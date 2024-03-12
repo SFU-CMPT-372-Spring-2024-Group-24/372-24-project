@@ -1,0 +1,22 @@
+@import '../../variables.scss';
+
+.not-found {
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  h1 {
+    color: $red;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 1rem;
+  }
+
+  .link {
+    margin-top: 2rem;
+  }
+}
