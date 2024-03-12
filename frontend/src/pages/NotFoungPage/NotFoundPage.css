@@ -1,0 +1,20 @@
+.not-found {
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.not-found h1 {
+  color: #DC6062;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.not-found p {
+  margin: 1rem;
+}
+
+.not-found .link {
+  margin-top: 2rem;
+}
