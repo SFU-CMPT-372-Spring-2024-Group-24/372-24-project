@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# .DS_Store files
+*.DS_Store
+
+# Preference files
+.vscode/
+
+# Docker files
+Dockerfile
+docker-compose.yml
+
+.env
