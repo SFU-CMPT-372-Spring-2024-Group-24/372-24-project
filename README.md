@@ -24,7 +24,7 @@ Switch to another branch:
 git checkout [branch-name]
 ```
 
-### 2. Open an issue on GitHub web interface for the developing feature
+### 2. [OPTIONAL] Open an issue on GitHub web interface for the developing feature
 
 ### 3. Write code on your local machine
 
@@ -34,7 +34,7 @@ git add .                  # stage files (new, modified, deleted, equivalent to 
 git commit -m "[Comment]"  # write a reasonable commit log
 ```
 > [!NOTE]
-> In the commit message, mention the issue number # of the issue created in step 2.
+> In the commit message, mention the issue number # of the issue created in step 2 (if any).
 
 ### 5. Sync with the main branch and resolve conflicts
 ```
@@ -47,7 +47,7 @@ git merge main                 # merge diff from main
 > Resolve conflicts and errors before pushing to the remote repo.
 
 ### 6. Push to the remote feature branch
-If it is the first time you're pushing to the remote, addition parameters are needed:
+If it is the first time you're pushing to the remote, additional parameters are needed:
 ```
 git checkout [branch name]            # switch to the feature branch
 git push -u origin [branch name]      # create a new feature branch in the upstream and push
