@@ -127,7 +127,7 @@ git push                                       # push from local to remote featu
 4. Type in the pull request title and comment
 5. Ask someone to review and approve the pull request
 
-## 8. [Optional] Delete local and remote branch
+### 8. [Optional] Delete local and remote branch
 
 Once the branch is merged, we may delete the feature branch:
 
