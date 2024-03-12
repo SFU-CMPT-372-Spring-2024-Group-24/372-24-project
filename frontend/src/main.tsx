@@ -2,10 +2,10 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Outlet, RouterProvider, createBrowserRouter, Navigate } from 'react-router-dom';
 
-// Global styles
-import './index.css';
 // Bootstrap
 import 'bootstrap/dist/css/bootstrap.css';
+// Global styles
+import './styles.scss';
 
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
