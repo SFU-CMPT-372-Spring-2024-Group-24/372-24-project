@@ -6,7 +6,69 @@ Clone the repo:
 git clone https://github.com/SFU-CMPT-372-Spring-2024-Group-24/372-24-project.git
 ```
 
+## Setting up during development
+
+If you haven't created a .env file in the backend directory, it's like a configuration variable file for database connection.
+
+How: Go to 'backend' folder, create a file with name ".env" and put these lines in:
+```
+PORT=8080
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=<your_password>
+DB_NAME=cmpt372project
+```
+
+
+### 1. Start your PostgreSQL server process
+
+#### Postgres.app
+
+I would recommend using the postgres.app because you can easily manage and keep track of running postgres instances.
+
+  Download link: https://postgresapp.com
+
+  For the server password, make sure to it matches the DB_PASSWORD in your .env file.
+
+> [!NOTE]
+> If you have any conflict about port being already in use, check if there is any postgres instance running on port 5432, kill that process, or simply change the port `DB_PORT` in the .env file
+
+#### Postico 2
+
+Also, if you want to easily see table records using a graphical tool, I would recommend download Postico 2
+
+  Download link: https://eggerapps.at/postico2/
+
+  Create a new server and enter the credentials same as your .env file (the DB_*).
+
+  Then you would be able to retrive table data with one click! (You can also directly put SQL commands in the app using its integrated terminal)
+
+### 2. Start the server (port 8080)
+
+In the backend directory:
+
+run `npm run dev` for running server using nodemon
+
+or:
+
+run `npm start` for running server using node
+
+> If you want to test out API, use port 8080 on Postman
+
+### 3. Start the client (port 3000)
+
+In the frontend directory:
+
+run `npm run dev`
+
+> Go to `http://localhost:3000` on your browser to view the app
+
 ## Development workflow
+
+> [!NOTE]
+> Remember to do a `git pull` to make sure your local project directory is up to date with our repo before you start coding!
+
 ### 1. Create a feature branch
 
 Create a new branch:
