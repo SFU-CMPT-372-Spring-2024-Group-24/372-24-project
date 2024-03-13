@@ -64,6 +64,7 @@ User.belongsToMany(Project, { through: 'UserProject' });
 Project.belongsToMany(User, { through: 'UserProject' });
 Project.hasMany(List, { foreignKey: 'projectId' });
 List.belongsTo(Project, { foreignKey: 'projectId' });
+// Task
 List.hasMany(Task, { foreignKey: 'listId' });
 Task.belongsTo(List, { foreignKey: 'listId' });
 // UserTask junction
@@ -75,7 +76,7 @@ Comment.belongsToMany(Task, { through: 'TaskComment' });
 Comment.belongsTo(User, { foreignKey: 'userId' });
 User.hasMany(Comment, { foreignKey: 'userId' });
 
-// Files
+// File
 // TaskFile junction
 Task.belongsToMany(File, { through: 'TaskFile' });
 File.belongsToMany(Task, { through: 'TaskFile' });

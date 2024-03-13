@@ -1,4 +1,5 @@
 # SFU CMPT 372 Spring 2024 Group Project
+
 ## Getting started
 
 Clone the repo:
@@ -6,22 +7,34 @@ Clone the repo:
 git clone https://github.com/SFU-CMPT-372-Spring-2024-Group-24/372-24-project.git
 ```
 
-## Setting up during development
+### 1. Set up development environment
 
-If you haven't created a .env file in the backend directory, it's like a configuration variable file for database connection.
+Change to the `backend/` directory.
 
-How: Go to 'backend' folder, create a file with name ".env" and put these lines in:
+Generate a self-signed SSL certificate:
+```bash
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
 ```
+
+This will create the `key.pem` and `cert.pem` files, which are your private key and certificate respectively.
+
+Then, while still in the `backend/` directory, create a `.env` file with the following information:
+
+```bash
 PORT=8080
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=<your_password>
+
+DB_HOST=<your_db_host> # e.g. localhost
+DB_PORT=<your_db_port> # e.g. 5432
+DB_USERNAME=<your_db_username> # e.g postgres
+DB_PASSWORD=<your_password> # e.g postgres
 DB_NAME=cmpt372project
+
+SSL_KEY_PATH=./key.pem
+SSL_CERT_PATH=./cert.pem
 ```
 
 
-### 1. Start your PostgreSQL server process
+### 2. Start PostgreSQL server process
 
 #### Postgres.app
 
@@ -44,7 +57,7 @@ Also, if you want to easily see table records using a graphical tool, I would re
 
   Then you would be able to retrive table data with one click! (You can also directly put SQL commands in the app using its integrated terminal)
 
-### 2. Start the server (port 8080)
+### 3. Start the server (port 8080)
 
 In the backend directory:
 
@@ -56,7 +69,7 @@ run `npm start` for running server using node
 
 > If you want to test out API, use port 8080 on Postman
 
-### 3. Start the client (port 3000)
+### 4. Start the client (port 3000)
 
 In the frontend directory:
 
