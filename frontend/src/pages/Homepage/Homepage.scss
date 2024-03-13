@@ -1,0 +1,46 @@
+@import '../../variables.scss';
+
+.homepage {
+  margin: 2rem;
+  padding: 2rem;
+
+  h1 {
+    margin-bottom: 3rem;
+  }
+
+  .project-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+
+    .project, .add-new-project{
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border: 1px solid $light-gray;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all .3s;
+
+      &:hover {
+        transform: scale(1.01);
+        box-shadow: 0 0 5px 3px $light-gray;
+      }
+
+      p {
+        margin: 1rem 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+    }
+
+    .add-new-project {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      gap: 1rem;
+      font-size: 2rem;
+      color: $blue;
+      border-color: $blue;
+    }
+  }
+}
