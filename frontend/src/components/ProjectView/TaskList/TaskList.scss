@@ -1,0 +1,67 @@
+@import '../../../variables.scss';
+
+.taskList {
+  border: 2px solid $light-gray;
+  border-radius: 10px;
+  padding: 1rem;
+
+  .list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    h2 {
+      margin: 0;
+    }
+
+    button.add-task {
+      border-color: $blue;
+    }
+  }
+
+  .task-count {
+    text-align: right;
+  }
+
+  .list {
+    .item {
+      background: #FFF;
+      margin: -.25rem 0 1rem 0;
+      padding: 1rem;
+      font-size: 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all .3s;
+
+      &:hover {
+        transform: scale(1.01);
+        box-shadow: 0 0 5px 3px $light-gray;
+      }
+
+      h3 {
+        font-size: 24px;
+        font-weight: 600;;
+      }
+
+      .info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+
+        .due-date {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+      }
+
+      img.assignee {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+      }
+    }
+  }
+}

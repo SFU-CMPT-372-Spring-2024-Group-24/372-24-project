@@ -11,6 +11,7 @@ import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import Homepage from './pages/Homepage/Homepage';
 import NotFoundPage from './pages/NotFoungPage/NotFoundPage';
+import ProjectViewPage from './pages/ProjectViewPage/ProjectViewPage';
 
 function Layout() {
   return (
@@ -35,13 +36,17 @@ const router = createBrowserRouter([
         element: <Homepage />
       },
       {
+        path: '/projectview',
+        element: <ProjectViewPage />
+      },
+      {
         path: 'error-not-found',
         element: <NotFoundPage />
       },
       {
         path: '*',
         element: <NotFoundPage />
-      }
+      },
     ]
   }
 ]);

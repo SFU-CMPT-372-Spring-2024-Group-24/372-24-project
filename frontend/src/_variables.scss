@@ -3,7 +3,7 @@
 $red: #CE4F51;
 $blue: #3355ed;
 $purple: #8C54FB;
-$green: #6FD08C;
+$green: #48c96f;
 $yellow: #F7CB15;
 $white: #F5F5F7;
 $light-gray: #D1D1D1;
@@ -16,4 +16,4 @@ $font: 'Archivo', Helvetica, sans-serif;
 // Color styles
 $background: $white;
 $text: $black;
-$gradient: radial-gradient(ellipse farthest-corner at center center, #8C54FB 0%, #CE4F51 100%);
+$gradient: radial-gradient(ellipse farthest-corner at center center, $purple 0%, $red 100%);
