@@ -31,8 +31,9 @@ DB_NAME=cmpt372project
 
 SSL_KEY_PATH=./key.pem
 SSL_CERT_PATH=./cert.pem
-```
 
+SESSION_SECRET=<your_secret_key> # e.g. not_so_secret_key_372
+```
 
 ### 2. Start PostgreSQL server process
 
@@ -59,23 +60,35 @@ Also, if you want to easily see table records using a graphical tool, I would re
 
 ### 3. Start the server (port 8080)
 
-In the backend directory:
+Change to the `backend/` directory.
 
-run `npm run dev` for running server using nodemon
+To start the server using `nodemon`:
 
-or:
+```bash
+npm run dev
+```
 
-run `npm start` for running server using node
+Alternatively, to start the server using `node`:
 
-> If you want to test out API, use port 8080 on Postman
+```bash
+npm start
+```
+
+> [!IMPORTANT]  
+> **Database migrations**
+> 
+> When changes are made to a model, a database migration might be required. You can perform a migration by running:
+> ```bash
+> npx sequelize-cli db:migrate
+> ```
 
 ### 4. Start the client (port 3000)
 
-In the frontend directory:
+Change to the `frontend/` directory, and run:
 
-run `npm run dev`
-
-> Go to `http://localhost:3000` on your browser to view the app
+```
+npm run dev
+```
 
 ## Development workflow
 
