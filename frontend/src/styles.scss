@@ -57,6 +57,7 @@ button {
   align-items: center;
   border-radius: 10px;
   transition: all .3s;
+  background-color: transparent;
 
   &:hover {
     box-shadow: 0 0 5px 2px $light-gray;

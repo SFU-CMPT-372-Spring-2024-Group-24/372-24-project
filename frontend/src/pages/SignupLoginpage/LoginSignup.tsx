@@ -1,73 +1,123 @@
-import React, { useState } from "react";
-import './LoginSignup.css';
-import user_icon from './Assets/person.png';
-import email_icon from './Assets/email.png';
-import password_icon from './Assets/password.png';
-import google_icon from './Assets/google.png';
+import { useState } from "react";
+import "./LoginSignup.scss";
+import { FaUser } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
+import { RiLockPasswordFill } from "react-icons/ri";
+import { FcGoogle } from "react-icons/fc";
+import { FaHandshakeSimple } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 const LoginSignup = () => {
   const [action, setAction] = useState("Sign Up");
 
+  const handleActionChange = (newAction: string) => {
+    setAction(newAction);
+  };
+
+  const handleCreateAccount = () => {
+    // Create account logic
+  };
+
+  const handleSignIn = () => {
+    // Sign in logic
+  };
+
+  const handleGoogleSignIn = () => {
+    // Google Sign in logic
+  };
+
   return (
-    <div className="container">
+    <div className="login-signup-page">
       <div className="content-left">
-        <h1 className="appName">
-          Application Name
-        </h1>
+        <Link to={"/"} className="">
+          <h1 className="logo">
+            <FaHandshakeSimple />
+            CollabHub
+          </h1>
+        </Link>
       </div>
+
       <div className="content">
         <div className="header">
-          <div className="text">{action}</div>
+          <h2 className="form-name">{action}</h2>
           <div className="underline"></div>
         </div>
+
         <div className="inputs">
-          {action === "Login" ? <div></div> :
+          {action === "Sign Up" && (
             <div className="input">
-              <img src={user_icon} alt="" />
-              <input type="text" placeholder="Username" />
-            </div>}
-          <div className="input">
-            <img src={email_icon} alt="" />
-            <input type="email" placeholder="Email" />
-          </div>
-          <div className="input">
-            <img src={password_icon} alt="" />
-            <input type="password" placeholder="Password" />
-          </div>
-        </div>
-        {action === "Sign Up" ? 
-          <button className="create-account-button" onClick={()=>{ /* Create account */}}>Create Account</button> : 
-          <button className="login-button" onClick={() => { /* Sign in */ }}>Log In</button>
-        }
-        <div className="or">
-          — Or —
-        </div>
-        <div className="google-button" onClick={() => { /* Google Sign in */ }}>
-          <img src={google_icon} alt="Google Icon" />
-          <span>Sign in with Google</span>
-        </div>
-        <div className="submit-container">
-          <div>
-            {action === "Sign Up" ? (
-              <span>Already have an account? </span>
-            ) : (
-              <span>Don't have an account yet? </span>
-            )}
-          </div>
-          {action === "Sign Up" ? (
-            <button className="login-btn" onClick={() => { setAction("Login") }}>
-              Log In
-            </button>
-          ) : (
-            <button className="create-btn" onClick={() => { setAction("Sign Up") }}>
-              Create Account
-            </button>
+              <FaUser size={18} />
+              <input
+                id="user_name"
+                name="user_name"
+                type="text"
+                placeholder="Your display name"
+              />
+            </div>
           )}
+          <div className="input">
+            <MdEmail size={20} />
+            <input
+              id="user_email"
+              name="user_email"
+              type="email"
+              placeholder="Email"
+            />
+          </div>
+          <div className="input">
+            <RiLockPasswordFill size={20} />
+            <input
+              id="user_pass"
+              name="user_pass"
+              type="password"
+              placeholder="Password"
+            />
+          </div>
         </div>
 
+        {action === "Sign Up" ? (
+          <button className="action-button" onClick={handleCreateAccount}>
+            Create Account
+          </button>
+        ) : (
+          <button className="action-button" onClick={handleSignIn}>
+            Log In
+          </button>
+        )}
+
+        <div className="or">— Or —</div>
+
+        <div className="google-button" onClick={handleGoogleSignIn}>
+          <FcGoogle size={20} />
+          <span>Sign in with Google</span>
+        </div>
+
+        <div className="submit-container">
+          {action === "Sign Up" ? (
+            <>
+              <span>Already have an account? </span>
+              <button
+                className="login-btn"
+                onClick={() => handleActionChange("Login")}
+              >
+                Log In
+              </button>
+            </>
+          ) : (
+            <>
+              <span>Don't have an account yet? </span>
+              <button
+                className="create-btn"
+                onClick={() => handleActionChange("Sign Up")}
+              >
+                Create Account
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default LoginSignup;

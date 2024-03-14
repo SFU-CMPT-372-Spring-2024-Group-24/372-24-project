@@ -12,6 +12,7 @@ import Footer from './components/Footer/Footer';
 import Homepage from './pages/Homepage/Homepage';
 import NotFoundPage from './pages/NotFoungPage/NotFoundPage';
 import ProjectViewPage from './pages/ProjectViewPage/ProjectViewPage';
+import LoginSignup from './pages/SignupLoginpage/LoginSignup';
 
 function Layout() {
   return (
@@ -48,7 +49,11 @@ const router = createBrowserRouter([
         element: <NotFoundPage />
       },
     ]
-  }
+  },
+  {
+    path: '/login',
+    element: <LoginSignup />
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
