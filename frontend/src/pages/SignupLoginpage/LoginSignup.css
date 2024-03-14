@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+.container {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(#040051, #203875);
+    padding-bottom: 30px;
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+.appName {
+    text-align: center;
+    color: #fff;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.content {
+    width: 80%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    grid-area: 1/2/2/3;
+    margin-top: 10px;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    margin-top: 30px;
+}
+
+.text {
+    color: #040051;
+    font-size: 48px;
+    font-weight: 700;
+    font-family: "Raleway", sans-serif;
+}
+
+.underline {
+    width: 100px;
+    height: 6px;
+    background: #040051;
+    border-radius: 9px;
+}
+
+.inputs {
+    margin-top: 45px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input {
+    display: flex;
+    align-items: center;
+    margin: auto;
+    background-color: #eaeaeaec;
+    border-radius: 6px;
+    width: 80%;
+    height: 65px;
+}
+
+.input:hover {
+    background-color: rgba(226, 226, 226, 0.859);
+}
+
+.input img {
+    margin: 0px 30px;
+}
+
+.input input {
+    height: 80px;
+    width: 400px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #797979;
+    font-size: 19px;
+}
+
+.submit-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.google-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    height: 59px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 50px;
+    margin: 20px auto;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.google-button:hover {
+    background-color: #f2f2f2;
+}
+
+.google-button img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.google-button span {
+    font-size: 16px;
+}
+
+.or {
+    color: #797979;
+    text-align: center;
+}
+
+.create-account-button,
+.login-button {
+    width: 80%;
+    height: 59px;
+    background-color: #002db4;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-size: 19px;
+    font-weight: 700;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto;
+}
+
+.create-account-button:hover,
+.login-button:hover {
+    background-color: #3151b3;
+}
+
+.or {
+    color: #797979;
+    text-align: center;
+}
+
+.login-btn,
+.create-btn {
+    color: #4c00b4;
+    cursor: pointer;
+    margin-right: 10px;
+    border: none;
+    background-color: #fff;
+}
+
+.login-btn:hover,
+.create-btn:hover {
+    color: #3151b3;
+}
