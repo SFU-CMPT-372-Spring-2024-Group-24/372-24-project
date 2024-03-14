@@ -1,0 +1,17 @@
+@import '../../variables.scss';
+
+.project-view-page {
+  display: flex;
+
+  .project {
+    flex-grow: 1;
+    padding: 1rem;
+
+    .project-columns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+  }
+
+}

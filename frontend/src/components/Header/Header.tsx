@@ -2,15 +2,23 @@ import { IoSearch } from "react-icons/io5";
 import { FaHandshakeSimple } from "react-icons/fa6";
 
 import "./Header.scss";
+import { Link } from "react-router-dom";
+
+// Todo:
+// Display search results from backend
+// User profile picture fetched from backend
+// User name fetched from backend
 
 // Header contains the logo on the left, search bar in the middle, and user profile on the right
 const Header = () => {
   return (
     <header>
-      <h1 className="logo">
-        <FaHandshakeSimple />
-        CollabHub
-      </h1>
+      <Link to={"/"} className="">
+        <h1 className="logo">
+          <FaHandshakeSimple />
+          CollabHub
+        </h1>
+      </Link>
 
       <div className="search-bar">
         <IoSearch size={20} className="search-icon" />

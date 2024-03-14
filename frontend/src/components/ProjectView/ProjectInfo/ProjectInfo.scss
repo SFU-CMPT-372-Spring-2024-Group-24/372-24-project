@@ -1,0 +1,67 @@
+@import '../../../variables.scss';
+
+aside.project-info {
+  width: 20%;
+  height: 90vh;
+  padding: 1rem;
+  border-right: 2px solid $light-gray;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  .members {
+    .title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: .5rem;
+
+      h2 {
+        margin: 0;
+      }
+    }
+
+    .add-member-icon {
+      cursor: pointer;
+    }
+  }
+
+  .member, .file {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+
+    img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .delete-project {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .5rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: $red;
+
+    p {
+      margin: 0;
+    }
+  }
+}
