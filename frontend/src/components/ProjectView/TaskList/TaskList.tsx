@@ -1,13 +1,19 @@
 import { FaRegClock } from "react-icons/fa6";
+import { IoMdAdd } from "react-icons/io";
 
 import "./TaskList.scss";
-import { IoMdAdd } from "react-icons/io";
+import { useState } from "react";
+import TaskItem from "../TaskItem/TaskItem";
 
 interface Props {
   listName: string;
 }
 
 const TaskList = ({ listName }: Props) => {
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+
+  const handleShowTask = () => setModalIsOpen(true);
+
   return (
     <div className="taskList">
       <div className="list-header">
@@ -22,8 +28,8 @@ const TaskList = ({ listName }: Props) => {
       <div className="task-count">3 tasks</div>
 
       <ul className="list">
-        <li className="item">
-          <h3>Task 1</h3>
+        <li className="item" onClick={handleShowTask}>
+          <h3>Sample Task View</h3>
 
           <div className="info">
             <div className="due-date">
@@ -37,6 +43,8 @@ const TaskList = ({ listName }: Props) => {
             />
           </div>
         </li>
+
+        <TaskItem modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen} />
 
         <li className="item">
           <h3>Task 2</h3>
