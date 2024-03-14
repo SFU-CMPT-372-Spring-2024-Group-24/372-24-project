@@ -19,5 +19,8 @@
     "pg": "^8.11.3",
     "sequelize": "^6.37.1",
     "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.2"
   }
 }
