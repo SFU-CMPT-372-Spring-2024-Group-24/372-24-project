@@ -82,6 +82,33 @@ app.post('/signup', async (req, res) => {
     });
 });
 
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    // Validate email
+    if (!validator.isEmail(email)) {
+        return res.status(400).json({ message: 'Invalid email' });
+    }
+
+    // Find user
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+        return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Compare password
+    bcrypt.compare(password, user.password, (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+        if (!result) {
+            return res.status(400).json({ message: 'Invalid email or password' });
+        }
+        req.session.user = user;
+        res.json(user);
+    });
+});
+
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
