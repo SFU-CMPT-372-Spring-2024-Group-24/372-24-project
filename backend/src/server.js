@@ -82,5 +82,15 @@ app.post('/signup', async (req, res) => {
     });
 });
 
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Internal server error: unable to log out' });
+        }
+        res.clearCookie('cmpt372project.sid');
+        res.json({ message: 'Logged out' });
+    });
+});
+
 // app.listen(port, () => console.log(`Server is running on port ${port}`));
 server.listen(port, () => console.log(`Server is running on port ${port}`));
