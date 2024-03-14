@@ -1,4 +1,3 @@
-import { FaRegClock } from "react-icons/fa6";
 import ProjectInfo from "../../components/ProjectView/ProjectInfo/ProjectInfo";
 
 import "./ProjectViewPage.scss";

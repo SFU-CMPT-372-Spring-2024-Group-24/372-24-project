@@ -1,0 +1,170 @@
+@import '../../../variables.scss';
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+  --bs-backdrop-opacity: 1;
+}
+
+.task-item {
+  width: 80%;
+  max-width: 80%;
+  margin-top: 5rem;
+  margin-bottom: 1rem;
+
+  h4 {
+    font-size: 20px;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  button {
+    background-color: transparent;
+    border: none;
+  }
+
+  .list-name,
+  .priority {
+    font-size: 14px;
+    color: $dark-gray;
+    border: 1px solid;
+    border-radius: 15px;
+    padding: .1rem .5rem;
+    user-select: none;
+  }
+
+  .priority {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .urgent {
+    color: $red;
+    border-color: $red;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+
+    .task-title {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: .5rem;
+
+      h3 {
+        margin: 0;
+      }
+    }
+
+    button.delete-btn {
+      position: absolute;
+      right: 5px;
+      bottom: 5px;
+      color: $red;
+    }
+
+    button.move-btn {
+      position: absolute;
+      right: 45px;
+      bottom: 5px;
+    }
+
+    button.close-btn {
+      position: absolute;
+      right: -50px;
+      top: 0;
+      background-color: $white;
+      border: none;
+      border-radius: 5px;
+    }
+  }
+
+  .body {
+    div {
+      margin-bottom: 1rem;
+    }
+
+    .check-due-date {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+
+      input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .member,
+    .file {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-top: 1rem;
+
+    }
+
+    img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+
+    .view-more {
+      cursor: pointer;
+      margin: .5rem 0;
+      color: $dark-gray;
+      font-weight: 500;
+    }
+
+    .comments {
+      border-top: 3px solid $dark-gray;
+      padding-top: 1rem;
+
+      .comment {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+
+        .comment-time {
+          font-size: 14px;
+          color: $dark-gray;
+          font-style: italic;
+          margin-left: .5rem;
+        }
+
+        .comment-details {
+          flex-grow: 1;
+          border: 1px solid $light-gray;
+          padding: .5rem;
+          border-radius: 10px;
+          margin: 0;
+        }
+      }
+
+      .add-comment {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+
+        textarea {
+          flex-grow: 1;
+          padding: .5rem;
+          border: 1px solid $light-gray;
+          border-radius: 10px;
+        }
+
+        button {
+          background-color: $blue;
+          color: $white;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
