@@ -7,7 +7,7 @@ import { FaUser } from "react-icons/fa6";
 // Styles
 import "./LoginSignupForm.scss";
 // Contexts
-import UserContext from "../../contexts/UserContext";
+import UserContext from "../../hooks/UserContext";
 
 interface Props {
 }

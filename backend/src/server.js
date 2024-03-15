@@ -29,7 +29,12 @@ app.use(session({
     name: 'cmpt372project.sid',
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false,
+    cookie: {
+        sameSite: true,
+        secure: true,
+        httpOnly: false
+    }
 }));
 
 app.get('/test', (req, res) => {

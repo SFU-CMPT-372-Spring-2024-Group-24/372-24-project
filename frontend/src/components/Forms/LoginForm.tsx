@@ -1,18 +1,17 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 
 // Styles
 import "./LoginSignupForm.scss";
 // Contexts
-import UserContext from "../../contexts/UserContext";
+import { useUser } from "../../hooks/UserContext";
 import { FaUser } from "react-icons/fa6";
 
-interface Props {
-}
+interface Props {}
 
-const LoginForm = ({  }: Props) => {
-  const userContext = useContext(UserContext);
+const LoginForm = ({}: Props) => {
+  const { setUser } = useUser();
   const navigate = useNavigate();
 
   const [identifier, setIdentifier] = useState<string>("");
@@ -20,7 +19,7 @@ const LoginForm = ({  }: Props) => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const response = await fetch("/api/users/login", {
       method: "POST",
       headers: {
@@ -31,17 +30,12 @@ const LoginForm = ({  }: Props) => {
         password: password,
       }),
     });
-    
+
     if (response.ok) {
       const user = await response.json();
-
-      if (userContext) {
-        userContext.setUser(user);
-      }
-
-      navigate("/");
-    }
-    else {
+      setUser(user);
+      navigate("/", { replace: true });
+    } else {
       console.error("Login failed: ", response.status, response.statusText);
     }
   };
@@ -71,9 +65,9 @@ const LoginForm = ({  }: Props) => {
           placeholder="Password"
         />
       </div>
-      
+
       <button type="submit" className="action-button">
-        Log In
+        Sign In
       </button>
     </form>
   );

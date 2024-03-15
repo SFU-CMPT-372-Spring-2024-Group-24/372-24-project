@@ -107,4 +107,18 @@ router.post('/logout', (req, res) => {
     });
 });
 
+// Check if user is authenticated
+const isAuthenticated = (req, res, next) => {
+    if (req.session && req.session.user) {
+        next();
+    } else {
+        res.status(401).json({ message: 'Unauthorized' });
+    }
+}
+
+// Restore current user session
+router.get('/me', isAuthenticated, (req, res) => {
+    res.json(req.session.user);
+});
+
 module.exports = router;
