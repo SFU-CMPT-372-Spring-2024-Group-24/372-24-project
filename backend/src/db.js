@@ -88,7 +88,10 @@ File.belongsToMany(Task, { through: 'TaskFile' });
 Project.belongsToMany(File, { through: 'ProjectFile' });
 File.belongsToMany(Project, { through: 'ProjectFile' });
 
-sequelize.sync({ alter: true });
+sequelize.sync({
+    alter: true,
+    logging: false
+});
 
 module.exports = {
     Message,
