@@ -12,7 +12,11 @@ const client = new Client({
 async function createDatabase() {
     try {
         await client.connect();
-        await client.query(`CREATE DATABASE ${process.env.DB_NAME || 'cmpt372project'}`);
+        // Create database if it doesn't exist
+        const res = await client.query(`SELECT 1 FROM pg_database WHERE datname = '${process.env.DB_NAME || 'cmpt-372-project'}'`);
+        if (res.rowCount === 0) {
+            await client.query(`CREATE DATABASE "${process.env.DB_NAME || 'cmpt-372-project'}"`);
+        }
     } catch (err) {
         console.error(err);
     } finally {
@@ -84,7 +88,10 @@ File.belongsToMany(Task, { through: 'TaskFile' });
 Project.belongsToMany(File, { through: 'ProjectFile' });
 File.belongsToMany(Project, { through: 'ProjectFile' });
 
-sequelize.sync({ alter: true });
+sequelize.sync({
+    alter: true,
+    logging: false
+});
 
 module.exports = {
     Message,

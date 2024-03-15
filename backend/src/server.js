@@ -37,19 +37,14 @@ app.use(session({
     }
 }));
 
-app.get('/test', (req, res) => {
-    res.send('Hello, World!');
-});
-
 // Routes
-app.get('/', (req, res) => {
-    if (req.session.user) {
-        res.send(`Hello, ${req.session.user.name}!`);
+app.get('/test', (req, res) => {
+    if (req.session.userId) {
+        res.send(`Hello, User ${req.session.userId}!`);
     } else {
         res.send(`Hello, World!`);
     }
 });
 app.use('/users', require('./routes/users'));
 
-// app.listen(port, () => console.log(`Server is running on port ${port}`));
 server.listen(port, () => console.log(`Server is running on port ${port}`));
