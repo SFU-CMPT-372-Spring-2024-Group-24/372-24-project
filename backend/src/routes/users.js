@@ -60,13 +60,13 @@ router.post('/signup', async (req, res) => {
 
 // Log in
 router.post('/login', async (req, res) => {
-    let { username, password } = req.body; // username can be either email or username
+    let { identifier, password } = req.body; // identifier can be either email or username
 
-    // Convert username to lowercase
-    username = username.toLowerCase();
+    // Convert identifier to lowercase
+    identifier = identifier.toLowerCase();
 
     // Validate identifier
-    if (!validator.isEmail(username) && !validator.isAlphanumeric(username)) {
+    if (!validator.isEmail(identifier) && !validator.isAlphanumeric(identifier)) {
         return res.status(400).json({ message: 'Invalid email or username' });
     }
 
@@ -74,8 +74,8 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ 
         where: { 
             [Sequelize.Op.or]: [
-                { email: username },
-                { username: username }
+                { email: identifier },
+                { username: identifier }
             ] 
         } 
     });
