@@ -131,16 +131,25 @@ router.post('/logout', (req, res) => {
 
 // Check if user is authenticated
 const isAuthenticated = (req, res, next) => {
-    if (req.session && req.session.user) {
-        next();
+    if (req.session && req.session.userId) {
+        return next();
     } else {
         res.status(401).json({ message: 'Unauthorized' });
     }
 }
 
 // Restore current user session
-router.get('/me', isAuthenticated, (req, res) => {
-    res.json(req.session.user);
+router.get('/me', isAuthenticated, async (req, res) => {
+    const user = await User.findByPk(req.session.userId);
+    if (user) {
+        const userJSON = user.toJSON();
+        delete userJSON.password;
+        delete userJSON.createdAt;
+        delete userJSON.updatedAt;
+        res.json(userJSON);
+    } else {
+        res.status(404).json({ message: 'User not found' });
+    }
 });
 
 module.exports = router;
