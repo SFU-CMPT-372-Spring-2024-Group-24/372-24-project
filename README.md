@@ -2,7 +2,7 @@
 
 ## Getting started
 
-Clone the repo:
+Clone this repository:
 ```
 git clone https://github.com/SFU-CMPT-372-Spring-2024-Group-24/372-24-project.git
 ```
@@ -20,7 +20,7 @@ This will create the `key.pem` and `cert.pem` files, which are your private key 
 
 Then, while still in the `backend/` directory, create a `.env` file with the following information:
 
-```bash
+```
 PORT=8080
 
 DB_HOST=<your_db_host> # e.g. localhost
@@ -35,56 +35,38 @@ SSL_CERT_PATH=./cert.pem
 SESSION_SECRET=<your_secret_key> # e.g. not_so_secret_key_372
 ```
 
-### 2. Start PostgreSQL server process
+### 2. Start PostgreSQL server
 
-#### Postgres.app
+If you installed PostgreSQL with the official installer, the server should start automatically when you start your computer. Otherwise, you can start the server using your preferred method.
 
-I would recommend using the postgres.app because you can easily manage and keep track of running postgres instances.
+### 3. Start backend (port 8080)
 
-  Download link: https://postgresapp.com
-
-  For the server password, make sure to it matches the DB_PASSWORD in your .env file.
-
-> [!NOTE]
-> If you have any conflict about port being already in use, check if there is any postgres instance running on port 5432, kill that process, or simply change the port `DB_PORT` in the .env file
-
-#### Postico 2
-
-Also, if you want to easily see table records using a graphical tool, I would recommend download Postico 2
-
-  Download link: https://eggerapps.at/postico2/
-
-  Create a new server and enter the credentials same as your .env file (the DB_*).
-
-  Then you would be able to retrive table data with one click! (You can also directly put SQL commands in the app using its integrated terminal)
-
-### 3. Start the server (port 8080)
-
-Change to the `backend/` directory.
-
-To start the server using `nodemon`:
+Change to the `backend/` directory and run:
 
 ```bash
 npm run dev
 ```
 
-Alternatively, to start the server using `node`:
-
-```bash
-npm start
-```
-
 > [!IMPORTANT]  
 > **Database migrations**
 > 
-> When changes are made to a model, a database migration might be required. You can perform a migration by running:
+> When changes are made to a model, a database migration might be required. If you haven't already, initialize `sequelize`:
 > ```bash
+> npx sequelize-cli init
+> ```
+>
+> By default, this will generate `models/index.js`, which you can remove because the content of this file is identical to `src/models/index.js`.
+> 
+> Then, modify the details in `config/config.json` to reflect your database connection (similar to your `.env` file). `sequelize` will use this information to connect to the database and perform changes to it.
+> 
+> Lastly, perform a database migration by running:
+> ```
 > npx sequelize-cli db:migrate
 > ```
 
-### 4. Start the client (port 3000)
+### 4. Start frontend (port 3000)
 
-Change to the `frontend/` directory, and run:
+Change to the `frontend/` directory and run:
 
 ```
 npm run dev
@@ -92,8 +74,8 @@ npm run dev
 
 ## Development workflow
 
-> [!NOTE]
-> Remember to do a `git pull` to make sure your local project directory is up to date with our repo before you start coding!
+> [!CAUTION]
+> Make sure to perform a `git pull` and resolve any conflicts prior to pushing to the repository!
 
 ### 1. Create a feature branch
 
@@ -131,7 +113,7 @@ git pull                       # pull from remote main branch
 git checkout [branch name]     # switch to the feature branch
 git merge main                 # merge diff from main
 ```
-> [!WARNING]
+> [!CAUTION]
 > Resolve conflicts and errors before pushing to the remote repo.
 
 ### 6. Push to the remote feature branch
@@ -153,7 +135,7 @@ git push                                       # push from local to remote featu
 4. Type in the pull request title and comment
 5. Ask someone to review and approve the pull request
 
-### 8. [Optional] Delete local and remote branch
+### 8. [OPTIONAL] Delete local and remote branch
 
 Once the branch is merged, we may delete the feature branch:
 
