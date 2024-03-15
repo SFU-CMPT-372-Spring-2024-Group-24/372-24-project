@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const validator = require('validator');
 const Sequelize = require('sequelize');
 
+
 // Get all users to test database connection
 router.get('/', async (req, res) => {
     const users = await User.findAll();
