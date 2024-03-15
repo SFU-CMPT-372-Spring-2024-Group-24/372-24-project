@@ -1,7 +1,6 @@
 @import '../../variables.scss';
 
 .login-signup-page {
-    // height: 80vh;
     width: 80%;
     position: absolute;
     top: 50%;
@@ -60,39 +59,6 @@ h1.logo {
     border-radius: 10px;
 }
 
-.inputs {
-    margin-top: 45px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.input {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: auto;
-    background-color: $white;
-    border-radius: 10px;
-    width: 80%;
-    padding: .25rem .5rem;
-    border: 2px solid transparent;
-    transition: .3s;
-
-    &:focus-within {
-        border: 2px solid $purple;
-    }
-
-    input {
-        width: 100%;
-        padding: .5rem;
-        background: transparent;
-        border: none;
-        outline: none;
-        font-size: 18px;
-    }
-}
-
 .submit-container {
     display: flex;
     justify-content: center;
@@ -121,29 +87,6 @@ h1.logo {
 
 .or {
     color: $dark-gray;
-    text-align: center;
-}
-
-.action-button {
-    width: 80%;
-    padding: 1rem;
-    background-color: $purple;
-    color: #fff;
-    border: none;
-    border-radius: 50px;
-    font-size: 19px;
-    font-weight: 700;
-    cursor: pointer;
-    display: block;
-    margin: 20px auto;
-
-    &:hover {
-        background-color: rgba($color: $purple, $alpha: 0.9);
-    }
-}
-
-.or {
-    color: #797979;
     text-align: center;
 }
 
