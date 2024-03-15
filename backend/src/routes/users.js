@@ -1,8 +1,9 @@
+const { User } = require('../db');
 const express = require('express');
 const router = express.Router();
-const { User } = require('../db');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
+const Sequelize = require('sequelize');
 
 // Get all users to test database connection
 router.get('/', async (req, res) => {
@@ -12,7 +13,21 @@ router.get('/', async (req, res) => {
 
 // Sign up
 router.post('/signup', async (req, res) => {
-    const { name, email, password, passwordConfirmation } = req.body;
+    let { name, username, email, password, passwordConfirmation } = req.body;
+
+    // Convert username to lowercase
+    username = username.toLowerCase();
+
+    // Validate username
+    if (!validator.isAlphanumeric(username)) {
+        return res.status(400).json({ message: 'Invalid username' });
+    }
+
+    // Check if username is already used
+    const existingUsername = await User.findOne({ where: { username } });
+    if (existingUsername) {
+        return res.status(400).json({ message: 'Username already used' });
+    }
 
     // Validate email
     if (!validator.isEmail(email)) {
@@ -37,7 +52,7 @@ router.post('/signup', async (req, res) => {
             return res.status(500).json({ message: 'Internal server error' });
         }
         // Create user
-        const user = await User.create({ name, email, password: hash });
+        const user = await User.create({ name, username, email, password: hash });
         req.session.user = user;
         res.json(user);
     });
@@ -45,17 +60,27 @@ router.post('/signup', async (req, res) => {
 
 // Log in
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    let { username, password } = req.body; // username can be either email or username
 
-    // Validate email
-    if (!validator.isEmail(email)) {
-        return res.status(400).json({ message: 'Invalid email' });
+    // Convert username to lowercase
+    username = username.toLowerCase();
+
+    // Validate identifier
+    if (!validator.isEmail(username) && !validator.isAlphanumeric(username)) {
+        return res.status(400).json({ message: 'Invalid email or username' });
     }
 
     // Find user
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ 
+        where: { 
+            [Sequelize.Op.or]: [
+                { email: username },
+                { username: username }
+            ] 
+        } 
+    });
     if (!user) {
-        return res.status(400).json({ message: 'Invalid email or password' });
+        return res.status(400).json({ message: 'Invalid email/username or password' });
     }
 
     // Compare password
@@ -64,7 +89,7 @@ router.post('/login', async (req, res) => {
             return res.status(500).json({ message: 'Internal server error' });
         }
         if (!result) {
-            return res.status(400).json({ message: 'Invalid email or password' });
+            return res.status(400).json({ message: 'Invalid email/username or password' });
         }
         req.session.user = user;
         res.json(user);
