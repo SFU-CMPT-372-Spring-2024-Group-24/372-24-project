@@ -32,10 +32,6 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.get('/test', (req, res) => {
-    res.send('Hello, World!');
-});
-
 // Routes
 app.get('/', (req, res) => {
     if (req.session.user) {
@@ -46,5 +42,4 @@ app.get('/', (req, res) => {
 });
 app.use('/users', require('./routes/users'));
 
-// app.listen(port, () => console.log(`Server is running on port ${port}`));
 server.listen(port, () => console.log(`Server is running on port ${port}`));
