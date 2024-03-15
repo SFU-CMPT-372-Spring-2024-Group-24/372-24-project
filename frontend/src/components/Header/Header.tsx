@@ -1,16 +1,41 @@
 import { IoSearch } from "react-icons/io5";
 import { FaHandshakeSimple } from "react-icons/fa6";
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import "./Header.scss";
-import { Link } from "react-router-dom";
+import UserContext from "../../contexts/UserContext";
+import { MdLogout } from "react-icons/md";
 
 // Todo:
 // Display search results from backend
 // User profile picture fetched from backend
-// User name fetched from backend
 
-// Header contains the logo on the left, search bar in the middle, and user profile on the right
 const Header = () => {
+  const userContext = useContext(UserContext);
+  const navigate = useNavigate();
+
+  if (!userContext || !userContext.user) {
+    return null;
+  }
+
+  const { user } = userContext;
+
+  const handleLogout = async () => {
+    if (userContext) {
+      userContext.setUser(null);
+    }
+
+    const response = await fetch("/api/logout", {
+      method: "POST",
+    });
+
+    if (response.ok) {
+      console.log("Logged out");
+      navigate("/login");
+    }
+  };
+
   return (
     <header>
       <Link to={"/"} className="">
@@ -33,10 +58,12 @@ const Header = () => {
           />
 
           <div className="dropdown-content">
-            <h3>John Doe</h3>
-            <p>
-              <a href="/">Logout</a>
-            </p>
+            <h3>{ user.name }</h3>
+            <p>{ user.email }</p>
+            <button className="btn-logout" onClick={handleLogout}>
+              <MdLogout size={20}/>
+              Logout
+            </button>
           </div>
         </div>
       </div>

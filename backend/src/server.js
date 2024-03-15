@@ -36,6 +36,10 @@ app.use(session({
     saveUninitialized: true
 }));
 
+app.get('/test', (req, res) => {
+    res.send('Hello, World!');
+});
+
 // Routes
 app.get('/', (req, res) => {
     if (req.session.user) {
@@ -109,7 +113,7 @@ app.post('/login', async (req, res) => {
     });
 });
 
-app.get('/logout', (req, res) => {
+app.post('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             return res.status(500).json({ message: 'Internal server error: unable to log out' });
