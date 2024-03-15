@@ -26,7 +26,7 @@ const Header = () => {
       userContext.setUser(null);
     }
 
-    const response = await fetch("/api/logout", {
+    const response = await fetch("/api/users/logout", {
       method: "POST",
     });
 

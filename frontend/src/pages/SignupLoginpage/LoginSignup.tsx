@@ -17,7 +17,7 @@ const LoginSignup = () => {
   const navigate = useNavigate();
 
   const [action, setAction] = useState("Sign Up");
-  const [userEmail, setUserEmail] = useState<string>("");
+  const [userIdentifier, setUserIdentifier] = useState<string>("");
   const [userPass, setUserPass] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
 
@@ -32,16 +32,16 @@ const LoginSignup = () => {
   const handleSignIn = async () => {
     // Debug
     console.log("Signing in...");
-    console.log("Email: ", userEmail);
+    console.log("Email: ", userIdentifier);
     console.log("Password: ", userPass);
     
-    const response = await fetch("/api/login", {
+    const response = await fetch("/api/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: userEmail,
+        identifer: userIdentifier,
         password: userPass,
       }),
     });
@@ -102,11 +102,11 @@ const LoginSignup = () => {
           <div className="input">
             <MdEmail size={20} />
             <input
-              id="user_email"
-              name="user_email"
-              type="email"
-              value={userEmail}
-              onChange={(e) => setUserEmail(e.target.value)}
+              id="user_identifier"
+              name="user_identifier"
+              type="text"
+              value={userIdentifier}
+              onChange={(e) => setUserIdentifier(e.target.value)}
               placeholder="Email"
             />
           </div>
