@@ -1,14 +1,25 @@
-import { useState } from "react";
-import "./LoginSignup.scss";
+import { useContext, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
 import { FaHandshakeSimple } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+// Styles
+import "./LoginSignup.scss";
+
+// Contexts
+import UserContext from "../../contexts/UserContext";
 
 const LoginSignup = () => {
+  const userContext = useContext(UserContext);
+  const navigate = useNavigate();
+
   const [action, setAction] = useState("Sign Up");
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [userPass, setUserPass] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
 
   const handleActionChange = (newAction: string) => {
     setAction(newAction);
@@ -18,8 +29,39 @@ const LoginSignup = () => {
     // Create account logic
   };
 
-  const handleSignIn = () => {
-    // Sign in logic
+  const handleSignIn = async () => {
+    // Debug
+    console.log("Signing in...");
+    console.log("Email: ", userEmail);
+    console.log("Password: ", userPass);
+    
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: userEmail,
+        password: userPass,
+      }),
+    });
+    
+    if (response.ok) {
+      const user = await response.json();
+      
+      // Debug
+      console.log("Logged in:");
+      console.log(user); 
+
+      if (userContext) {
+        userContext.setUser(user);
+      }
+
+      navigate("/");
+    }
+    else {
+      console.error("Login failed: ", response.status, response.statusText);
+    }
   };
 
   const handleGoogleSignIn = () => {
@@ -51,6 +93,8 @@ const LoginSignup = () => {
                 id="user_name"
                 name="user_name"
                 type="text"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
                 placeholder="Your display name"
               />
             </div>
@@ -61,6 +105,8 @@ const LoginSignup = () => {
               id="user_email"
               name="user_email"
               type="email"
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
               placeholder="Email"
             />
           </div>
@@ -70,6 +116,8 @@ const LoginSignup = () => {
               id="user_pass"
               name="user_pass"
               type="password"
+              value={userPass}
+              onChange={(e) => setUserPass(e.target.value)}
               placeholder="Password"
             />
           </div>

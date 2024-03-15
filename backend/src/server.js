@@ -32,6 +32,10 @@ app.use(session({
     saveUninitialized: true
 }));
 
+app.get('/test', (req, res) => {
+    res.send('Hello, World!');
+});
+
 // Routes
 app.get('/', (req, res) => {
     if (req.session.user) {

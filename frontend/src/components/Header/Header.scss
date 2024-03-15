@@ -58,30 +58,21 @@ header {
     }
 
     .dropdown-content {
-      display: none;
+      // display: none;
       position: absolute;
       right: 0;
       background-color: #FFF;
-      min-width: 160px;
+      min-width: 200px;
       box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
       z-index: 1;
-      padding: .5rem 1rem;
+      padding: 1.5rem;
       border-radius: 10px;
 
-      p {
-        margin: 0;
-      }
-
-      a {
-        color: $black;
+      button.btn-logout {
+        width: 100%;
         padding: .5rem;
-        text-decoration: none;
-        display: block;
       }
-
-      a:hover {
-        background-color: $light-gray;
-      }
+      
     }
 
     .dropdown:hover .dropdown-content {
