@@ -15,8 +15,9 @@ router.get('/', async (req, res) => {
 router.post('/signup', async (req, res) => {
     let { name, username, email, password, passwordConfirmation } = req.body;
 
-    // Convert username to lowercase
+    // Convert to lowercase
     username = username.toLowerCase();
+    email = email.toLowerCase();
 
     // Validate username
     if (!validator.isAlphanumeric(username)) {
