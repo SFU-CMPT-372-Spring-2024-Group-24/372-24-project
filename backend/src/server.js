@@ -33,7 +33,7 @@ app.use(session({
 }));
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/test', (req, res) => {
     if (req.session.userId) {
         res.send(`Hello, User ${req.session.userId}!`);
     } else {
