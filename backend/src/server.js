@@ -34,8 +34,8 @@ app.use(session({
 
 // Routes
 app.get('/', (req, res) => {
-    if (req.session.user) {
-        res.send(`Hello, ${req.session.user.name}!`);
+    if (req.session.userId) {
+        res.send(`Hello, User ${req.session.userId}!`);
     } else {
         res.send(`Hello, World!`);
     }

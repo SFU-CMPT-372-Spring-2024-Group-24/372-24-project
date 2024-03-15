@@ -8,6 +8,13 @@ const Sequelize = require('sequelize');
 // Get all users to test database connection
 router.get('/', async (req, res) => {
     const users = await User.findAll();
+
+    for (let user of users) {
+        delete user.dataValues.password;
+        delete user.dataValues.createdAt;
+        delete user.dataValues.updatedAt;
+    }
+
     res.json(users);
 });
 
@@ -24,21 +31,9 @@ router.post('/signup', async (req, res) => {
         return res.status(400).json({ message: 'Invalid username' });
     }
 
-    // Check if username is already used
-    const existingUsername = await User.findOne({ where: { username } });
-    if (existingUsername) {
-        return res.status(400).json({ message: 'Username already used' });
-    }
-
     // Validate email
     if (!validator.isEmail(email)) {
         return res.status(400).json({ message: 'Invalid email' });
-    }
-
-    // Check if email is already used
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-        return res.status(400).json({ message: 'Email already used' });
     }
     
     // Validate password
@@ -46,17 +41,36 @@ router.post('/signup', async (req, res) => {
         return res.status(400).json({ message: 'Passwords do not match' });
     }
 
-    // Hash password
-    const saltRounds = 10;
-    bcrypt.hash(password, saltRounds, async (err, hash) => {
-        if (err) {
-            return res.status(500).json({ message: 'Internal server error' });
+    try {
+        // Check if username is already used
+        const existingUsername = await User.findOne({ where: { username } });
+        if (existingUsername) {
+            return res.status(400).json({ message: 'Username already used' });
         }
+
+        // Check if email is already used
+        const existingUser = await User.findOne({ where: { email } });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Email already used' });
+        }
+        
+        // Hash password
+        const saltRounds = 10;
+        const hash = await bcrypt.hash(password, saltRounds);
+
         // Create user
         const user = await User.create({ name, username, email, password: hash });
-        req.session.user = user;
-        res.json(user);
-    });
+        req.session.userId = user.id;
+
+        const userJSON = user.toJSON();
+        delete userJSON.password;
+        delete userJSON.createdAt;
+        delete userJSON.updatedAt;
+
+        res.json(userJSON);
+    } catch (err) {
+        return res.status(500).json({ message: 'Internal server error' });
+    }
 });
 
 // Log in
@@ -71,30 +85,37 @@ router.post('/login', async (req, res) => {
         return res.status(400).json({ message: 'Invalid email or username' });
     }
 
-    // Find user
-    const user = await User.findOne({ 
-        where: { 
-            [Sequelize.Op.or]: [
-                { email: identifier },
-                { username: identifier }
-            ] 
-        } 
-    });
-    if (!user) {
-        return res.status(400).json({ message: 'Invalid email/username or password' });
-    }
-
-    // Compare password
-    bcrypt.compare(password, user.password, (err, result) => {
-        if (err) {
-            return res.status(500).json({ message: 'Internal server error' });
-        }
-        if (!result) {
+    try {
+        // Find user
+        const user = await User.findOne({ 
+            where: { 
+                [Sequelize.Op.or]: [
+                    { email: identifier },
+                    { username: identifier }
+                ] 
+            }
+        });
+        if (!user) {
             return res.status(400).json({ message: 'Invalid email/username or password' });
         }
-        req.session.user = user;
-        res.json(user);
-    });
+    
+        // Compare password
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: 'Invalid email/username or password' });
+        }
+        
+        req.session.userId = user.id;
+        
+        const userJSON = user.toJSON();
+        delete userJSON.password;
+        delete userJSON.createdAt;
+        delete userJSON.updatedAt;
+
+        res.json(userJSON);
+    } catch (err) {
+        return res.status(500).json({ message: 'Internal server error' });
+    }
 });
 
 // Log out
