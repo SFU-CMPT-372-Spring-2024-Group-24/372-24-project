@@ -2,8 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import {
   Outlet,
-  RouterProvider,
-  createBrowserRouter,
+  BrowserRouter,
+  Routes,
+  Route,
   Navigate,
 } from "react-router-dom";
 
@@ -21,63 +22,72 @@ import ProjectViewPage from "./pages/ProjectViewPage/ProjectViewPage";
 import LoginSignup from "./pages/SignupLoginpage/LoginSignup";
 
 // Contexts
-import UserContext from "./contexts/UserContext";
-
-// Models
-import { User } from "./models/User";
+import { UserProvider, useUser } from "./hooks/UserContext";
 
 function Layout() {
   return (
     <>
       <Header />
-
       <main>
         <Outlet />
       </main>
-
       <Footer />
     </>
   );
 }
 
-const router = createBrowserRouter([
-  {
-    element: <Layout />,
-    children: [
-      {
-        path: "/",
-        element: <Homepage />,
-      },
-      {
-        path: "/projectview",
-        element: <ProjectViewPage />,
-      },
-      {
-        path: "error-not-found",
-        element: <NotFoundPage />,
-      },
-      {
-        path: "*",
-        element: <NotFoundPage />,
-      },
-    ],
-  },
-  {
-    path: "/login",
-    element: <LoginSignup />,
-  },
-]);
+interface AuthRouteProps {
+  children: React.ReactNode;
+  path: string;
+}
+const AuthRoute = ({ children, path }: AuthRouteProps) => {
+  const { user } = useUser();
+
+  if (!user && path !== "/login") {
+    return <Navigate to="/login" />;
+  }
+
+  if (user && path === "/login") {
+    return <Navigate to="/" />;
+  }
+
+  return children;
+};
 
 const App = () => {
-  const [user, setUser] = React.useState<User | null>(null);
-
   return (
-    <React.StrictMode>
-      <UserContext.Provider value={{ user, setUser }}>
-        <RouterProvider router={router} />
-      </UserContext.Provider>
-    </React.StrictMode>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />} path="/">
+          <Route
+            path="/"
+            element={
+              <AuthRoute path="/">
+                <Homepage />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/projectview"
+            element={
+              <AuthRoute path="/projectview">
+                <ProjectViewPage />
+              </AuthRoute>
+            }
+          />
+          <Route path="error-not-found" element={<NotFoundPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+        <Route path="/login" element={<LoginSignup />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
-ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <UserProvider>
+      <App />
+    </UserProvider>
+  </React.StrictMode>
+);

@@ -10,7 +10,7 @@ import SignupForm from "../../components/Forms/SignupForm";
 import "./LoginSignup.scss";
 
 const LoginSignup = () => {
-  const [action, setAction] = useState("Sign Up");
+  const [action, setAction] = useState("Sign In");
 
   const handleActionChange = (newAction: string) => setAction(newAction);
 
@@ -35,7 +35,7 @@ const LoginSignup = () => {
           <div className="underline"></div>
         </div>
 
-        {action === "Sign Up" ? <SignupForm /> : <LoginForm />}
+        {action === "Sign In" ? <LoginForm /> : <SignupForm />}
 
         <div className="or">— Or —</div>
 
@@ -50,7 +50,7 @@ const LoginSignup = () => {
               <span>Already have an account? </span>
               <button
                 className="login-btn"
-                onClick={() => handleActionChange("Login")}
+                onClick={() => handleActionChange("Sign In")}
               >
                 Log In
               </button>
