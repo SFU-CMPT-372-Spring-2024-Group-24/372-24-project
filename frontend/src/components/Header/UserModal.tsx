@@ -2,7 +2,7 @@
 import Modal from "react-bootstrap/Modal";
 import { useUser } from "../../hooks/UserContext";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // Icons
 import { MdLogout } from "react-icons/md";
 // Files
@@ -36,6 +36,11 @@ const UserModal = ({}: Props) => {
       console.error("Failed to logout: ", error);
     }
   };
+
+  // Backdrop styling
+  useEffect(() => {
+    profileIsOpen ? (document.body.classList.add("userModal-open")) : (document.body.classList.remove("userModal-open"));
+  }, [profileIsOpen]);
 
   return (
     <>

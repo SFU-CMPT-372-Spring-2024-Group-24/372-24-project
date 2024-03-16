@@ -51,8 +51,8 @@ header {
 }
 
 // Modal styles
-body.modal-open .modal-backdrop {
-  background-color: transparent;
+body.userModal-open .modal-backdrop {
+  opacity: 0;
 }
 
 .user-info {
