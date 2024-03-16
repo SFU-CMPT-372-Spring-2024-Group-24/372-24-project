@@ -59,8 +59,22 @@ button {
   border-radius: 10px;
   transition: all .3s;
   background-color: transparent;
+  border: none;
+  font-weight: 600;
 
   &:hover {
     box-shadow: 0 0 5px 2px $light-gray;
+  }
+}
+
+input, textarea {
+  padding: .5rem;
+  border-radius: 10px;
+  outline: none;
+  border: 2px solid $light-gray;
+  transition: border .3s;
+
+  &:focus {
+    border: 2px solid $purple;
   }
 }
