@@ -40,7 +40,7 @@ router.get('/', async (req, res) => {
                 },
                 {
                     model: User,
-                    attributes: ['id', 'name', 'email', 'profilePicture'],
+                    attributes: ['id', 'name', 'username', 'email', 'profilePicture'],
                     through: { attributes: [] }
                 }
             ]
@@ -60,7 +60,7 @@ router.get('/:id', async (req, res) => {
         const project = await Project.findByPk(id, {
             include: {
                 model: User,
-                attributes: ['id', 'name', 'email', 'profilePicture'],
+                attributes: ['id', 'name', 'username', 'email', 'profilePicture'],
                 through: { attributes: [] }
             }
         });

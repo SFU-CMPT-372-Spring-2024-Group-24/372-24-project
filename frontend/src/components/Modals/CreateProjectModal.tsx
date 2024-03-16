@@ -45,7 +45,6 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
 
     if (response.ok) {
       const project: Project = await response.json();
-      console.log(project);
       
       navigate(`/project/${project.id}`);
 

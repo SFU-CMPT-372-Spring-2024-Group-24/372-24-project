@@ -29,10 +29,6 @@ const ProjectViewPage = () => {
     fetchProject();
   }, [id]);
 
-  useEffect(() => {
-    console.log(project);
-  }, [project]);
-
   return (
     <>
       {project && (
