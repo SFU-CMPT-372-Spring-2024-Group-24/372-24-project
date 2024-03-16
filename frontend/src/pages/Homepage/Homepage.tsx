@@ -1,65 +1,62 @@
 // Icons
 import { IoMdAdd } from "react-icons/io";
 // Libraries
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 // Styles
 import "./Homepage.scss";
 // Components
 import CreateProjectModal from "../../components/Modals/CreateProjectModal";
-
-// Todo
-// 1. Add a new project button
-// 2. Display a list of projects fetched from the backend
-// 3. Each project should be clickable and navigate to the project page
+// Models
+import { Project } from "../../models/Project";
+// Hooks
+import { useUser } from "../../hooks/UserContext";
 
 const Homepage = () => {
-  const navigate = useNavigate();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const { user } = useUser();
 
   const handleShowModal = () => setShowModal(true);
+
+  useEffect(() => {
+    const fetchUserProjects = async () => {
+      try {
+        const response = await fetch(`/api/projects?userId=${user!.id}`);
+
+        const projectsData = await response.json();
+
+        setProjects(projectsData);
+      } catch (error) {
+        console.error("Error fetching user projects", error);
+      }
+    };
+
+    fetchUserProjects();
+  }, []);
 
   return (
     <section className="homepage">
       <h1 className="gradient-text">Your Projects</h1>
 
-      <div className="project-list">
-        <button type="button" className="btn-add-project" onClick={handleShowModal}>
+      <ul className="project-list">
+        <button
+          type="button"
+          className="btn-add-project"
+          onClick={handleShowModal}
+        >
           <IoMdAdd size={20} />
           Add New Project
         </button>
 
-        <CreateProjectModal showModal={showModal} setShowModal={setShowModal} />
+        {projects.map((project) => (
+          <li key={project.id} className="project">
+            <Link to={`/project/${project.id}`}>{project.name}</Link>
+          </li>
+        ))}
+      </ul>
 
-        <div
-          className="project"
-          onClick={() => {
-            navigate("/projectview");
-          }}
-        >
-          <p>Sample Project View</p>
-        </div>
-
-        <div className="project">
-          <p>Project 2</p>
-        </div>
-
-        <div className="project">
-          <p>Project 3</p>
-        </div>
-
-        <div className="project">
-          <p>Project 4</p>
-        </div>
-
-        <div className="project">
-          <p>Project 5</p>
-        </div>
-
-        <div className="project">
-          <p>Project 6</p>
-        </div>
-      </div>
+      <CreateProjectModal showModal={showModal} setShowModal={setShowModal} />
     </section>
   );
 };

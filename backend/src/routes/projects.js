@@ -33,10 +33,17 @@ router.get('/', async (req, res) => {
 
     try {
         const projects = await Project.findAll({
-            include: {
-                model: User,
-                where: { id: userId }
-            }
+            include: [
+                {
+                    model: User,
+                    where: { id: userId }
+                },
+                {
+                    model: User,
+                    attributes: ['id', 'name', 'email', 'profilePicture'],
+                    through: { attributes: [] }
+                }
+            ]
         });
 
         res.json(projects);
@@ -50,7 +57,13 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        const project = await Project.findByPk(id);
+        const project = await Project.findByPk(id, {
+            include: {
+                model: User,
+                attributes: ['id', 'name', 'email', 'profilePicture'],
+                through: { attributes: [] }
+            }
+        });
 
         if (!project) {
             return res.status(404).json({ message: 'Project not found' });
