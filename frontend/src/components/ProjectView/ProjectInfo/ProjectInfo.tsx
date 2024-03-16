@@ -6,6 +6,8 @@ import "./ProjectInfo.scss";
 import { Project } from "../../../models/Project";
 // Utils
 import { getFileIcon } from "../../../utils/fileUtils";
+// Files
+import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 
 interface Props {
   project: Project;
@@ -26,20 +28,15 @@ const ProjectInfo = ({ project, setProject }: Props) => {
           <IoMdAdd size={20} className="add-member-icon" />
         </div>
 
-        <div className="member">
-          <img
-            src="https://images.unsplash.com/photo-1707343844152-6d33a0bb32c3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="User Avatar"
-          />
-          <p>John Doe</p>
-        </div>
-        <div className="member">
-          <img
-            src="https://images.unsplash.com/photo-1707343844152-6d33a0bb32c3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="User Avatar"
-          />
-          <p>Mary Ann</p>
-        </div>
+        {project.Users.map((user) => (
+          <div className="member" key={user.id}>
+            <img
+              src={user.profilePicture || defaultProfilePicture}
+              alt="User Avatar"
+            />
+            <p>{user.name}</p>
+          </div>
+        ))}
       </div>
 
       <div className="files">

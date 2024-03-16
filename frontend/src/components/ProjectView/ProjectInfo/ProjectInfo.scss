@@ -14,6 +14,12 @@ aside.project-info {
     font-size: 1.3rem;
   }
 
+  .project-description {
+    p {
+      word-break: break-all;
+    }
+  }
+
   .members {
     .title {
       display: flex;
@@ -40,6 +46,7 @@ aside.project-info {
     img {
       width: 30px;
       height: 30px;
+      object-fit: cover;
       border-radius: 50%;
     }
 
