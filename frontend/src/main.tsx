@@ -68,9 +68,9 @@ const App = () => {
             }
           />
           <Route
-            path="/project/:projectId"
+            path="/project/:id"
             element={
-              <AuthRoute path="/project/:projectId">
+              <AuthRoute path="/project/:id">
                 <ProjectViewPage />
               </AuthRoute>
             }

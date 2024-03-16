@@ -2,9 +2,12 @@
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 // Styles
 import './CreateProjectModal.scss';
+// Hooks
+import { useUser } from "../../hooks/UserContext";
+// Models
+import { Project } from "../../models/Project";
 
 interface Props {
   showModal: boolean;
@@ -16,11 +19,17 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
   const [projectDescription, setProjectDescription] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string>("");
   const navigate = useNavigate();
+  const { user } = useUser();
 
   const closeModal = () => setShowModal(false);
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!user) {
+      setErrorMsg("You must be logged in to create a project.");
+      return;
+    }
 
     const response = await fetch("/api/projects", {
       method: "POST",
@@ -30,11 +39,14 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
       body: JSON.stringify({
         name: projectName,
         description: projectDescription,
+        userId: user.id,
       }),
     });
 
     if (response.ok) {
-      const project = await response.json();
+      const project: Project = await response.json();
+      console.log(project);
+      
       navigate(`/project/${project.id}`);
 
       setProjectName("");
@@ -62,7 +74,7 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
       <form onSubmit={handleCreateProject}>
         <div className="input-field">
           <label htmlFor="project-name">Project Name</label>
-          <input type="text" id="project-name" name="project-name" value={projectName} onChange={(e) => setProjectDescription(e.target.value)} />
+          <input type="text" id="project-name" name="project-name" value={projectName} onChange={(e) => setProjectName(e.target.value)} />
         </div>
 
         <div className="input-field">

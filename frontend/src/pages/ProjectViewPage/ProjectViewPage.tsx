@@ -10,13 +10,13 @@ import { Project } from "../../models/Project";
 import "./ProjectViewPage.scss";
 
 const ProjectViewPage = () => {
-  const { projectId } = useParams();
+  const { id } = useParams();
   const [project, setProject] = useState<Project | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProject = async () => {
-      const response = await fetch(`/api/projects/${projectId}`);
+      const response = await fetch(`/api/projects/${id}`);
       const projectData = await response.json();
 
       if (projectData) {
@@ -27,7 +27,11 @@ const ProjectViewPage = () => {
     };
 
     fetchProject();
-  }, [projectId]);
+  }, [id]);
+
+  useEffect(() => {
+    console.log(project);
+  }, [project]);
 
   return (
     <>

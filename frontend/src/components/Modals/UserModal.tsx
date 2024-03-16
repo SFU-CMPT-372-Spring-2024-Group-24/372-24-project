@@ -1,6 +1,5 @@
 // Libraries
 import Modal from "react-bootstrap/Modal";
-import { useUser } from "../../hooks/UserContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 // Icons
@@ -9,6 +8,8 @@ import { MdLogout } from "react-icons/md";
 import defaultProfilePicture from "../../assets/default-profile-picture.png";
 // Styles
 import "./UserModal.scss";
+// Hooks
+import { useUser } from "../../hooks/UserContext";
 
 interface Props {}
 
