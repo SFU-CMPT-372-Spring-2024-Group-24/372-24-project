@@ -1,10 +1,5 @@
 @import '../../../variables.scss';
 
-.modal-backdrop {
-  background-color: rgba(0, 0, 0, 0.6);
-  --bs-backdrop-opacity: 1;
-}
-
 .task-item {
   width: 80%;
   max-width: 80%;
