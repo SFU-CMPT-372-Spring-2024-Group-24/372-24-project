@@ -1,25 +1,54 @@
+// Libraries
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+// Components
 import ProjectInfo from "../../components/ProjectView/ProjectInfo/ProjectInfo";
-
-import "./ProjectViewPage.scss";
 import TaskList from "../../components/ProjectView/TaskList/TaskList";
+// Models
+import { Project } from "../../models/Project";
+// Styles
+import "./ProjectViewPage.scss";
 
 const ProjectViewPage = () => {
+  const { projectId } = useParams();
+  const [project, setProject] = useState<Project | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      const response = await fetch(`/api/projects/${projectId}`);
+      const projectData = await response.json();
+
+      if (projectData) {
+        setProject(projectData);
+      } else {
+        navigate("/404");
+      }
+    };
+
+    fetchProject();
+  }, [projectId]);
+
   return (
-    <div className="project-view-page">
-      <ProjectInfo />
+    <>
+      {project && (
+        <div className="project-view-page">
+          <ProjectInfo project={project} setProject={setProject} />
 
-      <section className="project">
-        <h1 className="gradient-text">Project Name</h1>
+          <section className="project">
+            <h1 className="gradient-text">{project.name}</h1>
 
-        <div className="project-columns">
-          <TaskList listName="To do" />
+            <div className="project-columns">
+              <TaskList listName="To do" />
 
-          <TaskList listName="In progress" />
+              <TaskList listName="In progress" />
 
-          <TaskList listName="Done" />
+              <TaskList listName="Done" />
+            </div>
+          </section>
         </div>
-      </section>
-    </div>
+      )}
+    </>
   );
 };
 

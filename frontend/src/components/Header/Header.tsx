@@ -4,7 +4,7 @@ import { FaHandshakeSimple } from "react-icons/fa6";
 // Libraries
 import { Link } from "react-router-dom";
 // Components
-import UserModal from "./UserModal";
+import UserModal from "../Modals/UserModal";
 // Styles
 import "./Header.scss";
 

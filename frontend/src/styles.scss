@@ -78,3 +78,12 @@ input, textarea {
     border: 2px solid $purple;
   }
 }
+
+.error-msg {
+  color: $red;
+  font-size: 16px;
+  border-radius: 10px;
+  width: 80%;
+  margin: 0 auto;
+  font-weight: 700;
+}

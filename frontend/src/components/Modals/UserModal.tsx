@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { MdLogout } from "react-icons/md";
 // Files
 import defaultProfilePicture from "../../assets/default-profile-picture.png";
+// Styles
+import "./UserModal.scss";
 
 interface Props {}
 
@@ -57,7 +59,7 @@ const UserModal = ({}: Props) => {
           <Modal
             show={profileIsOpen}
             onHide={closeModal}
-            dialogClassName="user-info"
+            dialogClassName="user-info-modal"
           >
             <Modal.Header className="header" closeButton>
               <img

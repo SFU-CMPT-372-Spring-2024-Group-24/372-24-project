@@ -68,15 +68,15 @@ const App = () => {
             }
           />
           <Route
-            path="/projectview"
+            path="/project/:projectId"
             element={
-              <AuthRoute path="/projectview">
+              <AuthRoute path="/project/:projectId">
                 <ProjectViewPage />
               </AuthRoute>
             }
           />
-          <Route path="error-not-found" element={<NotFoundPage />} />
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="404" element={<NotFoundPage />} />
+          <Route path="*" element={<Navigate to={"/404"} />} />
         </Route>
         <Route path="/login" element={<LoginSignup />} />
       </Routes>
