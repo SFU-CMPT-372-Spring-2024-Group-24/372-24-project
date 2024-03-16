@@ -1,19 +1,14 @@
+// Libraries
 import Modal from "react-bootstrap/Modal";
 import { useEffect, useState } from "react";
-
+// Styles
 import "./TaskItem.scss";
+// Icons
 import { IoMdClose, IoMdTrash } from "react-icons/io";
-import {
-  FaFile,
-  FaFileExcel,
-  FaFileImage,
-  FaFilePdf,
-  FaFilePowerpoint,
-  FaFileWord,
-} from "react-icons/fa6";
-import { FaFileArchive } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import { TbArrowsExchange } from "react-icons/tb";
+// Utils
+import { getFileIcon } from "../../../utils/fileUtils";
 
 interface Props {
   modalIsOpen: boolean;
@@ -22,32 +17,6 @@ interface Props {
 
 const TaskItem = ({ modalIsOpen, setModalIsOpen }: Props) => {
   const closeModal = () => setModalIsOpen(false);
-
-  const getFileIcon = (fileExtension: string) => {
-    switch (fileExtension) {
-      case "pdf":
-        return <FaFilePdf size={20} color="F40F02" />;
-      case "doc":
-      case "docx":
-        return <FaFileWord size={20} color="2b579a" />;
-      case "xls":
-      case "xlsx":
-        return <FaFileExcel size={20} color="217346" />;
-      case "ppt":
-      case "pptx":
-        return <FaFilePowerpoint size={20} color="d24726" />;
-      case "jpg":
-      case "jpeg":
-      case "png":
-      case "gif":
-        return <FaFileImage size={20} color="48c96f" />;
-      case "zip":
-      case "rar":
-        return <FaFileArchive size={20} color="4D4A4F" />;
-      default:
-        return <FaFile size={20} />;
-    }
-  };
 
   return (
     <Modal show={modalIsOpen} onHide={closeModal} dialogClassName="task-item">
