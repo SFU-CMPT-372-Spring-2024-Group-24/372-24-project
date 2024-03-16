@@ -3,12 +3,10 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    for (let i = 1; i <= 82; i++) {
-      try {
-        await queryInterface.removeConstraint('Users', `Users_name_key${i}`);
-      } catch (error) {
-        console.log(`Failed to remove constraint Users_name_key${i}: ${error.message}`);
-      }
+    try {
+      await queryInterface.removeConstraint('Users', 'Users_name_key');
+    } catch (error) {
+      console.log(`Failed to remove constraint Users_name_key: ${error.message}`);
     }
   },
 
