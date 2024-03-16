@@ -1,12 +1,13 @@
+// Libraries
 import { useState } from "react";
-import { RiLockPasswordFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
-
+// Icons
+import { FaUser } from "react-icons/fa6";
+import { RiLockPasswordFill } from "react-icons/ri";
+// Hooks
+import { useUser } from "../../hooks/UserContext";
 // Styles
 import "./LoginSignupForm.scss";
-// Contexts
-import { useUser } from "../../hooks/UserContext";
-import { FaUser } from "react-icons/fa6";
 
 interface Props {}
 
@@ -16,6 +17,8 @@ const LoginForm = ({}: Props) => {
 
   const [identifier, setIdentifier] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,12 +39,15 @@ const LoginForm = ({}: Props) => {
       setUser(user);
       navigate("/", { replace: true });
     } else {
-      console.error("Login failed: ", response.status, response.statusText);
+      const errorData = await response.json();
+      setErrorMsg(errorData.message);
     }
   };
 
   return (
     <form onSubmit={handleLogin}>
+      <div className="error-msg">{errorMsg}</div>
+
       <div className="input">
         <FaUser size={17} />
         <input

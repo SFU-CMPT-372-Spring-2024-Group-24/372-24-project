@@ -1,12 +1,12 @@
 @import '../../variables.scss';
 
+// Header styles: logo, search bar, user avatar
 header {
   display: flex;
   gap: 1rem;
   justify-content: center;
   align-items: center;
   padding: 1rem;
-  // border: 1px solid;
   border-bottom: 2px solid $light-gray;
 
   h1.logo {
@@ -26,7 +26,6 @@ header {
       width: 100%;
       border-radius: 10px;
       padding: .5rem .5rem .5rem 2rem;
-      // font-size: 1.5rem;
     }
 
     .search-icon {
@@ -37,11 +36,7 @@ header {
     }
   }
 
-  .user-profile {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-
+  .user-avatar {
     img {
       width: 50px;
       height: 50px;
@@ -52,31 +47,51 @@ header {
     img:hover {
       box-shadow: 0 0 5px 3px $light-gray;
     }
+  }
+}
 
-    .dropdown {
-      position: relative;
-    }
+// Modal styles
+body.modal-open .modal-backdrop {
+  background-color: transparent;
+}
 
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      right: 0;
-      background-color: #FFF;
-      min-width: 200px;
-      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-      z-index: 1;
-      padding: 1.5rem;
-      border-radius: 10px;
+.user-info {
+  width: 30%;
+  position: absolute;
+  right: 30px;
+  top: 50px;
 
-      button.btn-logout {
-        width: 100%;
-        padding: .5rem;
-      }
-      
-    }
+  .header {
+    gap: 1.5rem;
+  }
 
-    .dropdown:hover .dropdown-content {
-      display: block;
+  img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+
+  .btn-close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    border: none;
+    border-radius: 5px;
+  }
+
+  p {
+    margin: .5rem;
+  }
+
+  .modal-body {
+    border: none;
+  }
+
+  .modal-footer {
+    justify-content: center;
+
+    .btn-logout {
+      padding: .5rem;
     }
   }
 }

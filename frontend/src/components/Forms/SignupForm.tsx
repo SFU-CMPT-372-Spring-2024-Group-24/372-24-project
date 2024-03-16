@@ -1,58 +1,58 @@
-import { useContext, useState } from "react";
-import { RiContactsBook2Fill, RiLockPasswordFill } from "react-icons/ri";
+// Libraries
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdEmail } from "react-icons/md";
+// Icons
 import { FaUser } from "react-icons/fa6";
-
+import { MdEmail } from "react-icons/md";
+import { RiContactsBook2Fill, RiLockPasswordFill } from "react-icons/ri";
+// Hooks
+import { useUser } from "../../hooks/UserContext";
 // Styles
 import "./LoginSignupForm.scss";
-// Contexts
-import UserContext from "../../hooks/UserContext";
 
-interface Props {
-}
+interface Props {}
 
-const SignupForm = ({  }: Props) => {
-  const userContext = useContext(UserContext);
+const SignupForm = ({}: Props) => {
+  const { setUser } = useUser();
   const navigate = useNavigate();
 
   const [name, setName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
 
   const [errorMsg, setErrorMsg] = useState<string>("");
 
+  // Todo: clean console error, only display error message on the app
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      const response = await fetch("/api/users/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          username,
+          email,
+          password,
+          passwordConfirmation,
+        }),
+      });
 
-    const response = await fetch("/api/users/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name,
-        username: username,
-        email: email,
-        password: password,
-        passwordConfirmation: confirmPassword,
-      }),
-    });
-
-    if (response.ok) {
-      const user = await response.json();
-
-      if (userContext) {
-        userContext.setUser(user);
+      if (response.ok) {
+        const user = await response.json();
+        setUser(user);
+        navigate("/", { replace: true });
+      } else {
+        const errorData = await response.json();
+        setErrorMsg(errorData.message);
       }
-
-      navigate("/");
-    }
-    else {
-      const errorData = await response.json();
-      setErrorMsg(errorData.message);
+    } catch (error) {
+      console.error(`An error occurred while creating your account: ${error}`);
+      setErrorMsg("An error occurred while creating your account");
     }
   };
 
@@ -114,8 +114,8 @@ const SignupForm = ({  }: Props) => {
           id="user_confirmPassCH"
           name="user_confirmPassCH"
           type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          value={passwordConfirmation}
+          onChange={(e) => setPasswordConfirmation(e.target.value)}
           placeholder="Confirm password"
         />
       </div>
