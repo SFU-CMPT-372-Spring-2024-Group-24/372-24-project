@@ -1,0 +1,21 @@
+.chatContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+#chatButton {
+  padding: 10px 10px;
+  border: none;
+  cursor: pointer;
+  position: fixed;
+  bottom: 23px;
+  right: 28px;
+  width: 150px;
+}
+.chatOverlay {
+  width: 400px;
+  height: 600px;
+  padding: 10px;
+  background-color: white;
+}

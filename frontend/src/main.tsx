@@ -14,6 +14,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "./styles.scss";
 
 // Pages and components
+import Chat from "./components/Chat/Chat";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Homepage from "./pages/Homepage/Homepage";
@@ -31,6 +32,7 @@ function Layout() {
       <main>
         <Outlet />
       </main>
+      <Chat />
       <Footer />
     </>
   );
