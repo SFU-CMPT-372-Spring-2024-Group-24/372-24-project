@@ -24,6 +24,13 @@ import LoginSignup from "./pages/SignupLoginpage/LoginSignup";
 // Contexts
 import { UserProvider, useUser } from "./hooks/UserContext";
 
+// Declaration for google
+declare global {
+  interface Window {
+    google: any;
+  }
+}
+
 function Layout() {
   return (
     <>
