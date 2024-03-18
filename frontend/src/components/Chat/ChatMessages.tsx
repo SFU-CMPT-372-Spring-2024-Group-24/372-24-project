@@ -7,9 +7,10 @@ interface Props {
   socket: Socket;
   username: String;
   room: String;
+  goBack: () => void;
 }
 
-function ChatMessages({ socket, username, room }: Props) {
+function ChatMessages({ socket, username, room, goBack }: Props) {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<any[]>([]);
   const sendMessage = async () => {
@@ -40,6 +41,9 @@ function ChatMessages({ socket, username, room }: Props) {
     <div>
       <div className="chat-window">
         <div className="chat-header">
+          <button id="backButton" className="btn btn-primary" onClick={goBack}>
+            GO BACK
+          </button>
           <p> Live Chat</p>
         </div>
         <div className="chat-body">

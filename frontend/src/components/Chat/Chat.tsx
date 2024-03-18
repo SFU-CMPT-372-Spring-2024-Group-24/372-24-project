@@ -14,6 +14,7 @@ const Chat = () => {
   //somehow get the user_id here
   const [username, setUsername] = useState("");
   const [room, setRoom] = useState("");
+  const [chatVisibility, setChatVisibility] = useState(false);
   const [showChat, setShowChat] = useState(false);
 
   const joinRoom = () => {
@@ -22,7 +23,11 @@ const Chat = () => {
       setShowChat(true);
     }
   };
-  const [chatVisibility, setChatVisibility] = useState(false);
+
+  const goBack = () => {
+    setShowChat(false);
+  };
+
   return (
     <>
       <button
@@ -36,10 +41,6 @@ const Chat = () => {
       <div className="chatContainer">
         {chatVisibility && (
           <div className="chatWindow">
-            <h2> Chat</h2>
-            <div className="AllChats">
-              <h2> List of People: </h2>
-            </div>
             {!showChat ? (
               <>
                 <input
@@ -61,7 +62,12 @@ const Chat = () => {
                 </button>
               </>
             ) : (
-              <ChatMessages socket={socket} username={username} room={room} />
+              <ChatMessages
+                socket={socket}
+                username={username}
+                room={room}
+                goBack={goBack}
+              />
             )}
             <button
               className="btn btn-danger"
