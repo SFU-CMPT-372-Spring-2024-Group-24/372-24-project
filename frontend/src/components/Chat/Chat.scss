@@ -13,9 +13,10 @@
   right: 28px;
   width: 150px;
 }
-.chatOverlay {
+.chatWindow {
   width: 400px;
   height: 600px;
   padding: 10px;
   background-color: white;
+  overflow-y: auto;
 }
