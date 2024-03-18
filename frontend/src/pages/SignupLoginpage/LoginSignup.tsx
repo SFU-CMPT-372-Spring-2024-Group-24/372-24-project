@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc";
 import { FaHandshakeSimple } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { jwtDecode } from "jwt-decode";
 
 import LoginForm from "../../components/Forms/LoginForm";
 import SignupForm from "../../components/Forms/SignupForm";
@@ -9,14 +10,47 @@ import SignupForm from "../../components/Forms/SignupForm";
 // Styles
 import "./LoginSignup.scss";
 
+const handleCallbackResponse = (response: any) => {
+  console.log("Encoded HWT ID token: " + response.credential);
+};
+
 const LoginSignup = () => {
+  
+  //google login
+  const [user, setUser] = useState({
+
+  });
+
+  function handleCallbackResponse(response: any) {
+    console.log("Encoded HWT ID token: " + response.credential);
+    var userObject = jwtDecode(response.credential);
+    console.log(userObject);
+    setUser(userObject);
+  
+  }
+
+  function handleSignOut(event: any) {
+    setUser({});
+  }
+
+  useEffect(() => {
+    if (window.google && window.google.accounts) {
+      window.google.accounts.id.initialize({
+        client_id: "921854374603-me6ko0fch21vb5t8i0vch7gh9bkcgrcg.apps.googleusercontent.com",
+        callback: handleCallbackResponse
+      });
+
+      window.google.accounts.id.renderButton(
+        document.getElementById("signInDiv"),
+        { theme: "outline", size: "large" }
+      );
+    }
+  }, []);
+
+  //regular login
   const [action, setAction] = useState("Sign In");
 
   const handleActionChange = (newAction: string) => setAction(newAction);
-
-  const handleGoogleSignIn = () => {
-    // Google Sign in logic
-  };
 
   return (
     <div className="login-signup-page">
@@ -39,10 +73,7 @@ const LoginSignup = () => {
 
         <div className="or">— Or —</div>
 
-        <div className="google-button" onClick={handleGoogleSignIn}>
-          <FcGoogle size={20} />
-          <span>Sign in with Google</span>
-        </div>
+        <div id='signInDiv'></div>
 
         <div className="submit-container">
           {action === "Sign Up" ? (
