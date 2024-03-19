@@ -1,0 +1,126 @@
+// Libraries
+import { useEffect, useRef, useState } from "react";
+import Modal from "react-bootstrap/Modal";
+import { ButtonGroup, ToggleButton } from "react-bootstrap";
+// Models
+import { Task, PriorityTypes } from "../../../models/Task";
+
+interface Props {
+  task: Task;
+  setTask: (updatedTask: Task) => void;
+}
+
+const Priority = ({ task, setTask }: Props) => {
+  const [showPriorityModal, setShowPriorityModal] = useState<boolean>(false);
+  const priorityRef = useRef<HTMLDivElement>(null);
+  const [priorityValue, setPriorityValue] = useState<PriorityTypes>(
+    task.priority || ""
+  );
+
+  const priorities = [
+    { value: "unset", color: "#d3d3d3" }, // light grey
+    { value: "planning", color: "#48c96f" }, // green
+    { value: "low", color: "#F7CB15" }, // yellow
+    { value: "medium", color: "#FFA500" }, // orange
+    { value: "high", color: "#FF6347" }, // tomato
+    { value: "urgent", color: "#B22222" }, // dark red
+  ];
+
+  const togglePriorityModal = () => setShowPriorityModal(!showPriorityModal);
+
+  useEffect(() => {
+    if (showPriorityModal && priorityRef.current) {
+      const buttonRect = priorityRef.current.getBoundingClientRect();
+      const modal = document.querySelector(".priority-modal");
+
+      if (modal instanceof HTMLElement) {
+        modal.style.top = `${buttonRect.bottom}px`;
+        modal.style.left = `${buttonRect.left}px`;
+      }
+    }
+  }, [showPriorityModal]);
+
+  const handlePriorityChange = async (priority: PriorityTypes) => {
+    try {
+      const response = await fetch(`/api/tasks/${task.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ priority }),
+      });
+
+      if (response.ok) {
+        setTask({ ...task, priority });
+        setPriorityValue(priority);
+        togglePriorityModal();
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+    } catch (error) {
+      console.error("Error updating priority:", error);
+    }
+  };
+
+  return (
+    <>
+      <div ref={priorityRef} className="priority">
+        {task.priority && task.priority !== 'unset' ? (
+          <span
+            className="task-priority"
+            onClick={togglePriorityModal}
+            style={{
+              color: priorities.find((p) => p.value === task.priority)?.color,
+              borderColor: priorities.find((p) => p.value === task.priority)?.color,
+            }}
+          >
+            {task.priority}
+          </span>
+        ) : (
+          <button className="set-priority" onClick={togglePriorityModal}>
+            Set priority
+          </button>
+        )}
+      </div>
+
+      <Modal
+        show={showPriorityModal}
+        onHide={togglePriorityModal}
+        dialogClassName="priority-modal"
+        backdropClassName="priority-modal-backdrop"
+      >
+        <Modal.Header closeButton>
+          <h4>Priority</h4>
+        </Modal.Header>
+
+        <Modal.Body>
+          <ButtonGroup>
+            {priorities.map((priority, idx) => (
+              <ToggleButton
+                key={idx}
+                id={`priority-${idx}`}
+                type="radio"
+                name="priority"
+                value={priority.value}
+                checked={priorityValue === priority.value}
+                onChange={(e) => {
+                  handlePriorityChange(e.currentTarget.value as PriorityTypes);
+                }}
+                style={{
+                  backgroundColor:
+                    priorityValue === priority.value ? priority.color : "",
+                  borderRadius: "10px",
+                }}
+              >
+                {priority.value}
+              </ToggleButton>
+            ))}
+          </ButtonGroup>
+        </Modal.Body>
+      </Modal>
+    </>
+  );
+};
+
+export default Priority;

@@ -2,7 +2,7 @@
 
 .task-item {
   background: #FFF;
-  margin: -.25rem 0 1rem 0;
+  margin: 1rem 0;
   padding: 1rem;
   font-size: 24px;
   border-radius: 10px;
@@ -16,7 +16,8 @@
 
   h3 {
     font-size: 24px;
-    font-weight: 600;;
+    font-weight: 600;
+    margin: 0;
   }
 
   .info {
@@ -39,6 +40,53 @@
   }
 }
 
+.priority-modal-backdrop {
+  opacity: 0 !important;
+}
+
+.priority-modal {
+  position: absolute;
+  margin: .5rem 0;
+
+  .modal-content {
+    box-shadow: 0 0 10px 3px $light-gray;
+  }
+
+  .modal-header {
+    border-bottom: none;
+
+    h4 {
+      margin: 0;
+    }
+  }
+
+  .modal-body {
+    padding: .5rem 1rem;
+    display: flex;
+    flex-direction: column;
+
+    .btn-group {
+      gap: 1rem;
+    }
+
+    .btn {
+      background: $light-gray;
+      border: none;
+      color: $black;
+      transition: .3s;
+
+      &:hover {
+        background: $dark-gray;
+        color: $white;
+      }
+    }
+
+    .btn-check:checked+.btn {
+      color: $white;
+    }
+  }
+}
+
 .task-item-modal {
   width: 80%;
   max-width: 80%;
@@ -58,8 +106,7 @@
     border: none;
   }
 
-  .list-name,
-  .priority {
+  .list-name {
     font-size: 14px;
     color: $dark-gray;
     border: 1px solid;
@@ -69,14 +116,29 @@
   }
 
   .priority {
-    font-size: 15px;
-    font-weight: 700;
+    .task-priority {
+      font-size: 15px;
+      font-weight: 700;
+      border: 1px solid;
+      border-radius: 10px;
+      padding: .25rem .5rem;
+      text-transform: capitalize;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    button.set-priority {
+      font-size: 15px;
+      font-weight: 700;
+      border: 1px solid transparent;
+
+      &:hover {
+        box-shadow: none;
+      }
+    }
   }
 
-  .urgent {
-    color: $red;
-    border-color: $red;
-  }
 
   .header {
     flex-direction: column;
