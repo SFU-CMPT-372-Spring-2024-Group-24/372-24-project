@@ -53,6 +53,7 @@ router.get('/', async (req, res) => {
 });
 
 // Get project by id
+// Todo: check if user is part of project
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
 
