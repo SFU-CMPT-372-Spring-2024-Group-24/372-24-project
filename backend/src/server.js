@@ -8,7 +8,7 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 
-//Chat App Stuff
+// //Chat App Stuff
 const http = require("http");
 const cors = require("cors");
 
@@ -25,8 +25,9 @@ const options = {
 const app = express();
 const server = https.createServer(options, app);
 
+const chatServer = http.createServer(app);
 app.use(cors());
-const io = new Server(server, {
+const io = new Server(chatServer, {
   cors: {
     //which url is making calls to our socket io server
     //where our react application is running
@@ -37,8 +38,15 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
-  console.log("test");
+  // this would be the chat_id instead of room
+  socket.on("join_room", (data) => {
+    socket.join(data);
+    console.log(`User with ID: ${socket.id} joined room: ${data}`);
+  });
 
+  socket.on("send_message", (data) => {
+    socket.to(data.room).emit("receive_message", data);
+  });
   socket.on("disconnect", () => {
     console.log("User Disconnected", socket.id);
   });
@@ -78,3 +86,7 @@ app.use("/users", require("./routes/users"));
 app.use("/projects", require("./routes/projects"));
 
 server.listen(port, () => console.log(`Server is running on port ${port}`));
+
+chatServer.listen(3001, () => {
+  console.log("CHAT SERVER RUNNING ON port 3001");
+});
