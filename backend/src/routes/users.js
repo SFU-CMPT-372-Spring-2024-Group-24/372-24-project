@@ -18,6 +18,33 @@ router.get('/', async (req, res) => {
     res.json(users);
 });
 
+
+//google sign in
+router.post('/google-login', async (req, res) => {
+    try {
+        const { given_name, name, email, picture } = req.body;
+
+        let user = await User.findOne({ where: { email } });
+
+        if (!user) {
+            user = await User.create({
+                name: name,
+                password: given_name,
+                username: email,
+                email: email,
+                profilePicture: picture
+            });
+        }
+
+        req.session.userId = user.id;
+
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: error.message });
+    }
+});
+
 // Sign up
 router.post('/signup', async (req, res) => {
     let { name, username, email, password, passwordConfirmation } = req.body;
