@@ -1,0 +1,50 @@
+.landing-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(53, 41, 99);
+
+  header {}
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .landing-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 80px 40px;
+
+      .landing-content {
+        max-width: 500px;
+
+        h1 {
+          font-size: 36px;
+          margin-bottom: 20px;
+        }
+
+        p {
+          font-size: 18px;
+          margin-bottom: 30px;
+        }
+
+        button {
+          padding: 10px 20px;
+          font-size: 18px;
+          background-color: #007bff;
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+      }
+
+      .landing-image {}
+    }
+
+  }
+
+  footer {}
+}

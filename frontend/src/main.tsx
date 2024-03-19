@@ -21,7 +21,7 @@ import Homepage from "./pages/Homepage/Homepage";
 import NotFoundPage from "./pages/NotFoungPage/NotFoundPage";
 import ProjectViewPage from "./pages/ProjectViewPage/ProjectViewPage";
 import LoginSignup from "./pages/SignupLoginpage/LoginSignup";
-
+import LandingPage from "./pages/LandingPage/LandingPage";
 // Contexts
 import { UserProvider, useUser } from "./hooks/UserContext";
 
@@ -88,6 +88,7 @@ const App = () => {
           <Route path="*" element={<Navigate to={"/404"} />} />
         </Route>
         <Route path="/login" element={<LoginSignup />} />
+        <Route path="/landing" element={<LandingPage />} /> 
       </Routes>
     </BrowserRouter>
   );
