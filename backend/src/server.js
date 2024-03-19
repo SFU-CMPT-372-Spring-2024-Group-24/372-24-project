@@ -25,7 +25,7 @@ const httpsPort = process.env.HTTPS_PORT || 8443;
 const httpsServer = https.createServer(options, app);
 // HTTP (for chatting only)
 const httpPort = process.env.HTTP_PORT || 8080;
-const httpServer = http.createServer(app);
+const httpServer = http.createServer();
 
 app.use(cors());
 
