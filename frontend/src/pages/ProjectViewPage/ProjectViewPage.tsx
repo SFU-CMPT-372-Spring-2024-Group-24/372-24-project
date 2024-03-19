@@ -9,6 +9,8 @@ import { Project } from "../../models/Project";
 // Styles
 import "./ProjectViewPage.scss";
 
+// Project View Page
+// Contains the project info component and 3 task list components
 const ProjectViewPage = () => {
   const { id } = useParams();
   const [project, setProject] = useState<Project | null>(null);
@@ -39,11 +41,11 @@ const ProjectViewPage = () => {
             <h1 className="gradient-text">{project.name}</h1>
 
             <div className="project-columns">
-              <TaskList listName="To do" />
+              <TaskList projectId={project.id} listName="To do" />
 
-              <TaskList listName="In progress" />
+              <TaskList projectId={project.id} listName="In progress" />
 
-              <TaskList listName="Done" />
+              <TaskList projectId={project.id} listName="Done" />
             </div>
           </section>
         </div>
