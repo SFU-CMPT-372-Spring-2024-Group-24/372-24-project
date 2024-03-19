@@ -15,12 +15,49 @@
       margin: 0;
     }
 
-    button.add-task {
-      border-color: $blue;
-    }
+    // button.show-add-task {
+    //   border-color: $blue;
+    // }
   }
 
   .task-count {
     text-align: right;
+  }
+
+  .task-input-field {
+    input {
+      width: 100%;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      margin-top: .5rem;
+      gap: 1rem;
+
+      button {
+        padding: .1rem .5rem;
+      }
+
+      button.add-task {
+        border: 2px solid $purple;
+        color: $purple;
+
+        &:hover {
+          background: $purple;
+          color: $white;
+        }
+      }
+
+      button.close-btn {
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+
+        &:hover {
+          box-shadow: none;
+          border-bottom: 2px solid $dark-gray;
+        }
+      }
+    }
   }
 }
