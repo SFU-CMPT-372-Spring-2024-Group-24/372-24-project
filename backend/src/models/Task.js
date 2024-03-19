@@ -16,7 +16,7 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         priority: {
-            type: DataTypes.ENUM('low', 'medium', 'high'),
+            type: DataTypes.ENUM('planning', 'low', 'medium', 'high', 'urgent'),
             allowNull: false
         },
         description: {

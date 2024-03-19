@@ -1,18 +1,36 @@
-import { FaRegClock } from "react-icons/fa6";
+// Icons
 import { IoMdAdd } from "react-icons/io";
-
+// Libraries
+import { useEffect, useState } from "react";
+// Styles
 import "./TaskList.scss";
-import { useState } from "react";
+// Components
 import TaskItem from "../TaskItem/TaskItem";
+// Models
+import { Task } from "../../../models/Task";
 
 interface Props {
+  projectId: number;
   listName: string;
 }
 
-const TaskList = ({ listName }: Props) => {
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+const TaskList = ({ projectId, listName }: Props) => {
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-  const handleShowTask = () => setModalIsOpen(true);
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const response = await fetch(
+        `/api/tasks?projectId=${projectId}&listName=${listName}`
+      );
+      const tasksData = await response.json();
+
+      if (tasksData) {
+        setTasks(tasksData);
+      }
+    };
+
+    fetchTasks();
+  }, [projectId, listName]);
 
   return (
     <div className="taskList">
@@ -25,58 +43,17 @@ const TaskList = ({ listName }: Props) => {
         </button>
       </div>
 
-      <div className="task-count">3 tasks</div>
+      <div className="task-count">{tasks.length} tasks</div>
 
-      <ul className="list">
-        <li className="item" onClick={handleShowTask}>
-          <h3>Sample Task View</h3>
-
-          <div className="info">
-            <div className="due-date">
-              <FaRegClock size={18} /> 5 days
-            </div>
-
-            <img
-              src="https://images.unsplash.com/photo-1707343844152-6d33a0bb32c3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="User Avatar"
-              className="assignee"
-            />
-          </div>
-        </li>
-
-        <TaskItem modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen} />
-
-        <li className="item">
-          <h3>Task 2</h3>
-
-          <div className="info">
-            <div className="due-date">
-              <FaRegClock size={18} /> Mar 20
-            </div>
-
-            <img
-              src="https://images.unsplash.com/photo-1707343844152-6d33a0bb32c3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="User Avatar"
-              className="assignee"
-            />
-          </div>
-        </li>
-
-        <li className="item">
-          <h3>Task 3</h3>
-
-          <div className="info">
-            <div className="due-date">
-              <FaRegClock size={18} /> 5 days
-            </div>
-
-            <img
-              src="https://images.unsplash.com/photo-1707343844152-6d33a0bb32c3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="User Avatar"
-              className="assignee"
-            />
-          </div>
-        </li>
+      <ul>
+        {tasks.map((task) => (
+          <TaskItem
+            key={task.id}
+            task={task}
+            projectId={projectId}
+            listName={listName}
+          />
+        ))}
       </ul>
     </div>
   );

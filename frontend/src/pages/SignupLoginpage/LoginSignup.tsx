@@ -1,22 +1,20 @@
-import { useState } from "react";
-import { FcGoogle } from "react-icons/fc";
 import { FaHandshakeSimple } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import { useState } from 'react';
 
 import LoginForm from "../../components/Forms/LoginForm";
 import SignupForm from "../../components/Forms/SignupForm";
+import GoogleSignIn from "../../components/Forms/GoogleSignIn";
 
 // Styles
 import "./LoginSignup.scss";
 
 const LoginSignup = () => {
+
+  //regular login
   const [action, setAction] = useState("Sign In");
 
   const handleActionChange = (newAction: string) => setAction(newAction);
-
-  const handleGoogleSignIn = () => {
-    // Google Sign in logic
-  };
 
   return (
     <div className="login-signup-page">
@@ -39,10 +37,7 @@ const LoginSignup = () => {
 
         <div className="or">— Or —</div>
 
-        <div className="google-button" onClick={handleGoogleSignIn}>
-          <FcGoogle size={20} />
-          <span>Sign in with Google</span>
-        </div>
+        <GoogleSignIn />
 
         <div className="submit-container">
           {action === "Sign Up" ? (
