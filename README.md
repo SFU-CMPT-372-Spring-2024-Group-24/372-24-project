@@ -21,7 +21,8 @@ This will create the `key.pem` and `cert.pem` files, which are your private key 
 Then, while still in the `backend/` directory, create a `.env` file with the following information:
 
 ```
-PORT=8080
+HTTPS_PORT=8443
+HTTP_PORT=8080
 
 DB_HOST=<your_db_host> # e.g. localhost
 DB_PORT=<your_db_port> # e.g. 5432
