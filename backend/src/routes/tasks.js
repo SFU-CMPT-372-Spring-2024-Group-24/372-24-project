@@ -39,19 +39,34 @@ router.post('/', async (req, res) => {
 // Update task
 router.put('/:id', async (req, res) => {
     const id = req.params.id;
-    const { name, listId } = req.body;
+    const { name, listId, priority, description, dueDate } = req.body;
+    const fieldsToUpdate = {};
+
+    if (name) {
+        fieldsToUpdate.name = name;
+    }
+    if (listId) {
+        fieldsToUpdate.listId = listId;
+    }
+    if (priority) {
+        fieldsToUpdate.priority = priority;
+    }
+    if (description) {
+        fieldsToUpdate.description = description;
+    }
+    if (dueDate) {
+        fieldsToUpdate.dueDate = dueDate;
+    }
 
     try {
-        await Task.update({
-            name,
-            listId
-        }, {
-            where: {
-                id
-            }
-        });
-
         const task = await Task.findByPk(id);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        // Update only the specified fields
+        await task.update(fieldsToUpdate);
+
         res.json(task);
     } catch (err) {
         res.status(400).json({ message: err.message });

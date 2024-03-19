@@ -16,20 +16,16 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         priority: {
-            type: DataTypes.ENUM('planning', 'low', 'medium', 'high', 'urgent'),
-            allowNull: false
+            type: DataTypes.ENUM('unset', 'planning', 'low', 'medium', 'high', 'urgent'),
+            allowNull: true
         },
         description: {
             type: DataTypes.TEXT,
-            allowNull: false
-        },
-        createdDate: {
-            type: DataTypes.DATE,
-            allowNull: false
+            allowNull: true
         },
         dueDate: {
             type: DataTypes.DATE,
-            allowNull: false
+            allowNull: true
         }
     });
 

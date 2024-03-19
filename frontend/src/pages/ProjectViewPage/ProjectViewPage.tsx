@@ -8,14 +8,17 @@ import TaskList from "../../components/ProjectView/TaskList/TaskList";
 import { Project } from "../../models/Project";
 // Styles
 import "./ProjectViewPage.scss";
+import { List } from "../../models/List";
 
 // Project View Page
 // Contains the project info component and 3 task list components
 const ProjectViewPage = () => {
   const { id } = useParams();
   const [project, setProject] = useState<Project | null>(null);
+  const [lists, setLists] = useState<List[]>([]);
   const navigate = useNavigate();
 
+  // Fetch project data from server
   useEffect(() => {
     const fetchProject = async () => {
       const response = await fetch(`/api/projects/${id}`);
@@ -31,6 +34,20 @@ const ProjectViewPage = () => {
     fetchProject();
   }, [id]);
 
+  // Fetch lists data from server
+  useEffect(() => {
+    const fetchLists = async () => {
+      const response = await fetch(`/api/lists/${id}`);
+      const listsData = await response.json();
+
+      if (listsData) {
+        setLists(listsData);
+      }
+    };
+
+    fetchLists();
+  }, [id]);
+
   return (
     <>
       {project && (
@@ -41,11 +58,13 @@ const ProjectViewPage = () => {
             <h1 className="gradient-text">{project.name}</h1>
 
             <div className="project-columns">
-              <TaskList projectId={project.id} listName="To do" />
-
-              <TaskList projectId={project.id} listName="In progress" />
-
-              <TaskList projectId={project.id} listName="Done" />
+              {lists.map((list) => (
+                <TaskList
+                  key={list.id}
+                  listId={list.id}
+                  listName={list.name}
+                />
+              ))}
             </div>
           </section>
         </div>
