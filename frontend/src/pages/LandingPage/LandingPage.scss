@@ -1,0 +1,111 @@
+@mixin respond ($breakpoint) {
+  @if $breakpoint ==phone {
+    //600px
+    @media screen and (max-width: 37.5em) {
+      @content;
+    }
+  }
+
+  @if $breakpoint ==tab-port {
+    //900px
+    @media screen and (max-width: 56.25em) {
+      @content;
+    }
+  }
+
+  @if $breakpoint ==tab-land {
+    //1200px
+    @media screen and (max-width: 75em) {
+      @content;
+    }
+  }
+}
+
+.landing-page {
+
+  :root {
+    --spanish-gray: #969696;
+    --cultured: #f6f6f6;
+    --black: #151515;
+    --eerie-black: #1b1b1b;
+    --gradient: linear-gradient(to right, #3fe8ab, #78cdcd);
+  }
+
+  *,
+  *::before,
+  *::after {
+    padding: 0;
+    margin: 0;
+    box-sizing: inherit;
+    outline: none;
+    text-decoration: none;
+    list-style: none;
+  }
+
+  html {
+    scroll-behavior: smooth;
+
+  }
+
+  body {
+    box-sizing: border-box;
+    overflow-x: hidden;
+    line-height: 1.5;
+    font-family: "Lato", sans-serif;
+    color: var(--spanish-gray);
+    background-color: var(--black);
+  }
+
+  img {
+    display: block;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inter", sans-serif;
+    color: var(--cultured);
+  }
+
+  .wrapper {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 5rem;
+
+    @include respond(tab-land) {
+      padding-inline: 1.5rem;
+    }
+
+    @include respond (phone) {
+      padding-inline: 0.8rem;
+    }
+  }
+
+  .btn {
+    background: var(--gradient);
+    padding: 0.6rem 1.2rem;
+    color: var(--black) !important;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    display: inline-block;
+
+    &:hover {
+      border-color: #3fe8ab;
+      background: transparent;
+      color: var(--cultured) !important;
+    }
+  }
+
+}
+
+.landing-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--black);
+}
