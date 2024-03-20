@@ -187,13 +187,10 @@ const Chat = () => {
                     key={index}
                     onClick={() => joinRoom(item.chatID, index)}
                   >
-                    {" "}
+                    Chat#
                     {item.chatID}
                     {item.users.map((person: any, userIndex: number) => (
-                      <p key={userIndex}>
-                        {" "}
-                        {person.username} {userIndex}
-                      </p>
+                      <p key={userIndex}> {person.username}</p>
                     ))}
                   </div>
                 ))}
