@@ -1,6 +1,6 @@
-// import React from 'react';
 import './LandingPage.scss';
 import Navbar from '../../components/Navbar/Navbar';
+import { Link } from "react-router-dom";
 
 const LandingPage = () => {
   return (
@@ -10,18 +10,18 @@ const LandingPage = () => {
       <main>
         <section className="landing-section">
           <div className="landing-content">
-            <h1>Welcome to Our Platform</h1>
-            <p>A brief description of your platform</p>
-            <button>Get Started</button>
+            <h1>Welcome to CollabHub</h1>
+            <p>Description on CollabHub</p>
+              <Link to="/login" className='btn'>Get Started</Link>
           </div>
           <div className="landing-image">
-            {/* Image or Illustration */}
+          
           </div>
         </section>
-        {/* Additional sections */}
+  
       </main>
       <footer>
-        {/* Footer content */}
+
       </footer>
     </div>
     </>

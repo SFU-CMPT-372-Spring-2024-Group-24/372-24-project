@@ -52,11 +52,11 @@ interface AuthRouteProps {
 const AuthRoute = ({ children, path }: AuthRouteProps) => {
   const { user } = useUser();
 
-  if (!user && path !== "/login") {
-    return <Navigate to="/login" />;
+  if (!user && path !== "/landing") {
+    return <Navigate to="/landing" />;
   }
 
-  if (user && path === "/login") {
+  if (user && path === "/landing") {
     return <Navigate to="/" />;
   }
 

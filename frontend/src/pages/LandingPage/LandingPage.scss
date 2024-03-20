@@ -24,67 +24,67 @@
   }
 }
 .landing-page {
-:root {
-  --spanish-gray: #969696;
-  --cultured: #f6f6f6;
-  --black: #151515;
-  --eerie-black: #1b1b1b;
-  --gradient: linear-gradient(to right, #3fe8ab, #78cdcd);
-}
-
-*,
-*::before,
-*::after {
-  padding: 0;
-  margin: 0;
-  box-sizing: inherit;
-  outline: none;
-  text-decoration: none;
-  list-style: none;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  box-sizing: border-box;
-  overflow-x: hidden;
-  line-height: 1.5;
-  font-family: "Lato", sans-serif;
-  color: var(--spanish-gray);
-  background-color: var(--eerie-black);
-}
-
-img {
-  display: block;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: "Inter", sans-serif;
-  color: var(--cultured);
-}
-
-.wrapper {
-  max-width: 1440px;
-  margin-inline: auto;
-  padding-inline: 5rem;
-
-  @include respond(tab-land) {
-    padding-inline: 1.5rem;
+  :root {
+    --spanish-gray: #969696;
+    --cultured: #f6f6f6;
+    --black: #151515;
+    --eerie-black: #1b1b1b;
+    --gradient: linear-gradient(to right, #3fe8ab, #78cdcd);
   }
 
-  @include respond (phone) {
-    padding-inline: 0.8rem;
+  *,
+  *::before,
+  *::after {
+    padding: 0;
+    margin: 0;
+    box-sizing: inherit;
+    outline: none;
+    text-decoration: none;
+    list-style: none;
   }
-}
 
-.btn {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    box-sizing: border-box;
+    overflow-x: hidden;
+    line-height: 1.5;
+    font-family: "Lato", sans-serif;
+    color: var(--spanish-gray);
+    background-color: var(--eerie-black);
+  }
+
+  img {
+    display: block;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inter", sans-serif;
+    color: var(--cultured);
+  }
+
+  .wrapper {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 5rem;
+
+    @include respond(tab-land) {
+      padding-inline: 1.5rem;
+    }
+
+    @include respond (phone) {
+      padding-inline: 0.8rem;
+    }
+  }
+
+  .btn {
   background: var(--gradient);
   padding: 0.6rem 1.2rem;
   color: var(--black) !important;
@@ -109,7 +109,7 @@ h6 {
   flex-direction: column;
   background-color: var(--eerie-black);
 
-  header {}
+  // header {}
 
   main {
     flex: 1;
@@ -133,6 +133,7 @@ h6 {
         p {
           font-size: 18px;
           margin-bottom: 30px;
+          color: #fff;
         }
 
         button {
@@ -146,10 +147,10 @@ h6 {
         }
       }
 
-      .landing-image {}
+      // .landing-image {}
     }
 
   }
 
-  footer {}
+  // footer {}
 }
