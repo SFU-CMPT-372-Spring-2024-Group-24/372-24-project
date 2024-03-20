@@ -84,6 +84,7 @@ app.get("/test", (req, res) => {
 });
 app.use("/users", require("./routes/users"));
 app.use("/projects", require("./routes/projects"));
+app.use("/chats", require("./routes/chats"));
 
 server.listen(port, () => console.log(`Server is running on port ${port}`));
 

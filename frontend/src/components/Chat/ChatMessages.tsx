@@ -13,6 +13,7 @@ interface Props {
 function ChatMessages({ socket, username, room, goBack }: Props) {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<any[]>([]);
+  //insert message into messages table, need chat_id, and user_id, and message_text
   const sendMessage = async () => {
     if (currentMessage !== "") {
       const messageData = {
@@ -24,7 +25,8 @@ function ChatMessages({ socket, username, room, goBack }: Props) {
           ":" +
           new Date(Date.now()).getMinutes(),
       };
-
+      console.log("Username is: ", username);
+      console.log("Author is: ", messageData.author);
       await socket.emit("send_message", messageData);
       setMessageList((list) => [...list, messageData]);
       setCurrentMessage("");
@@ -52,7 +54,7 @@ function ChatMessages({ socket, username, room, goBack }: Props) {
               return (
                 <div
                   className="message"
-                  id={username === messageContent.author ? "you" : "other"}
+                  id={username == messageContent.author ? "other" : "you"}
                 >
                   <div>
                     <div className="message-content">
