@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 const Adminpage = () => {
     const [users, setUsers] = useState<any[]>([]); 
+    
 
     useEffect(() => {
         const fetchUsers = async () => {

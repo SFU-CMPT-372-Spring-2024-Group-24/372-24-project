@@ -117,4 +117,14 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+//Get all projects in the database
+router.get('/all', async (req, res) => {
+    try {
+        const projects = await Project.findAll();
+        res.json(projects);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 module.exports = router;
