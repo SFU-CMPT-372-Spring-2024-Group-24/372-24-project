@@ -1,4 +1,4 @@
-const { Chat, User } = require("../db");
+const { Chat, User, Message } = require("../db");
 const express = require("express");
 const router = express.Router();
 const validator = require("validator");
@@ -39,7 +39,7 @@ router.post("/addChat", async (req, res) => {
     //return information
     res.json({ chat, user, other });
   } catch (err) {
-    console.error("Error adding chat:", err); // Log the error with stack trace
+    console.error("Error adding chat:", err);
     res.status(400).json({ message: "Error adding chat", error: err.message });
   }
 });
@@ -74,4 +74,46 @@ router.get("/getChats/:id", async (req, res) => {
   }
 });
 
+//add a new message
+router.post("/addMessage", async (req, res) => {
+  const { chatID, userID, text, date } = req.body;
+  console.log(date);
+  try {
+    const myMessage = await Message.create({
+      chatId: chatID,
+      userId: userID,
+      message: text,
+      date: date,
+    });
+
+    //return information
+    res.json(myMessage);
+  } catch (err) {
+    console.error("Error adding message:", err);
+    res
+      .status(400)
+      .json({ message: "Error adding message", error: err.message });
+  }
+});
+
+//get all messages for a certain chat
+router.get("/getMessagesFromChat/:chatID", async (req, res) => {
+  try {
+    const { chatID } = req.params;
+
+    const messages = await Message.findAll({
+      where: { chatId: chatID },
+      include: [
+        {
+          model: User,
+          attributes: ["id", "name", "username"],
+        },
+      ],
+      attributes: ["message", "date"], // get message and date
+    });
+    res.json(messages);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 module.exports = router;

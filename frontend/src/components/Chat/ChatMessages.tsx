@@ -3,21 +3,62 @@ import ScrollToBottom from "react-scroll-to-bottom";
 import React, { useEffect, useState } from "react";
 import "./ChatMessages.scss";
 import { Socket } from "socket.io-client";
+import { useUser } from "../../hooks/UserContext";
+import { User } from "../../models/User";
 interface Props {
   socket: Socket;
   username: String;
-  room: String;
+  chatID: String;
   goBack: () => void;
 }
 
-function ChatMessages({ socket, username, room, goBack }: Props) {
+function ChatMessages({ socket, username, chatID, goBack }: Props) {
+  const { user } = useUser();
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<any[]>([]);
   //insert message into messages table, need chat_id, and user_id, and message_text
+  //pull from the database the past messages
+
+  const addNewMessage = async (chatID: String, userID: any, text: String) => {
+    //get current time
+    var currentDate = new Date();
+    console.log(currentDate);
+    const response = await fetch("/api/chats/addMessage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        chatID: chatID,
+        userID: userID,
+        text: text,
+        date: currentDate,
+      }),
+    });
+    if (response.ok) {
+      //want to return the chatID
+      const myMessage = await response.json();
+      console.log("addNewMessage:", myMessage);
+    } else {
+      console.log("response not ok");
+    }
+  };
+
+  const getMessagesFromChatID = async () => {
+    try {
+      const response = await fetch(`/api/chats/getMessagesFromChat/${chatID}`);
+      const messages = await response.json();
+      setMessageList(messages);
+      console.log("Messages:", messages);
+    } catch (error) {
+      console.error("Error fetching messages", error);
+    }
+  };
+
   const sendMessage = async () => {
     if (currentMessage !== "") {
       const messageData = {
-        room: room,
+        chatID: chatID,
         author: username,
         message: currentMessage,
         timeSent:
@@ -25,10 +66,10 @@ function ChatMessages({ socket, username, room, goBack }: Props) {
           ":" +
           new Date(Date.now()).getMinutes(),
       };
-      console.log("Username is: ", username);
-      console.log("Author is: ", messageData.author);
+      addNewMessage(chatID, user?.id, currentMessage);
       await socket.emit("send_message", messageData);
-      setMessageList((list) => [...list, messageData]);
+      await getMessagesFromChatID();
+      // setMessageList((list) => [...list, messageData]);
       setCurrentMessage("");
     }
   };
@@ -36,9 +77,26 @@ function ChatMessages({ socket, username, room, goBack }: Props) {
   //when change in socket server
   useEffect(() => {
     socket.off("receive_message").on("receive_message", (data: any) => {
-      setMessageList((list) => [...list, data]);
+      // setMessageList((list) => [...list, data]);
+      //get the message list from the correct id
+      getMessagesFromChatID();
     });
   }, [socket]);
+
+  useEffect(() => {
+    getMessagesFromChatID();
+  }, []);
+
+  function convertTime(isoString: string) {
+    var date = new Date(isoString);
+    console.log(date.getHours());
+    return (
+      date.getHours() +
+      ":" +
+      (date.getMinutes() < 10 ? "0" : "") +
+      date.getMinutes()
+    );
+  }
   return (
     <div>
       <div className="chat-window">
@@ -54,15 +112,17 @@ function ChatMessages({ socket, username, room, goBack }: Props) {
               return (
                 <div
                   className="message"
-                  id={username == messageContent.author ? "other" : "you"}
+                  id={
+                    username == messageContent.User.username ? "you" : "other"
+                  }
                 >
                   <div>
                     <div className="message-content">
                       <p>{messageContent.message}</p>{" "}
                     </div>
                     <div className="message-meta">
-                      <p id="time">{messageContent.timeSent}</p>
-                      <p id="author">{messageContent.author}</p>
+                      <p id="time">{convertTime(messageContent.date)}</p>
+                      <p id="author">{messageContent.User.name}</p>
                     </div>
                   </div>
                 </div>

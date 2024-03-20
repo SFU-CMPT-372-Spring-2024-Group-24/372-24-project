@@ -187,7 +187,7 @@ const Chat = () => {
               <ChatMessages
                 socket={socket}
                 username={user!.name}
-                room={room}
+                chatID={room}
                 goBack={goBack}
               />
             )}
