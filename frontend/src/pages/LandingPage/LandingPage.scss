@@ -1,6 +1,5 @@
 @mixin respond ($breakpoint) {
   @if $breakpoint ==phone {
-
     //600px
     @media screen and (max-width: 37.5em) {
       @content;
@@ -8,7 +7,6 @@
   }
 
   @if $breakpoint ==tab-port {
-
     //900px
     @media screen and (max-width: 56.25em) {
       @content;
@@ -16,14 +14,15 @@
   }
 
   @if $breakpoint ==tab-land {
-
     //1200px
     @media screen and (max-width: 75em) {
       @content;
     }
   }
 }
+
 .landing-page {
+
   :root {
     --spanish-gray: #969696;
     --cultured: #f6f6f6;
@@ -45,6 +44,7 @@
 
   html {
     scroll-behavior: smooth;
+
   }
 
   body {
@@ -53,7 +53,7 @@
     line-height: 1.5;
     font-family: "Lato", sans-serif;
     color: var(--spanish-gray);
-    background-color: var(--eerie-black);
+    background-color: var(--black);
   }
 
   img {
@@ -85,21 +85,21 @@
   }
 
   .btn {
-  background: var(--gradient);
-  padding: 0.6rem 1.2rem;
-  color: var(--black) !important;
-  border-radius: 0.5rem;
-  border: 1px solid transparent;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  display: inline-block;
+    background: var(--gradient);
+    padding: 0.6rem 1.2rem;
+    color: var(--black) !important;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    display: inline-block;
 
-  &:hover {
-    border-color: #3fe8ab;
-    background: transparent;
-    color: var(--cultured) !important;
+    &:hover {
+      border-color: #3fe8ab;
+      background: transparent;
+      color: var(--cultured) !important;
+    }
   }
-}
 
 }
 
@@ -107,50 +107,5 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--eerie-black);
-
-  // header {}
-
-  main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-
-    .landing-section {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 80px 40px;
-
-      .landing-content {
-        max-width: 500px;
-
-        h1 {
-          font-size: 36px;
-          margin-bottom: 20px;
-        }
-
-        p {
-          font-size: 18px;
-          margin-bottom: 30px;
-          color: #fff;
-        }
-
-        button {
-          padding: 10px 20px;
-          font-size: 18px;
-          background-color: #007bff;
-          color: #fff;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-        }
-      }
-
-      // .landing-image {}
-    }
-
-  }
-
-  // footer {}
+  background-color: var(--black);
 }

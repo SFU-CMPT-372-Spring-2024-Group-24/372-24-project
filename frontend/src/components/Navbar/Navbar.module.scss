@@ -1,6 +1,5 @@
 @mixin respond ($breakpoint) {
   @if $breakpoint ==phone {
-
     //600px
     @media screen and (max-width: 37.5em) {
       @content;
@@ -8,7 +7,6 @@
   }
 
   @if $breakpoint ==tab-port {
-
     //900px
     @media screen and (max-width: 56.25em) {
       @content;
@@ -16,7 +14,6 @@
   }
 
   @if $breakpoint ==tab-land {
-
     //1200px
     @media screen and (max-width: 75em) {
       @content;
@@ -60,8 +57,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-
   }
 
   &_logo img {
@@ -69,8 +64,6 @@
     position: absolute;
     top: 1em;
     left: 1em;
-
-  
   }
 
   ul {
@@ -182,8 +175,5 @@
       }
     }
   }
-
-
-
 
 }
