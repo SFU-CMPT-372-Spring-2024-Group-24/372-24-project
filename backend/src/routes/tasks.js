@@ -51,7 +51,7 @@ router.put('/:id', async (req, res) => {
     if (priority) {
         fieldsToUpdate.priority = priority;
     }
-    if (description) {
+    if (description !== undefined) {
         fieldsToUpdate.description = description;
     }
     if (dueDate) {

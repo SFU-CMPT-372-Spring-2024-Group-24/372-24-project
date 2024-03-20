@@ -17,6 +17,7 @@ import { Task } from "../../../models/Task";
 import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Components
 import Priority from "./Priority";
+import Description from "./Description";
 
 interface Props {
   listId: number;
@@ -81,10 +82,7 @@ const TaskItem = ({ listId, listName, task, setTask }: Props) => {
         </Modal.Header>
 
         <Modal.Body className="body">
-          <div className="description">
-            <h4>Description</h4>
-            {task.description}
-          </div>
+          <Description task={task} setTask={setTask} />
 
           <div className="due-date">
             <h4>Due date</h4>
