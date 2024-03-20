@@ -1,5 +1,6 @@
 @import '../../../variables.scss';
 
+// The task item displayed in the list
 .task-item {
   background: #FFF;
   margin: 1rem 0;
@@ -40,6 +41,7 @@
   }
 }
 
+// The modal for setting the priority of the task
 .priority-modal-backdrop {
   opacity: 0 !important;
 }
@@ -87,11 +89,12 @@
   }
 }
 
+// The modal for the details of the task
 .task-item-modal {
-  width: 80%;
-  max-width: 80%;
+  width: 50%;
+  max-width: none;
   margin-top: 5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 3rem;
 
   h4 {
     font-size: 20px;
@@ -126,6 +129,7 @@
       display: flex;
       align-items: center;
       gap: .5rem;
+      cursor: pointer;
     }
 
     button.set-priority {
@@ -179,9 +183,55 @@
     }
   }
 
+  // Task-item-modal body
   .body {
     div {
       margin-bottom: 1rem;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      font-size: 14px;
+      margin: 0;
+
+      .btn-save {
+        background: $purple;
+        color: $white;
+        padding: .25rem .5rem;
+
+        &:hover {
+          background: $light-purple;
+        }
+      }
+
+      .btn-cancel {
+        border: 1px solid transparent;
+        border-radius: 0;
+
+        &:hover {
+          border-bottom: 1px solid $dark-gray;
+          box-shadow: none;
+        }
+      }
+    }
+
+    .description {
+      form {
+        margin-top: 0;
+      }
+
+      textarea {
+        flex-grow: 1;
+        height: 100px;
+      }
+
+      p {
+        cursor: pointer;
+        flex-grow: 1;
+        white-space: pre-wrap;
+      }
     }
 
     .check-due-date {
