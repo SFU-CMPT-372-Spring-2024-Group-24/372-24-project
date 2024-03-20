@@ -21,6 +21,7 @@ const Chat = () => {
   const [recentChatters, setRecentChatters] = useState<any[]>([]);
   const [currentSelectValue, setCurrentSelectValue] = useState("");
   const [chat, setChat] = useState("");
+  const [divIndexValue, setDivIndexValue] = useState(-1);
   // maybe make this change everytime userList is changed
   const getRecentChats = async () => {
     try {
@@ -77,8 +78,7 @@ const Chat = () => {
     }
   };
 
-  const joinRoom = (roomVal: string) => {
-    setRoom(roomVal);
+  useEffect(() => {
     console.log("Username:", username);
     console.log(room);
     if (username !== "" && room !== "") {
@@ -86,10 +86,25 @@ const Chat = () => {
       socket.emit("join_room", room);
       setShowChat(true);
     }
+  }, [room, divIndexValue]);
+
+  const joinRoom = (roomVal: string, index: number) => {
+    setRoom(roomVal);
+    setDivIndexValue(index);
+    // console.log("Username:", username);
+    // console.log(room);
+    // if (username !== "" && room !== "") {
+    //   console.log("Going to join room!");
+    //   socket.emit("join_room", room);
+    //   setShowChat(true);
+    // }
   };
 
   const goBack = () => {
+    setDivIndexValue(-1);
     setShowChat(false);
+    setRoom("");
+    //set div value back to -1 here
   };
 
   const updateValue = (event: any) => {
@@ -170,7 +185,7 @@ const Chat = () => {
                   <div
                     className="recentChatters"
                     key={index}
-                    onClick={() => joinRoom(item.chatID)}
+                    onClick={() => joinRoom(item.chatID, index)}
                   >
                     {" "}
                     {item.chatID}

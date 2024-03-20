@@ -22,7 +22,7 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
   const addNewMessage = async (chatID: String, userID: any, text: String) => {
     //get current time
     var currentDate = new Date();
-    console.log(currentDate);
+    // console.log(currentDate);
     const response = await fetch("/api/chats/addMessage", {
       method: "POST",
       headers: {
@@ -66,8 +66,8 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
           ":" +
           new Date(Date.now()).getMinutes(),
       };
-      addNewMessage(chatID, user?.id, currentMessage);
-      await socket.emit("send_message", messageData);
+      await addNewMessage(chatID, user?.id, currentMessage);
+      socket.emit("send_message", messageData);
       await getMessagesFromChatID();
       // setMessageList((list) => [...list, messageData]);
       setCurrentMessage("");
@@ -76,10 +76,10 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
 
   //when change in socket server
   useEffect(() => {
-    socket.off("receive_message").on("receive_message", (data: any) => {
+    socket.off("receive_message").on("receive_message", async (data: any) => {
       // setMessageList((list) => [...list, data]);
       //get the message list from the correct id
-      getMessagesFromChatID();
+      await getMessagesFromChatID();
     });
   }, [socket]);
 
@@ -89,7 +89,7 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
 
   function convertTime(isoString: string) {
     var date = new Date(isoString);
-    console.log(date.getHours());
+    // console.log(date.getHours());
     return (
       date.getHours() +
       ":" +
@@ -112,9 +112,7 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
               return (
                 <div
                   className="message"
-                  id={
-                    username == messageContent.User.username ? "you" : "other"
-                  }
+                  id={username == messageContent.User.name ? "other" : "you"}
                 >
                   <div>
                     <div className="message-content">
