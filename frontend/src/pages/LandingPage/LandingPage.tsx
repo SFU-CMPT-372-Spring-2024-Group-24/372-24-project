@@ -1,14 +1,12 @@
 // import React from 'react';
 import './LandingPage.scss';
+import Navbar from '../../components/Navbar/Navbar';
 
 const LandingPage = () => {
   return (
+    <>
+    <Navbar />
     <div className="landing-page">
-      <header>
-        <nav>
-          {/* Navigation links */}
-        </nav>
-      </header>
       <main>
         <section className="landing-section">
           <div className="landing-content">
@@ -26,6 +24,7 @@ const LandingPage = () => {
         {/* Footer content */}
       </footer>
     </div>
+    </>
   );
 }
 

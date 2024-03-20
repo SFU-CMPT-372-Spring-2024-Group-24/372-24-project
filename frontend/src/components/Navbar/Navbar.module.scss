@@ -1,0 +1,86 @@
+@mixin respond ($breakpoint) {
+    @if $breakpoint ==phone {
+
+        //600px
+        @media screen and (max-width: 37.5em) {
+            @content;
+        }
+    }
+
+    @if $breakpoint ==tab-port {
+
+        //900px
+        @media screen and (max-width: 56.25em) {
+            @content;
+        }
+    }
+
+    @if $breakpoint ==tab-land {
+
+        //1200px
+        @media screen and (max-width: 75em) {
+            @content;
+        }
+    }
+}
+
+:root {
+    --spanish-gray: #969696;
+    --cultured: #f6f6f6;
+    --black: #151515;
+    --eerie-black: #1b1b1b;
+    --gradient: linear-gradient(to right, #3fe8ab, #78cdcd);
+}
+
+
+//navbar scss
+
+.navbar {
+    background: var(--black);
+    padding-block: 0.6rem;
+    position: relative;
+
+    &_container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &_logo img {
+        width: 5rem;
+    }
+
+    ul {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+
+        a {
+            color: var(--cultured);
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+
+            &:hover {
+                color: var(--spanish-gray);
+            }
+        }
+    }
+
+
+    &_btns {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+
+        a {
+            text-transform: capitalize;
+            color: var(--cultured);
+        }
+
+        @include respond(tab-port) {
+            display: none;
+        }
+    }
+
+
+}
