@@ -67,7 +67,7 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
           new Date(Date.now()).getMinutes(),
       };
       await addNewMessage(chatID, user?.id, currentMessage);
-      socket.emit("send_message", messageData);
+      socket.emit("send_message", chatID);
       await getMessagesFromChatID();
       // setMessageList((list) => [...list, messageData]);
       setCurrentMessage("");
@@ -76,7 +76,7 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
 
   //when change in socket server
   useEffect(() => {
-    socket.off("receive_message").on("receive_message", async (data: any) => {
+    socket.off("receive_message").on("receive_message", async () => {
       // setMessageList((list) => [...list, data]);
       //get the message list from the correct id
       await getMessagesFromChatID();
@@ -108,11 +108,12 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
         </div>
         <div className="chat-body">
           <ScrollToBottom className="message-container">
-            {messageList.map((messageContent) => {
+            {messageList.map((messageContent, index) => {
               return (
                 <div
                   className="message"
                   id={username == messageContent.User.name ? "other" : "you"}
+                  key={index}
                 >
                   <div>
                     <div className="message-content">
