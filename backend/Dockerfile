@@ -1,11 +1,13 @@
 FROM node
 
-WORKDIR /backend
+WORKDIR /usr/src/app/backend/
 
-COPY package.json ./
+COPY package*.json ./
 
 RUN npm install
 
 COPY . .
+
+EXPOSE 8080
 
 CMD ["npm", "start"]
