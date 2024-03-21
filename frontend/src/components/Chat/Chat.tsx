@@ -7,7 +7,7 @@ import ChatMessages from "./ChatMessages";
 import { useUser } from "../../hooks/UserContext";
 import { User } from "../../models/User";
 
-const socket = io("http://localhost:3001", { transports: ["websocket"] });
+const socket = io("http://localhost:8080", { transports: ["websocket"] });
 
 const Chat = () => {
   //   return <IoMdChatboxes size={40} />;

@@ -21,7 +21,8 @@ This will create the `key.pem` and `cert.pem` files, which are your private key 
 Then, while still in the `backend/` directory, create a `.env` file with the following information:
 
 ```
-PORT=8080
+HTTPS_PORT=8443
+HTTP_PORT=8080
 
 DB_HOST=<your_db_host> # e.g. localhost
 DB_PORT=<your_db_port> # e.g. 5432
@@ -33,6 +34,14 @@ SSL_KEY_PATH=./key.pem
 SSL_CERT_PATH=./cert.pem
 
 SESSION_SECRET=<your_secret_key> # e.g. not_so_secret_key_372
+
+FIREBASE_API_KEY=<your_api_key>
+FIREBASE_AUTH_DOMAIN=<your_auth_domain>
+FIREBASE_PROJECT_ID=<im_too_lazy_now_u_get_the_idea>
+FIREBASE_STORAGE_BUCKET=<im_too_lazy_now_u_get_the_idea>
+FIREBASE_MESSAGING_SENDER_ID=<im_too_lazy_now_u_get_the_idea>
+FIREBASE_APP_ID=<im_too_lazy_now_u_get_the_idea>
+FIREBASE_MEASUREMENT_ID=<im_too_lazy_now_u_get_the_idea>
 ```
 
 ### 2. Start PostgreSQL server

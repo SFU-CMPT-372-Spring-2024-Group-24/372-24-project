@@ -15,16 +15,21 @@ import { getFileIcon } from "../../../utils/fileUtils";
 import { Task } from "../../../models/Task";
 // Files
 import defaultProfilePicture from "../../../assets/default-profile-picture.png";
+// Components
+import Priority from "./Priority";
+import Description from "./Description";
 
 interface Props {
-  projectId: number;
+  listId: number;
   listName: string;
   task: Task;
+  setTask: (updatedTask: Task) => void;
 }
 
-const TaskItem = ({ projectId, listName, task }: Props) => {
+const TaskItem = ({ listId, listName, task, setTask }: Props) => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
+  // Toggle Task Item details visibility
   const toggleModal = () => setModalIsOpen(!modalIsOpen);
 
   return (
@@ -32,19 +37,21 @@ const TaskItem = ({ projectId, listName, task }: Props) => {
       <li className="task-item" onClick={toggleModal}>
         <h3>{task.name}</h3>
 
-        <div className="info">
-          <div className="due-date">
-            <FaRegClock size={18} />
-            {moment(task.dueDate).format("MMM D hh:mma")}
-          </div>
+        {task.dueDate && (
+          <div className="info">
+            <div className="due-date">
+              <FaRegClock size={18} />
+              {moment(task.dueDate).format("MMM D hh:mma")}
+            </div>
 
-          {/* Todo: Add assignee
+            {/* Todo: Add assignee
           <img
             src="https://images.unsplash.com/photo-1707343844152-6d33a0bb32c3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             alt="User Avatar"
             className="assignee"
           /> */}
-        </div>
+          </div>
+        )}
       </li>
 
       <Modal
@@ -59,7 +66,7 @@ const TaskItem = ({ projectId, listName, task }: Props) => {
             <span className="list-name">{listName}</span>
           </div>
 
-          <span className="priority urgent">{task.priority}</span>
+          <Priority task={task} setTask={setTask} />
 
           <button className="move-btn">
             <TbArrowsExchange size={20} />
@@ -75,10 +82,7 @@ const TaskItem = ({ projectId, listName, task }: Props) => {
         </Modal.Header>
 
         <Modal.Body className="body">
-          <div className="description">
-            <h4>Description</h4>
-            {task.description}
-          </div>
+          <Description task={task} setTask={setTask} />
 
           <div className="due-date">
             <h4>Due date</h4>
@@ -94,15 +98,16 @@ const TaskItem = ({ projectId, listName, task }: Props) => {
           <div className="members">
             <h4>Members</h4>
 
-            {task.assignees.map((assignee) => (
-              <div className="member" key={assignee.id}>
-                <img
-                  src={assignee.profilePicture || defaultProfilePicture}
-                  alt="User Avatar"
-                />
-                <p>{assignee.name}</p>
-              </div>
-            ))}
+            {task.assignees &&
+              task.assignees.map((assignee) => (
+                <div className="member" key={assignee.id}>
+                  <img
+                    src={assignee.profilePicture || defaultProfilePicture}
+                    alt="User Avatar"
+                  />
+                  <p>{assignee.name}</p>
+                </div>
+              ))}
           </div>
 
           <div className="attachments">

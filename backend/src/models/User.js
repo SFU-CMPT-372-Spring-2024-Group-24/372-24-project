@@ -28,6 +28,10 @@ module.exports = (sequelize) => {
         profilePicture: {
             type: DataTypes.STRING,
             allowNull: true
+        },
+        isAdmin: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true 
         }
     });
 
