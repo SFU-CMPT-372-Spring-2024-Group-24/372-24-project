@@ -4,6 +4,8 @@ import Modal from "react-bootstrap/Modal";
 import { ButtonGroup, ToggleButton } from "react-bootstrap";
 // Models
 import { Task, PriorityTypes } from "../../../models/Task";
+// Utils
+import { priorities } from "../../../utils/priorityColorUtils";
 
 interface Props {
   task: Task;
@@ -17,29 +19,23 @@ const Priority = ({ task, setTask }: Props) => {
     task.priority || ""
   );
 
-  const priorities = [
-    { value: "unset", color: "#d3d3d3" }, // light grey
-    { value: "planning", color: "#48c96f" }, // green
-    { value: "low", color: "#F7CB15" }, // yellow
-    { value: "medium", color: "#FFA500" }, // orange
-    { value: "high", color: "#FF6347" }, // tomato
-    { value: "urgent", color: "#B22222" }, // dark red
-  ];
-
+  // For toggling the modal
   const togglePriorityModal = () => setShowPriorityModal(!showPriorityModal);
 
+  // For positioning the modal
   useEffect(() => {
     if (showPriorityModal && priorityRef.current) {
-      const buttonRect = priorityRef.current.getBoundingClientRect();
+      const priorityRect = priorityRef.current.getBoundingClientRect();
       const modal = document.querySelector(".priority-modal");
 
       if (modal instanceof HTMLElement) {
-        modal.style.top = `${buttonRect.bottom}px`;
-        modal.style.left = `${buttonRect.left}px`;
+        modal.style.top = `${priorityRect.bottom}px`;
+        modal.style.left = `${priorityRect.left}px`;
       }
     }
   }, [showPriorityModal]);
 
+  // For updating the priority
   const handlePriorityChange = async (priority: PriorityTypes) => {
     try {
       const response = await fetch(`/api/tasks/${task.id}`, {
@@ -88,7 +84,7 @@ const Priority = ({ task, setTask }: Props) => {
         show={showPriorityModal}
         onHide={togglePriorityModal}
         dialogClassName="priority-modal"
-        backdropClassName="priority-modal-backdrop"
+        backdropClassName="task-subModal-backdrop"
       >
         <Modal.Header closeButton>
           <h4>Priority</h4>

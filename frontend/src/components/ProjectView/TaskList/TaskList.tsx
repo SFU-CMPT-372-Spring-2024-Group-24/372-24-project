@@ -65,6 +65,10 @@ const TaskList = ({ listId, listName }: Props) => {
     );
   };
 
+  const deleteTask = (id: number) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+  };
+
   return (
     <div className="taskList">
       <div className="list-header">
@@ -119,6 +123,7 @@ const TaskList = ({ listId, listName }: Props) => {
               setTask={setTask}
               listId={listId}
               listName={listName}
+              deleteTask={deleteTask}
             />
           ))
         )}
