@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
 // Update task
 router.put('/:id', async (req, res) => {
     const id = req.params.id;
-    const { name, listId, priority, description, dueDate } = req.body;
+    const { name, listId, priority, description, dueDate, isDone } = req.body;
     const fieldsToUpdate = {};
 
     if (name) {
@@ -56,6 +56,9 @@ router.put('/:id', async (req, res) => {
     }
     if (dueDate) {
         fieldsToUpdate.dueDate = dueDate;
+    }
+    if (isDone !== undefined) {
+        fieldsToUpdate.isDone = isDone;
     }
 
     try {

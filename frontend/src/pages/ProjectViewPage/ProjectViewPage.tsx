@@ -38,10 +38,13 @@ const ProjectViewPage = () => {
   useEffect(() => {
     const fetchLists = async () => {
       const response = await fetch(`/api/lists/${id}`);
-      const listsData = await response.json();
-
-      if (listsData) {
+      
+      if (response.ok) {
+        const listsData = await response.json();
         setLists(listsData);
+      } else {
+        const errorData = await response.json();
+        console.error("Error fetching lists:", errorData.message);
       }
     };
 
