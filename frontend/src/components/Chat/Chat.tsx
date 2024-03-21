@@ -1,5 +1,5 @@
 // import { IoMdChatboxes } from "react-icons/io";
-import { Key, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import io from "socket.io-client";
 import "./Chat.scss";
@@ -7,7 +7,9 @@ import ChatMessages from "./ChatMessages";
 import { useUser } from "../../hooks/UserContext";
 import { User } from "../../models/User";
 
-const socket = io("http://localhost:8080", { transports: ["websocket"] });
+const socket = io("https://cmpt-372-project-backend-e6bh7dyuba-uc.a.run.app/", {
+  transports: ["websocket"],
+});
 
 const Chat = () => {
   //   return <IoMdChatboxes size={40} />;
@@ -20,7 +22,7 @@ const Chat = () => {
   const [showChat, setShowChat] = useState(false);
   const [recentChatters, setRecentChatters] = useState<any[]>([]);
   const [currentSelectValue, setCurrentSelectValue] = useState("");
-  const [chat, setChat] = useState("");
+  // const [chat, setChat] = useState("");
   const [divIndexValue, setDivIndexValue] = useState(-1);
   // maybe make this change everytime userList is changed
   const getRecentChats = async () => {
@@ -70,9 +72,10 @@ const Chat = () => {
     });
     if (response.ok) {
       //want to return the chatID
-      const myChat = await response.json();
+      console.log("response ok");
+      // const myChat = await response.json();
       // console.log("addNewChat:", myChat);
-      setChat(myChat);
+      // setChat(myChat);
     } else {
       console.log("response not ok");
     }

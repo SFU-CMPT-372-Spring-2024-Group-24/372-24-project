@@ -1,10 +1,9 @@
 // a lot of code taken from: https://www.youtube.com/watch?v=NU-HfZY3ATQ&t=610s
 import ScrollToBottom from "react-scroll-to-bottom";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./ChatMessages.scss";
 import { Socket } from "socket.io-client";
 import { useUser } from "../../hooks/UserContext";
-import { User } from "../../models/User";
 interface Props {
   socket: Socket;
   username: String;
@@ -37,7 +36,8 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
     });
     if (response.ok) {
       //want to return the chatID
-      const myMessage = await response.json();
+      console.log("response ok");
+      // const myMessage = await response.json();
       // console.log("addNewMessage:", myMessage);
     } else {
       console.log("response not ok");
@@ -57,15 +57,15 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
 
   const sendMessage = async () => {
     if (currentMessage !== "") {
-      const messageData = {
-        chatID: chatID,
-        author: username,
-        message: currentMessage,
-        timeSent:
-          new Date(Date.now()).getHours() +
-          ":" +
-          new Date(Date.now()).getMinutes(),
-      };
+      // const messageData = {
+      //   chatID: chatID,
+      //   author: username,
+      //   message: currentMessage,
+      //   timeSent:
+      //     new Date(Date.now()).getHours() +
+      //     ":" +
+      //     new Date(Date.now()).getMinutes(),
+      // };
       await addNewMessage(chatID, user?.id, currentMessage);
       socket.emit("send_message", chatID);
       await getMessagesFromChatID();

@@ -13,8 +13,7 @@ interface Props {
   project: Project;
   setProject: (project: Project) => void;
 }
-const ProjectInfo = ({ project, setProject }: Props) => {
-
+const ProjectInfo = ({ project }: Props) => {
   return (
     <aside className="project-info">
       <div className="project-description">

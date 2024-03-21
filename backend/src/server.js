@@ -112,3 +112,21 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const storage = getStorage(firebaseApp);
 const storageRef = ref(storage, "files");
+
+//Static files of the built react application:
+app.use(express.static(path.join(__dirname, "..", "..", "frontend/dist/")));
+
+//send html
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "..", "frontend/dist/index.html"));
+  console.log("made it to test2!");
+});
+
+console.log(
+  "path name:",
+  path.join(__dirname, "..", "..", "frontend/dist/index.html")
+);
+
+httpsServer.listen(httpsPort, () =>
+  console.log(`HTTPS server is running on port ${httpsPort}`)
+);
