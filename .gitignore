@@ -24,7 +24,6 @@ dist-ssr
 *.sw?
 
 # Docker files
-Dockerfile
 docker-compose.yml
 
 .env
