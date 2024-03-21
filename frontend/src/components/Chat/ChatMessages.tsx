@@ -38,7 +38,7 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
     if (response.ok) {
       //want to return the chatID
       const myMessage = await response.json();
-      console.log("addNewMessage:", myMessage);
+      // console.log("addNewMessage:", myMessage);
     } else {
       console.log("response not ok");
     }
@@ -49,7 +49,7 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
       const response = await fetch(`/api/chats/getMessagesFromChat/${chatID}`);
       const messages = await response.json();
       setMessageList(messages);
-      console.log("Messages:", messages);
+      // console.log("Messages:", messages);
     } catch (error) {
       console.error("Error fetching messages", error);
     }

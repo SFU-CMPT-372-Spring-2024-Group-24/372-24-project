@@ -28,7 +28,7 @@ const Chat = () => {
       const response = await fetch(`/api/chats/getChats/${user!.id}`);
       const chats = await response.json();
       setRecentChatters(chats);
-      console.log("Chats:", chats);
+      // console.log("Chats:", chats);
     } catch (error) {
       console.error("Error fetching recent Chats", error);
     }
@@ -71,7 +71,7 @@ const Chat = () => {
     if (response.ok) {
       //want to return the chatID
       const myChat = await response.json();
-      console.log("addNewChat:", myChat);
+      // console.log("addNewChat:", myChat);
       setChat(myChat);
     } else {
       console.log("response not ok");
@@ -79,10 +79,10 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    console.log("Username:", username);
-    console.log(room);
+    // console.log("Username:", username);
+    // console.log(room);
     if (username !== "" && room !== "") {
-      console.log("Going to join room!");
+      // console.log("Going to join room!");
       socket.emit("join_room", room);
       setShowChat(true);
     }
@@ -119,7 +119,7 @@ const Chat = () => {
     //add to list of user_id, need to represent each with a div
     if (currentSelectValue != "") {
       const convertedSelectValue = JSON.parse(currentSelectValue);
-      console.log("CurrentSelectValue", currentSelectValue);
+      // console.log("CurrentSelectValue", currentSelectValue);
       const myName = uuidv4();
       await addNewChat(myName, user?.id, convertedSelectValue.id);
       // setRecentChatters((currentRecentChatters) => {
