@@ -11,6 +11,7 @@ import { TbArrowsExchange } from "react-icons/tb";
 import { FaRegClock } from "react-icons/fa6";
 // Utils
 import { getFileIcon } from "../../../utils/fileUtils";
+import { priorities } from "../../../utils/priorityColorUtils";
 // Models
 import { Task } from "../../../models/Task";
 // Files
@@ -18,29 +19,57 @@ import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Components
 import Priority from "./Priority";
 import Description from "./Description";
+import DueDate from "./DueDate";
 
 interface Props {
   listId: number;
   listName: string;
   task: Task;
   setTask: (updatedTask: Task) => void;
+  deleteTask: (taskId: number) => void;
 }
 
 const TaskItem = ({ listName, task, setTask }: Props) => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const priorityColor = priorities.find(
+    (p) => p.value === task.priority
+  )?.color;
 
   // Toggle Task Item details visibility
   const toggleModal = () => setModalIsOpen(!modalIsOpen);
 
+  // Delete Task
+  const handleDeleteTask = async () => {
+    try {
+      const response = await fetch(`/api/tasks/${task.id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        deleteTask(task.id);
+        setModalIsOpen(false);
+      } else {
+        const errorData = await response.json();
+        console.error("Error deleting task:", errorData.message);
+      }
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  };
+
   return (
     <>
-      <li className="task-item" onClick={toggleModal}>
+      <li
+        className="task-item"
+        onClick={toggleModal}
+        style={{ borderColor: priorityColor }}
+      >
         <h3>{task.name}</h3>
 
         {task.dueDate && (
           <div className="info">
             <div className="due-date">
-              <FaRegClock size={18} />
+              <FaRegClock size={14} />
               {moment(task.dueDate).format("MMM D hh:mma")}
             </div>
 
@@ -72,7 +101,7 @@ const TaskItem = ({ listName, task, setTask }: Props) => {
             <TbArrowsExchange size={20} />
           </button>
 
-          <button className="delete-btn">
+          <button className="delete-btn" onClick={handleDeleteTask}>
             <IoMdTrash size={20} />
           </button>
 
@@ -84,16 +113,7 @@ const TaskItem = ({ listName, task, setTask }: Props) => {
         <Modal.Body className="body">
           <Description task={task} setTask={setTask} />
 
-          <div className="due-date">
-            <h4>Due date</h4>
-
-            <div className="check-due-date">
-              <input type="checkbox" name="dueDate" id="dueDate" />
-              <label htmlFor="dueDate">
-                {moment(task.dueDate).format("MMM D hh:mma")}
-              </label>
-            </div>
-          </div>
+          <DueDate task={task} setTask={setTask} />
 
           <div className="members">
             <h4>Members</h4>

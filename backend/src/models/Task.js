@@ -26,6 +26,11 @@ module.exports = (sequelize) => {
         dueDate: {
             type: DataTypes.DATE,
             allowNull: true
+        },
+        isDone: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     });
 
