@@ -1,6 +1,6 @@
 // Libraries
 import Modal from "react-bootstrap/Modal";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import moment from "moment";
 // Styles
 import "./TaskItem.scss";
@@ -26,7 +26,7 @@ interface Props {
   setTask: (updatedTask: Task) => void;
 }
 
-const TaskItem = ({ listId, listName, task, setTask }: Props) => {
+const TaskItem = ({ listName, task, setTask }: Props) => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
   // Toggle Task Item details visibility

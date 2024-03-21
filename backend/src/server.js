@@ -63,9 +63,6 @@ const options = {
 };
 const httpsPort = process.env.HTTPS_PORT || 8443;
 const httpsServer = https.createServer(options, app);
-httpsServer.listen(httpsPort, () =>
-  console.log(`HTTPS server is running on port ${httpsPort}`)
-);
 
 // HTTP server (for chatting only)
 const httpPort = process.env.HTTP_PORT || 8080;
@@ -79,7 +76,7 @@ const io = new SocketIOServer(httpServer, {
   cors: {
     //which url is making calls to our socket io server
     //where our react application is running
-    origin: "http://localhost:3000/",
+    origin: "https://cmpt-372-project-backend-e6bh7dyuba-uc.a.run.app/",
     methods: ["GET", "POST"],
   },
 });
@@ -112,3 +109,21 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const storage = getStorage(firebaseApp);
 const storageRef = ref(storage, "files");
+
+//Static files of the built react application:
+app.use(express.static(path.join(__dirname, "..", "..", "frontend/dist/")));
+
+//send html
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "..", "frontend/dist/index.html"));
+  console.log("made it to test2!");
+});
+
+console.log(
+  "path name:",
+  path.join(__dirname, "..", "..", "frontend/dist/index.html")
+);
+
+httpsServer.listen(httpsPort, () =>
+  console.log(`HTTPS server is running on port ${httpsPort}`)
+);
