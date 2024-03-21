@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useBackendAPI } from '../../hooks/BackendAPI';
 
 const Adminpage = () => {
+    const backendAPI = useBackendAPI();
     const [users, setUsers] = useState<any[]>([]); 
     
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch('/api/users');
+                const response = await backendAPI('/users');
                 const userData = await response.json();
                 setUsers(userData);
             } catch (error) {

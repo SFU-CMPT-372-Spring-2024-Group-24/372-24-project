@@ -9,6 +9,8 @@ import "./TaskList.scss";
 import TaskItem from "../TaskItem/TaskItem";
 // Models
 import { Task } from "../../../models/Task";
+// Hooks
+import { useBackendAPI } from "../../../hooks/BackendAPI";
 
 interface Props {
   listId: number;
@@ -16,6 +18,7 @@ interface Props {
 }
 
 const TaskList = ({ listId, listName }: Props) => {
+  const backendAPI = useBackendAPI();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [showTaskInput, setShowTaskInput] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
@@ -23,7 +26,7 @@ const TaskList = ({ listId, listName }: Props) => {
   // Fetch tasks by listId from server
   useEffect(() => {
     const fetchTasks = async () => {
-      const response = await fetch(`/api/tasks/${listId}`);
+      const response = await backendAPI(`/tasks/${listId}`);
       const tasksData = await response.json();
 
       if (tasksData) {
@@ -44,7 +47,7 @@ const TaskList = ({ listId, listName }: Props) => {
   const handleAddTask = async () => {
     if (taskName.trim() === "") return;
 
-    const response = await fetch(`/api/tasks`, {
+    const response = await backendAPI(`/tasks`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

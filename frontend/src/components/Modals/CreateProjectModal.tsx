@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import './CreateProjectModal.scss';
 // Hooks
 import { useUser } from "../../hooks/UserContext";
+import { useBackendAPI } from "../../hooks/BackendAPI";
 // Models
 import { Project } from "../../models/Project";
 
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
+  const backendAPI = useBackendAPI();
   const [projectName, setProjectName] = useState<string>("");
   const [projectDescription, setProjectDescription] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -31,7 +33,7 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
       return;
     }
 
-    const response = await fetch("/api/projects", {
+    const response = await backendAPI("/projects", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

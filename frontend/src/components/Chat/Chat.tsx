@@ -5,13 +5,15 @@ import io from "socket.io-client";
 import "./Chat.scss";
 import ChatMessages from "./ChatMessages";
 import { useUser } from "../../hooks/UserContext";
+import { useBackendAPI } from "../../hooks/BackendAPI";
 import { User } from "../../models/User";
 
-const socket = io("https://cmpt-372-project-backend-e6bh7dyuba-uc.a.run.app/", {
-  transports: ["websocket"],
-});
 
 const Chat = () => {
+  const backendAPI = useBackendAPI();
+  const socket = io(`${import.meta.env.VITE_APP_BACKEND_URL}`, {
+    transports: ["websocket"],
+  });
   //   return <IoMdChatboxes size={40} />;
   //somehow get the user_id here
   const { user } = useUser();
@@ -27,7 +29,7 @@ const Chat = () => {
   // maybe make this change everytime userList is changed
   const getRecentChats = async () => {
     try {
-      const response = await fetch(`/api/chats/getChats/${user!.id}`);
+      const response = await backendAPI(`/chats/getChats/${user!.id}`);
       const chats = await response.json();
       setRecentChatters(chats);
       // console.log("Chats:", chats);
@@ -40,7 +42,7 @@ const Chat = () => {
     setUsername(user!.name);
     const getAllUsers = async () => {
       try {
-        const response = await fetch("/api/users");
+        const response = await backendAPI("/users");
         if (!response.ok) {
           throw new Error("Failed to get all users");
         }
@@ -59,16 +61,12 @@ const Chat = () => {
   }, []);
 
   const addNewChat = async (chatName: any, userID: any, otherID: any) => {
-    const response = await fetch("/api/chats/addChat", {
+    const response = await backendAPI("/chats/addChat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        chatName: chatName,
-        userID: userID,
-        otherID: otherID,
-      }),
+      body: JSON.stringify({ chatName, userID, otherID }),
     });
     if (response.ok) {
       //want to return the chatID

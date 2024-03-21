@@ -6,6 +6,7 @@ import {
   useEffect,
 } from "react";
 import { User } from "../models/User";
+import { useBackendAPI } from "./BackendAPI";
 
 interface UserContextType {
   user: User | null;
@@ -26,13 +27,14 @@ interface Props {
   children: ReactNode;
 }
 export const UserProvider = ({ children }: Props) => {
+  const backendAPI = useBackendAPI();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("/api/users/me", {
+        const response = await backendAPI("/users/me", {
           method: "GET",
           credentials: "include",
         });

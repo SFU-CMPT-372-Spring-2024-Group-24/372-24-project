@@ -6,6 +6,8 @@ import { ButtonGroup, ToggleButton } from "react-bootstrap";
 import { Task, PriorityTypes } from "../../../models/Task";
 // Utils
 import { priorities } from "../../../utils/priorityColorUtils";
+// Hooks
+import { useBackendAPI } from "../../../hooks/BackendAPI";
 
 interface Props {
   task: Task;
@@ -13,6 +15,7 @@ interface Props {
 }
 
 const Priority = ({ task, setTask }: Props) => {
+  const backendAPI = useBackendAPI();
   const [showPriorityModal, setShowPriorityModal] = useState<boolean>(false);
   const priorityRef = useRef<HTMLDivElement>(null);
   const [priorityValue, setPriorityValue] = useState<PriorityTypes>(
@@ -38,7 +41,7 @@ const Priority = ({ task, setTask }: Props) => {
   // For updating the priority
   const handlePriorityChange = async (priority: PriorityTypes) => {
     try {
-      const response = await fetch(`/api/tasks/${task.id}`, {
+      const response = await backendAPI(`/tasks/${task.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

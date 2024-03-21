@@ -20,6 +20,8 @@ import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 import Priority from "./Priority";
 import Description from "./Description";
 import DueDate from "./DueDate";
+// Hooks
+import { useBackendAPI } from "../../../hooks/BackendAPI";
 
 interface Props {
   listId: number;
@@ -30,6 +32,7 @@ interface Props {
 }
 
 const TaskItem = ({ listName, task, setTask, deleteTask }: Props) => {
+  const backendAPI = useBackendAPI();
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const priorityColor = priorities.find(
     (p) => p.value === task.priority
@@ -41,7 +44,7 @@ const TaskItem = ({ listName, task, setTask, deleteTask }: Props) => {
   // Delete Task
   const handleDeleteTask = async () => {
     try {
-      const response = await fetch(`/api/tasks/${task.id}`, {
+      const response = await backendAPI(`/tasks/${task.id}`, {
         method: "DELETE",
       });
 

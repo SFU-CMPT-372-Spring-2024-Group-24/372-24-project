@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 // Models
 import { Task } from "../../../models/Task";
+// Hookes
+import { useBackendAPI } from "../../../hooks/BackendAPI";
 
 interface Props {
   task: Task;
@@ -9,6 +11,7 @@ interface Props {
 }
 
 const Description = ({ task, setTask }: Props) => {
+  const backendAPI = useBackendAPI();
   const [showTextArea, setShowTextArea] = useState<boolean>(false);
   const [description, setDescription] = useState<string>(task.description);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -26,7 +29,7 @@ const Description = ({ task, setTask }: Props) => {
     }
 
     try {
-      const response = await fetch(`/api/tasks/${task.id}`, {
+      const response = await backendAPI(`/tasks/${task.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

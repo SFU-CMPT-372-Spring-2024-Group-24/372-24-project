@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { jwtDecode } from "jwt-decode";
 import { useUser } from "../../hooks/UserContext";
+import { useBackendAPI } from '../../hooks/BackendAPI';
 import { useNavigate } from "react-router-dom";
 
 const GoogleSignIn = () => {
+  const backendAPI = useBackendAPI();
   const { setUser } = useUser();
   const navigate = useNavigate();
 
@@ -16,7 +18,7 @@ const GoogleSignIn = () => {
       const { given_name, name, email, picture } = decodedToken;
 
       // POST request to server 
-      const res = await fetch('/api/users/google-login', {
+      const res = await backendAPI('/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

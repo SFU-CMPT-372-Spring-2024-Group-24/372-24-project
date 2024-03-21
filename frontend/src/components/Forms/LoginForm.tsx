@@ -6,12 +6,14 @@ import { FaUser } from "react-icons/fa6";
 import { RiLockPasswordFill } from "react-icons/ri";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
+import { useBackendAPI } from "../../hooks/BackendAPI";
 // Styles
 import "./LoginSignupForm.scss";
 
 interface Props {}
 
-const LoginForm = ({}: Props) => {
+const LoginForm = ({ }: Props) => {
+  const backendAPI = useBackendAPI();
   const { setUser } = useUser();
   const navigate = useNavigate();
 
@@ -23,7 +25,7 @@ const LoginForm = ({}: Props) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const response = await fetch("/api/users/login", {
+    const response = await backendAPI("/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

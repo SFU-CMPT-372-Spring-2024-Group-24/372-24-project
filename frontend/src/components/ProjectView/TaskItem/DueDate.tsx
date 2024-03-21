@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 // Models
 import { Task } from "../../../models/Task";
+// Hookes
+import { useBackendAPI } from "../../../hooks/BackendAPI";
 
 interface Props {
   task: Task;
@@ -11,6 +13,7 @@ interface Props {
 }
 
 const DueDate = ({ task, setTask }: Props) => {
+  const backendAPI = useBackendAPI();
   const [showDueDateModal, setShowDueDateModal] = useState<boolean>(false);
   const dueDateRef = useRef<HTMLDivElement>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(task.dueDate);
@@ -43,7 +46,7 @@ const DueDate = ({ task, setTask }: Props) => {
     const isDone = event.target.checked;
 
     try {
-      const response = await fetch(`/api/tasks/${task.id}`, {
+      const response = await backendAPI(`/tasks/${task.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +77,7 @@ const DueDate = ({ task, setTask }: Props) => {
     }
 
     try {
-      const response = await fetch(`/api/tasks/${task.id}`, {
+      const response = await backendAPI(`/tasks/${task.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

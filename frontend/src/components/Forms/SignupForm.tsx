@@ -7,12 +7,14 @@ import { MdEmail } from "react-icons/md";
 import { RiContactsBook2Fill, RiLockPasswordFill } from "react-icons/ri";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
+import { useBackendAPI } from "../../hooks/BackendAPI";
 // Styles
 import "./LoginSignupForm.scss";
 
 interface Props {}
 
-const SignupForm = ({}: Props) => {
+const SignupForm = ({ }: Props) => {
+  const backendAPI = useBackendAPI();
   const { setUser } = useUser();
   const navigate = useNavigate();
 
@@ -28,7 +30,7 @@ const SignupForm = ({}: Props) => {
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/users/signup", {
+      const response = await backendAPI("/users/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

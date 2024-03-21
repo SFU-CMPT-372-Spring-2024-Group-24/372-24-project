@@ -10,10 +10,12 @@ import defaultProfilePicture from "../../assets/default-profile-picture.png";
 import "./UserModal.scss";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
+import { useBackendAPI } from "../../hooks/BackendAPI";
 
 interface Props {}
 
-const UserModal = ({}: Props) => {
+const UserModal = ({ }: Props) => {
+  const backendAPI = useBackendAPI();
   const navigate = useNavigate();
   const { user, setUser } = useUser();
   const [profileIsOpen, setProfileIsOpen] = useState<boolean>(false);
@@ -24,7 +26,7 @@ const UserModal = ({}: Props) => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("/api/users/logout", {
+      const response = await backendAPI("/users/logout", {
         method: "POST",
       });
 

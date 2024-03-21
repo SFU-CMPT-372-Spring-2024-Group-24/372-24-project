@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import "./ChatMessages.scss";
 import { Socket } from "socket.io-client";
 import { useUser } from "../../hooks/UserContext";
+import { useBackendAPI } from "../../hooks/BackendAPI";
 interface Props {
   socket: Socket;
   username: String;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 function ChatMessages({ socket, username, chatID, goBack }: Props) {
+  const backendAPI = useBackendAPI();
   const { user } = useUser();
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<any[]>([]);
@@ -22,7 +24,7 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
     //get current time
     var currentDate = new Date();
     // console.log(currentDate);
-    const response = await fetch("/api/chats/addMessage", {
+    const response = await backendAPI(`/chats/addMessage`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,7 +33,7 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
         chatID: chatID,
         userID: userID,
         text: text,
-        date: currentDate,
+        timeSent: currentDate,
       }),
     });
     if (response.ok) {
@@ -46,7 +48,7 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
 
   const getMessagesFromChatID = async () => {
     try {
-      const response = await fetch(`/api/chats/getMessagesFromChat/${chatID}`);
+      const response = await backendAPI(`/chats/getMessages/${chatID}`);
       const messages = await response.json();
       setMessageList(messages);
       // console.log("Messages:", messages);

@@ -9,10 +9,13 @@ import { Project } from "../../models/Project";
 // Styles
 import "./ProjectViewPage.scss";
 import { List } from "../../models/List";
+// Hooks
+import { useBackendAPI } from "../../hooks/BackendAPI";
 
 // Project View Page
 // Contains the project info component and 3 task list components
 const ProjectViewPage = () => {
+  const backendAPI = useBackendAPI();
   const { id } = useParams();
   const [project, setProject] = useState<Project | null>(null);
   const [lists, setLists] = useState<List[]>([]);
@@ -21,7 +24,7 @@ const ProjectViewPage = () => {
   // Fetch project data from server
   useEffect(() => {
     const fetchProject = async () => {
-      const response = await fetch(`/api/projects/${id}`);
+      const response = await backendAPI(`/projects/${id}`);
       const projectData = await response.json();
 
       if (projectData) {
@@ -37,7 +40,7 @@ const ProjectViewPage = () => {
   // Fetch lists data from server
   useEffect(() => {
     const fetchLists = async () => {
-      const response = await fetch(`/api/lists/${id}`);
+      const response = await backendAPI(`/lists/${id}`);
       
       if (response.ok) {
         const listsData = await response.json();

@@ -11,8 +11,10 @@ import CreateProjectModal from "../../components/Modals/CreateProjectModal";
 import { Project } from "../../models/Project";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
+import { useBackendAPI } from "../../hooks/BackendAPI";
 
 const Homepage = () => {
+  const backendAPI = useBackendAPI();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const { user } = useUser();
@@ -22,7 +24,7 @@ const Homepage = () => {
   useEffect(() => {
     const fetchUserProjects = async () => {
       try {
-        const response = await fetch(`/api/projects?userId=${user!.id}`);
+        const response = await backendAPI(`/projects?userId=${user!.id}`);
 
         const projectsData = await response.json();
 
