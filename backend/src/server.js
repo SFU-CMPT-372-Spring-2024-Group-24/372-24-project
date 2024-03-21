@@ -68,7 +68,7 @@ const httpServer = http.createServer();
 httpServer.listen(httpPort, () => console.log(`HTTP server is running on port ${httpPort}`));
 
 // Chat server
-const io = new SocketIOServer(httpServer, {
+const io = new SocketIOServer(httpsServer, {
     cors: {
         //which url is making calls to our socket io server
         //where our react application is running
