@@ -1,6 +1,6 @@
 // Libraries
 import Modal from "react-bootstrap/Modal";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import moment from "moment";
 // Styles
 import "./TaskItem.scss";
@@ -29,9 +29,11 @@ interface Props {
   deleteTask: (taskId: number) => void;
 }
 
-const TaskItem = ({ listId, listName, task, setTask, deleteTask }: Props) => {
+const TaskItem = ({ listName, task, setTask }: Props) => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-  const priorityColor = priorities.find((p) => p.value === task.priority)?.color;
+  const priorityColor = priorities.find(
+    (p) => p.value === task.priority
+  )?.color;
 
   // Toggle Task Item details visibility
   const toggleModal = () => setModalIsOpen(!modalIsOpen);
@@ -50,14 +52,18 @@ const TaskItem = ({ listId, listName, task, setTask, deleteTask }: Props) => {
         const errorData = await response.json();
         console.error("Error deleting task:", errorData.message);
       }
-    } catch (error) { 
+    } catch (error) {
       console.error("Error deleting task:", error);
     }
   };
 
   return (
     <>
-      <li className="task-item" onClick={toggleModal} style={{borderColor: priorityColor}}>
+      <li
+        className="task-item"
+        onClick={toggleModal}
+        style={{ borderColor: priorityColor }}
+      >
         <h3>{task.name}</h3>
 
         {task.dueDate && (
