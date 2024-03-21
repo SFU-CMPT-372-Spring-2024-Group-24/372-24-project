@@ -30,3 +30,5 @@ docker-compose.yml
 .env
 *.pem
 config.json
+app.yaml
+.gcloudignore
