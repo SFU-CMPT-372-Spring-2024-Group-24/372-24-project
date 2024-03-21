@@ -29,7 +29,7 @@ interface Props {
   deleteTask: (taskId: number) => void;
 }
 
-const TaskItem = ({ listName, task, setTask }: Props) => {
+const TaskItem = ({ listName, task, setTask, deleteTask }: Props) => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const priorityColor = priorities.find(
     (p) => p.value === task.priority
