@@ -8,7 +8,7 @@ const LPSection1 = () => {
       <div className="lpsection1_container wrapper">
 
         <div className="lpsection1_left">
-          <h1>Streamline Your Projects, Boost Productivity,</h1>
+          <h1>Streamline Your Projects, Boost Productivity.</h1>
           <p>
             Tired of managing your projects across multiple
             tools and platforms? Say goodbye to scattered workflows
