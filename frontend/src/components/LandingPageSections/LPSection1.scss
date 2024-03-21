@@ -54,7 +54,11 @@
     grid-template-columns: repeat(2, 1fr);
     align-items: center;
     gap: 3rem;
-    margin-left: 100px;
+    margin-left: 5.5rem;
+
+    @include respond(tab-port){
+      margin-left: 3rem;
+    }
   }
 
   &_container::before {
@@ -62,8 +66,8 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    width: 110%;
-    height: 110%;
+    width: 100%;
+    height: 100%;
     background-image: url("../../assets/blur-white.png");
     background-position: center;
     background-size: contain;
@@ -74,6 +78,7 @@
 
   &_right img {
     width: 70%;
+    margin-left: 1rem;
 
     @include respond(tab-port) {
       width: 80%;

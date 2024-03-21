@@ -17,6 +17,20 @@ async function createDatabase() {
         if (res.rowCount === 0) {
             await client.query(`CREATE DATABASE "${process.env.DB_NAME || 'cmpt-372-project'}"`);
         }
+        await sequelize.authenticate();
+        await sequelize.sync();
+
+        //Insert admin user into database
+        const adminUser = await User.findOne({ where: { email: 'collabhub@admin.com' } });
+        if (!adminUser) {
+            await User.create({
+                name: 'Admin',
+                username: 'Admin',
+                email: 'collabhub@admin.com',
+                password: 'chadminpassword',
+                isAdmin: true
+            });
+        }
     } catch (err) {
         console.error(err);
     } finally {
