@@ -39,8 +39,29 @@ const DueDate = ({ task, setTask }: Props) => {
   }, [showDueDateModal]);
 
   // For handling the change in the task's isDone property
-  const handleTaskDoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTask({ ...task, isDone: event.target.checked });
+  const handleTaskDoneChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isDone = event.target.checked;
+
+    try {
+      const response = await fetch(`/api/tasks/${task.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isDone }),
+      });
+
+      if (response.ok) {
+        setTask({ ...task, isDone });
+        setErrorMsg("");
+      } else {
+        const errorData = await response.json();
+        setErrorMsg(errorData.message);
+      }
+    } catch (error) {
+      console.error("Error updating task done:", error);
+      setErrorMsg("An error occurred while updating the task done status.");
+    }
   };
 
   // For handling the change in the due date
