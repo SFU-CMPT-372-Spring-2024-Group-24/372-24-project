@@ -7,7 +7,6 @@ const LandingPage = () => {
   return (
     <>
     <Navbar />
-    <p>{import.meta.env.VITE_APP_API_URL}</p>
     <LPSection1 />
     <div className="landing-page">
     </div>
