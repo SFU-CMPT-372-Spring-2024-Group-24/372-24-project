@@ -31,7 +31,7 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
       return;
     }
 
-    const response = await fetch("/api/projects", {
+    const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/projects`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

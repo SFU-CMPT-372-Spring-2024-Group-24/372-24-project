@@ -22,7 +22,7 @@ const Homepage = () => {
   useEffect(() => {
     const fetchUserProjects = async () => {
       try {
-        const response = await fetch(`/api/projects?userId=${user!.id}`);
+        const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/projects?userId=${user!.id}`);
 
         const projectsData = await response.json();
 

@@ -21,7 +21,7 @@ const ProjectViewPage = () => {
   // Fetch project data from server
   useEffect(() => {
     const fetchProject = async () => {
-      const response = await fetch(`/api/projects/${id}`);
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/projects/${id}`);
       const projectData = await response.json();
 
       if (projectData) {
@@ -37,7 +37,7 @@ const ProjectViewPage = () => {
   // Fetch lists data from server
   useEffect(() => {
     const fetchLists = async () => {
-      const response = await fetch(`/api/lists/${id}`);
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/lists/${id}`);
       
       if (response.ok) {
         const listsData = await response.json();

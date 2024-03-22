@@ -26,7 +26,7 @@ const Description = ({ task, setTask }: Props) => {
     }
 
     try {
-      const response = await fetch(`/api/tasks/${task.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${task.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -6,13 +6,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    proxy: {
-      "/api": {
-        target: "https://cmpt-372-project-backend-e6bh7dyuba-uc.a.run.app/",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
-        secure: false,
-      },
-    },
+    // proxy: {
+    //   "/api": {
+    //     target: process.env.VITE_APP_API_URL,
+    //     changeOrigin: true,
+    //     rewrite: (path) => path.replace(/^\/api/, ""),
+    //     secure: false,
+    //   },
+    // },
   },
 });

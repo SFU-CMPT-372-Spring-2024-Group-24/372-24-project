@@ -7,7 +7,7 @@ const Adminpage = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch('/api/users');
+                const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users`);
                 const userData = await response.json();
                 setUsers(userData);
             } catch (error) {

@@ -16,7 +16,7 @@ const GoogleSignIn = () => {
       const { given_name, name, email, picture } = decodedToken;
 
       // POST request to server 
-      const res = await fetch('/api/users/google-login', {
+      const res = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/google-login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

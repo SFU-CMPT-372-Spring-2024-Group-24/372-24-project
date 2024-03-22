@@ -24,7 +24,7 @@ const UserModal = ({}: Props) => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("/api/users/logout", {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/logout`, {
         method: "POST",
       });
 
