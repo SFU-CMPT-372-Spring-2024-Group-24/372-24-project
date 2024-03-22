@@ -34,6 +34,7 @@ export const UserProvider = ({ children }: Props) => {
     const fetchUser = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/me`, {
+        // const response = await fetch(`api/users/me`, {
           method: "GET",
           credentials: "include",
         });
@@ -42,8 +43,8 @@ export const UserProvider = ({ children }: Props) => {
         // });
         // setUser(response.data);
         if (response.ok) {
-          const data = await response.json();
-          setUser(data);
+          const userData = await response.json();
+          setUser(userData);
         } else {
           setUser(null);
         }

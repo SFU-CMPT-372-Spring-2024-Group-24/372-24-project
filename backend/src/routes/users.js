@@ -35,7 +35,8 @@ router.post("/google-login", async (req, res) => {
       });
     }
 
-    req.session.userId = user.id;
+    // req.session.userId = user.id;
+    req.session.user = user;
 
     res.json(user);
   } catch (error) {
@@ -86,7 +87,8 @@ router.post("/signup", async (req, res) => {
 
     // Create user
     const user = await User.create({ name, username, email, password: hash });
-    req.session.userId = user.id;
+    // req.session.userId = user.id;
+    req.session.user = user;
 
     const userJSON = user.toJSON();
     delete userJSON.password;
@@ -132,7 +134,8 @@ router.post("/login", async (req, res) => {
         .json({ message: "Invalid email/username or password" });
     }
 
-    req.session.userId = user.id;
+    // req.session.userId = user.id;
+    req.session.user = user;
 
     const userJSON = user.toJSON();
     delete userJSON.password;
@@ -160,7 +163,7 @@ router.post("/logout", (req, res) => {
 
 // Check if user is authenticated
 const isAuthenticated = (req, res, next) => {
-  if (req.session && req.session.userId) {
+  if (req.session.user) {
     return next();
   } else {
     res.status(401).json({ message: "Unauthorized" });
@@ -169,7 +172,7 @@ const isAuthenticated = (req, res, next) => {
 
 // Restore current user session
 router.get("/me", isAuthenticated, async (req, res) => {
-  const user = await User.findByPk(req.session.userId);
+  const user = await User.findByPk(req.session.user.id);
   if (user) {
     const userJSON = user.toJSON();
     delete userJSON.password;

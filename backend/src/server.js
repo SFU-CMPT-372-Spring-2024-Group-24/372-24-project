@@ -9,7 +9,7 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
-// const { Server: SocketIOServer } = require("socket.io");
+const { Server: SocketIOServer } = require("socket.io");
 // const { initializeApp } = require("firebase/app");
 // const { getStorage, ref } = require("firebase/storage");
 
@@ -18,7 +18,7 @@ const app = express();
 // CORS
 // app.use(cors());
 app.use(cors({
-  origin: 'https://frontendservice-4v2gb6vska-uc.a.run.app',
+  origin: process.env.CLIENT_URL,
   credentials: true,
 }));
 
@@ -31,30 +31,28 @@ app.use("/test", express.static(path.join(__dirname, "./test.local")));
 
 // Still trying to get the session to work to keep user logged in
 // Session
-// app.use(
-//   session({
-//     name: "cmpt372project.sid",
-//     secret: process.env.SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: {
-//       sameSite: true,
-//       secure: true,
-//       httpOnly: false,
-//     },
-//   })
-// );
 app.use(session({
   name: "cmpt372project.sid",
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
+    sameSite: true,
     secure: false,
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 
   },
 }));
+// app.use(session({
+//     name: "cmpt372project.sid",
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: {
+//         secure: false,
+//         httpOnly: true,
+//         maxAge: 24 * 60 * 60 * 1000
+//     },
+// }));
 
 // Routes
 app.get("/test", (req, res) => {
@@ -84,40 +82,27 @@ app.use("/tasks", require("./routes/tasks"));
 // );
 
 // HTTP server
-const httpPort = process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 const httpServer = http.createServer(app);
-httpServer.listen(httpPort, () =>
-    console.log(`HTTP server is running on port ${httpPort}`)
-);
-// const port = process.env.PORT || 8080;
-// app.listen(port, () => {
-//   console.log(`App listening on port ${port}`);
-// });
+httpServer.listen(port, () => console.log(`HTTP server is running on port ${port}`));
 
 // Chat server
-// const io = new SocketIOServer(httpServer, {
-//     cors: {
-//         //which url is making calls to our socket io server
-//         //where our react application is running
-//         origin: "http://localhost:3000/",
-//         methods: ["GET", "POST"],
-//     },
-// });
-// io.on("connection", (socket) => {
-//     console.log(`User Connected: ${socket.id}`);
-//     // this would be the chat_id instead of room
-//     socket.on("join_room", (data) => {
-//         socket.join(data);
-//         console.log(`User with ID: ${socket.id} joined room: ${data}`);
-//     });
+const io = new SocketIOServer(httpServer);
+io.on("connection", (socket) => {
+  console.log(`User Connected: ${socket.id}`);
+  // this would be the chat_id instead of room
+  socket.on("join_room", (data) => {
+    socket.join(data);
+    console.log(`User with ID: ${socket.id} joined room: ${data}`);
+  });
 
-//     socket.on("send_message", (data) => {
-//         socket.to(data).emit("receive_message");
-//     });
-//     socket.on("disconnect", () => {
-//         console.log("User Disconnected", socket.id);
-//     });
-// });
+  socket.on("send_message", (data) => {
+    socket.to(data).emit("receive_message");
+  });
+  socket.on("disconnect", () => {
+    console.log("User Disconnected", socket.id);
+  });
+});
 
 // Firebase cloud storage
 // const firebaseConfig = {
