@@ -15,17 +15,14 @@ const LoginSignup = () => {
 
   const handleActionChange = (newAction: string) => setAction(newAction);
 
-  console.log(import.meta.env.VITE_APP_API_URL);
-
   return (
     <div className="login-signup-page">
       <div className="content-left">
         <Link to={"/"} className="">
           <h1 className="logo">
             <FaHandshakeSimple />
-            CollabHubit's nothing
+            CollabHub
           </h1>
-          <p>{import.meta.env.VITE_APP_API_URL} it's nothing</p>
         </Link>
       </div>
 
