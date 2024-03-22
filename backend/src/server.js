@@ -76,7 +76,7 @@ const io = new SocketIOServer(httpServer, {
   cors: {
     //which url is making calls to our socket io server
     //where our react application is running
-    origin: "https://cmpt-372-project-backend-e6bh7dyuba-uc.a.run.app/",
+    origin: "https://localhost:3000",
     methods: ["GET", "POST"],
   },
 });

@@ -7,7 +7,7 @@ import ChatMessages from "./ChatMessages";
 import { useUser } from "../../hooks/UserContext";
 import { User } from "../../models/User";
 
-const socket = io("https://cmpt-372-project-backend-e6bh7dyuba-uc.a.run.app/", {
+const socket = io("http://localhost:8080", {
   transports: ["websocket"],
 });
 
@@ -27,9 +27,11 @@ const Chat = () => {
   // maybe make this change everytime userList is changed
   const getRecentChats = async () => {
     try {
-      const response = await fetch(`/api/chats/getChats/${user!.id}`);
-      const chats = await response.json();
-      setRecentChatters(chats);
+      if (user != null) {
+        const response = await fetch(`/api/chats/getChats/${user!.id}`);
+        const chats = await response.json();
+        setRecentChatters(chats);
+      }
       // console.log("Chats:", chats);
     } catch (error) {
       console.error("Error fetching recent Chats", error);
@@ -37,7 +39,11 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    setUsername(user!.name);
+    if (user != null) {
+      setUsername(user!.name);
+    } else {
+      setUsername("");
+    }
     const getAllUsers = async () => {
       try {
         const response = await fetch("/api/users");
@@ -45,10 +51,12 @@ const Chat = () => {
           throw new Error("Failed to get all users");
         }
         const allUsers = await response.json();
-        const filteredAllUsers: User[] = allUsers.filter(
-          (myUser: User) => myUser.id != user!.id
-        );
-        setUserList(filteredAllUsers);
+        if (user != null) {
+          const filteredAllUsers: User[] = allUsers.filter(
+            (myUser: User) => myUser.id != user!.id
+          );
+          setUserList(filteredAllUsers);
+        }
       } catch (error) {
         console.error("Error fetching all users:", error);
       }
@@ -201,7 +209,7 @@ const Chat = () => {
             ) : (
               <ChatMessages
                 socket={socket}
-                username={user!.name}
+                username={username}
                 chatID={room}
                 goBack={goBack}
               />
