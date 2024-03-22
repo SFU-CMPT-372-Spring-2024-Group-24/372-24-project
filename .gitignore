@@ -27,7 +27,7 @@ dist-ssr
 docker-compose.yml
 
 .env
+.env.production
+.env.development
 *.pem
 config.json
-app.yaml
-.gcloudignore

@@ -1,13 +1,14 @@
-FROM node
+FROM node:20
 
-WORKDIR /usr/src/app/backend/
+WORKDIR /app
 
-COPY package*.json ./
+COPY package.json .
+COPY package-lock.json .
 
 RUN npm install
 
-COPY . .
+COPY . . 
 
 EXPOSE 8080
 
-CMD ["npm", "start"]
+CMD npm run start

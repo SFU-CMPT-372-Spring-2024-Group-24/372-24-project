@@ -1,6 +1,6 @@
 import { FaHandshakeSimple } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import { useState } from 'react';
+import { useState } from "react";
 
 import LoginForm from "../../components/Forms/LoginForm";
 import SignupForm from "../../components/Forms/SignupForm";
@@ -10,11 +10,12 @@ import GoogleSignIn from "../../components/Forms/GoogleSignIn";
 import "./LoginSignup.scss";
 
 const LoginSignup = () => {
-
   //regular login
   const [action, setAction] = useState("Sign In");
 
   const handleActionChange = (newAction: string) => setAction(newAction);
+
+  console.log(import.meta.env.VITE_APP_API_URL);
 
   return (
     <div className="login-signup-page">
@@ -22,8 +23,9 @@ const LoginSignup = () => {
         <Link to={"/"} className="">
           <h1 className="logo">
             <FaHandshakeSimple />
-            CollabHub
+            CollabHubit's nothing
           </h1>
+          <p>{import.meta.env.VITE_APP_API_URL} it's nothing</p>
         </Link>
       </div>
 

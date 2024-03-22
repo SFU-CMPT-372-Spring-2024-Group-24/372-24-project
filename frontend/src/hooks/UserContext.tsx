@@ -38,16 +38,19 @@ export const UserProvider = ({ children }: Props) => {
           method: "GET",
           credentials: "include",
         });
+        // const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/users/me`, {
+        //   withCredentials: true,
+        // });
+        // setUser(response.data);
         if (response.ok) {
-          const user = await response.json();
-          setUser(user);
+          const data = await response.json();
+          setUser(data);
         } else {
-          const errorData = await response.json();
-          console.error("Failed to fetch user", errorData);
           setUser(null);
         }
       } catch (error) {
         console.error("An error occurred while fetching user", error);
+        setUser(null);
       } finally {
         setLoading(false);
       }

@@ -1,7 +1,7 @@
 // Node modules
-const https = require("https");
+// const https = require("https");
 const http = require("http");
-const fs = require("fs");
+// const fs = require("fs");
 const path = require("path");
 
 // Third-party modules
@@ -9,14 +9,18 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
-const { Server: SocketIOServer } = require("socket.io");
-const { initializeApp } = require("firebase/app");
-const { getStorage, ref } = require("firebase/storage");
+// const { Server: SocketIOServer } = require("socket.io");
+// const { initializeApp } = require("firebase/app");
+// const { getStorage, ref } = require("firebase/storage");
 
 const app = express();
 
 // CORS
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: 'https://frontendservice-4v2gb6vska-uc.a.run.app',
+  credentials: true,
+}));
 
 // Body parser
 app.use(express.json());
@@ -25,20 +29,32 @@ app.use(express.urlencoded({ extended: true }));
 // Static files (for testing)
 app.use("/test", express.static(path.join(__dirname, "./test.local")));
 
+// Still trying to get the session to work to keep user logged in
 // Session
-app.use(
-  session({
-    name: "cmpt372project.sid",
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      sameSite: true,
-      secure: true,
-      httpOnly: false,
-    },
-  })
-);
+// app.use(
+//   session({
+//     name: "cmpt372project.sid",
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       sameSite: true,
+//       secure: true,
+//       httpOnly: false,
+//     },
+//   })
+// );
+app.use(session({
+  name: "cmpt372project.sid",
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: false,
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 
+  },
+}));
 
 // Routes
 app.get("/test", (req, res) => {
@@ -67,12 +83,16 @@ app.use("/tasks", require("./routes/tasks"));
 //     console.log(`HTTPS server is running on port ${httpsPort}`)
 // );
 
-// HTTP server (for chatting only)
-const httpPort = process.env.HTTP_PORT || 8080;
+// HTTP server
+const httpPort = process.env.PORT || 8080;
 const httpServer = http.createServer(app);
 httpServer.listen(httpPort, () =>
     console.log(`HTTP server is running on port ${httpPort}`)
 );
+// const port = process.env.PORT || 8080;
+// app.listen(port, () => {
+//   console.log(`App listening on port ${port}`);
+// });
 
 // Chat server
 const io = new SocketIOServer(httpServer, {
@@ -112,21 +132,3 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const storage = getStorage(firebaseApp);
 const storageRef = ref(storage, "files");
-
-//Static files of the built react application:
-app.use(express.static(path.join(__dirname, "..", "..", "frontend/dist/")));
-
-//send html
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "..", "frontend/dist/index.html"));
-  console.log("made it to test2!");
-});
-
-console.log(
-  "path name:",
-  path.join(__dirname, "..", "..", "frontend/dist/index.html")
-);
-
-httpsServer.listen(httpsPort, () =>
-  console.log(`HTTPS server is running on port ${httpsPort}`)
-);

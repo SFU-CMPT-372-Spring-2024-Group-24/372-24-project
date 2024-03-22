@@ -18,7 +18,7 @@ const GoogleSignIn = () => {
       const { given_name, name, email, picture } = decodedToken;
 
       // POST request to server 
-      const res = await backendAPI('/users', {
+      const res = await backendAPI('/users/google-login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
