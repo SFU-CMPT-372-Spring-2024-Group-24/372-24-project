@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google-cloud/cloud-sql-connector": "^1.2.4",
     "bootstrap": "^5.3.3",
     "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",
