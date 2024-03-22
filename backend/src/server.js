@@ -99,15 +99,14 @@ httpServer.listen(httpPort, () =>
 // });
 
 // Chat server
-const io = new SocketIOServer(httpServer);
-// , {
-//   cors: {
-//     //which url is making calls to our socket io server
-//     //where our react application is running
-//     origin: "http://localhost:3000/",
-//     methods: ["GET", "POST"],
-//   },
-// }
+const io = new SocketIOServer(httpServer, {
+  cors: {
+    //which url is making calls to our socket io server
+    //where our react application is running
+    origin: "https://cmpt-372-project-backend-e6bh7dyuba-uc.a.run.app/",
+    methods: ["GET", "POST"],
+  },
+});
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
   // this would be the chat_id instead of room

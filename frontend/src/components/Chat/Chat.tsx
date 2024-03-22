@@ -1,11 +1,11 @@
-// // import { IoMdChatboxes } from "react-icons/io";
-// import { useEffect, useState } from "react";
-// import { v4 as uuidv4 } from "uuid";
-// import io from "socket.io-client";
-// import "./Chat.scss";
-// import ChatMessages from "./ChatMessages";
-// import { useUser } from "../../hooks/UserContext";
-// import { User } from "../../models/User";
+// import { IoMdChatboxes } from "react-icons/io";
+import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import io from "socket.io-client";
+import "./Chat.scss";
+import ChatMessages from "./ChatMessages";
+import { useUser } from "../../hooks/UserContext";
+import { User } from "../../models/User";
 
 const socket = io("http://localhost:8080", {
   transports: ["websocket"],
@@ -28,9 +28,13 @@ const Chat = () => {
   const getRecentChats = async () => {
     try {
       if (user != null) {
-        const response = await fetch(`/api/chats/getChats/${user!.id}`);
+        console.log("User not null!");
+        const response = await fetch(
+          `${import.meta.env.VITE_APP_API_URL}/chats/getChats/${user!.id}`
+        );
         const chats = await response.json();
         setRecentChatters(chats);
+        console.log("Chats", chats);
       }
       // console.log("Chats:", chats);
     } catch (error) {
@@ -46,7 +50,9 @@ const Chat = () => {
     }
     const getAllUsers = async () => {
       try {
-        const response = await fetch("/api/users");
+        const response = await fetch(
+          `${import.meta.env.VITE_APP_API_URL}/users`
+        );
         if (!response.ok) {
           throw new Error("Failed to get all users");
         }
@@ -228,4 +234,4 @@ const Chat = () => {
   );
 };
 
-// export default Chat;
+export default Chat;
