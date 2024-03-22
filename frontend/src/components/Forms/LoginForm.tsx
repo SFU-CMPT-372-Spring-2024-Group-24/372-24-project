@@ -36,9 +36,16 @@ const LoginForm = ({}: Props) => {
     });
 
     if (response.ok) {
-      const user = await response.json();
+      const { user, token } = await response.json();
+
+      localStorage.setItem("token", token);
       setUser(user);
       navigate("/", { replace: true });
+
+      // return
+      // const user = await response.json();
+      // setUser(user);
+      // navigate("/", { replace: true });
     } else {
       const errorData = await response.json();
       setErrorMsg(errorData.message);

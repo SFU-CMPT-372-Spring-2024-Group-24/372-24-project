@@ -33,9 +33,14 @@ export const UserProvider = ({ children }: Props) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        const token = localStorage.getItem("token");
+
         const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/me`, {
         // const response = await fetch(`api/users/me`, {
           method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           credentials: "include",
         });
         // const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/users/me`, {

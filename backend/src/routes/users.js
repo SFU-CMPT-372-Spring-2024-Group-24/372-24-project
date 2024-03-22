@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const Sequelize = require("sequelize");
+const jwt = require("jsonwebtoken");
 
 // Get all users to test database connection
 router.get("/", async (req, res) => {
@@ -142,7 +143,14 @@ router.post("/login", async (req, res) => {
     delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
-    res.json(userJSON);
+    // JWT
+    const token = jwt.sign({ id: user.id }, process.env.SESSION_SECRET, {
+      expiresIn: "1d",
+    });
+
+    // res.cookie("token", token, { httpOnly: true });
+    // res.json(userJSON);
+    res.json({ user: userJSON, token });
   } catch (err) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -163,16 +171,29 @@ router.post("/logout", (req, res) => {
 
 // Check if user is authenticated
 const isAuthenticated = (req, res, next) => {
-  if (req.session.user) {
-    return next();
-  } else {
-    res.status(401).json({ message: "Unauthorized" });
-  }
+  
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
+  // const token = req.cookies.token;
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.SESSION_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+
+  // if (req.session.user) {
+  //   return next();
+  // } else {
+  //   res.status(401).json({ message: "Unauthorized" });
+  // }
 };
 
 // Restore current user session
 router.get("/me", isAuthenticated, async (req, res) => {
-  const user = await User.findByPk(req.session.user.id);
+  // const user = await User.findByPk(req.session.user.id);
+  const user = await User.findByPk(req.user.id);
   if (user) {
     const userJSON = user.toJSON();
     delete userJSON.password;

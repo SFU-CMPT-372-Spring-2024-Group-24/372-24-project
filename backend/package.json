@@ -19,6 +19,7 @@
     "express-session": "^1.18.0",
     "firebase": "^10.9.0",
     "google-auth-library": "^9.7.0",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
     "sequelize": "^6.37.1",
     "socket.io": "^4.7.5",
