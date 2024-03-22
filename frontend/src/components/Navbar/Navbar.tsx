@@ -1,5 +1,5 @@
 import styles from "./Navbar.module.scss";
-import Logo from "../../../public/handshakewhite.png";
+import Logo from "../../assets/handshakewhite.png";
 import { IoMenu } from "react-icons/io5"; 
 import { IoMdClose } from "react-icons/io";
 import { useState } from "react";

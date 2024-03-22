@@ -24,6 +24,7 @@ const LoginForm = ({}: Props) => {
     e.preventDefault();
 
     const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/login`, {
+    // const response = await fetch(`api/users/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
