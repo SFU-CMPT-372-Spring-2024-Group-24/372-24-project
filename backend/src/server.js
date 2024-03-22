@@ -9,18 +9,19 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
-// const { Server: SocketIOServer } = require("socket.io");
-// const { initializeApp } = require("firebase/app");
-// const { getStorage, ref } = require("firebase/storage");
+const { Server: SocketIOServer } = require("socket.io");
+const { initializeApp } = require("firebase/app");
+const { getStorage, ref } = require("firebase/storage");
 
 const app = express();
 
 // CORS
 // app.use(cors());
-app.use(cors({
-  origin: 'https://frontendservice-4v2gb6vska-uc.a.run.app',
-  credentials: true,
-}));
+// app.use(cors({
+//   origin: 'https://frontendservice-4v2gb6vska-uc.a.run.app',
+//   credentials: true,
+// }));
+app.use(cors())
 
 // Body parser
 app.use(express.json());
