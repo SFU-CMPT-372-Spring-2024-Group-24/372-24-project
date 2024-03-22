@@ -38,7 +38,7 @@ const Priority = ({ task, setTask }: Props) => {
   // For updating the priority
   const handlePriorityChange = async (priority: PriorityTypes) => {
     try {
-      const response = await fetch(`/api/tasks/${task.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${task.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

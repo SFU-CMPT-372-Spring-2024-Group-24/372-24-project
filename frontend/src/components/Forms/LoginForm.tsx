@@ -23,7 +23,7 @@ const LoginForm = ({}: Props) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const response = await fetch("/api/users/login", {
+    const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

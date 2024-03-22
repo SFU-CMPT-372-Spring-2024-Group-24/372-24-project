@@ -1,44 +1,44 @@
 require('dotenv').config();
-const { Client } = require('pg');
+// const { Client } = require('pg');
 const Sequelize = require('sequelize');
 
-const client = new Client({
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 5432,
-    user: process.env.DB_USERNAME || 'postgres',
-    password: process.env.DB_PASSWORD || 'postgres'
-});
+// const client = new Client({
+//     host: process.env.DB_HOST || 'localhost',
+//     port: process.env.DB_PORT || 5432,
+//     user: process.env.DB_USERNAME || 'postgres',
+//     password: process.env.DB_PASSWORD || 'postgres'
+// });
 
-async function createDatabase() {
-    try {
-        await client.connect();
-        // Create database if it doesn't exist
-        const res = await client.query(`SELECT 1 FROM pg_database WHERE datname = '${process.env.DB_NAME || 'cmpt-372-project'}'`);
-        if (res.rowCount === 0) {
-            await client.query(`CREATE DATABASE "${process.env.DB_NAME || 'cmpt-372-project'}"`);
-        }
-        await sequelize.authenticate();
-        await sequelize.sync();
+// async function createDatabase() {
+//     try {
+//         await client.connect();
+//         // Create database if it doesn't exist
+//         const res = await client.query(`SELECT 1 FROM pg_database WHERE datname = '${process.env.DB_NAME || 'cmpt-372-project'}'`);
+//         if (res.rowCount === 0) {
+//             await client.query(`CREATE DATABASE "${process.env.DB_NAME || 'cmpt-372-project'}"`);
+//         }
+//         await sequelize.authenticate();
+//         await sequelize.sync();
 
-        //Insert admin user into database
-        const adminUser = await User.findOne({ where: { email: 'collabhub@admin.com' } });
-        if (!adminUser) {
-            await User.create({
-                name: 'Admin',
-                username: 'Admin',
-                email: 'collabhub@admin.com',
-                password: 'chadminpassword',
-                isAdmin: true
-            });
-        }
-    } catch (err) {
-        console.error(err);
-    } finally {
-        await client.end();
-    }
-}
+//         //Insert admin user into database
+//         const adminUser = await User.findOne({ where: { email: 'collabhub@admin.com' } });
+//         if (!adminUser) {
+//             await User.create({
+//                 name: 'Admin',
+//                 username: 'Admin',
+//                 email: 'collabhub@admin.com',
+//                 password: 'chadminpassword',
+//                 isAdmin: true
+//             });
+//         }
+//     } catch (err) {
+//         console.error(err);
+//     } finally {
+//         await client.end();
+//     }
+// }
 
-createDatabase();
+// createDatabase();
 
 const sequelize = new Sequelize({
     dialect: 'postgres',
@@ -46,10 +46,13 @@ const sequelize = new Sequelize({
     port: process.env.DB_PORT || 5432,
     username: process.env.DB_USERNAME || 'postgres',
     password: process.env.DB_PASSWORD || 'postgres',
-    database: process.env.DB_NAME || 'cmpt-372-project',
+    database: process.env.DB_NAME || 'cmpt372project',
     retry: {
         max: 10,
         timeout: 60000
+    },
+    dialectOptions: {
+        socketPath: process.env.DB_HOST || 'localhost'
     }
 });
 
