@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import "./ChatMessages.scss";
 import { Socket } from "socket.io-client";
 import { useUser } from "../../hooks/UserContext";
+import { api } from "../../api";
 interface Props {
   socket: Socket;
   username: String;
@@ -22,34 +23,52 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
     //get current time
     var currentDate = new Date();
     // console.log(currentDate);
-    const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/chats/addMessage`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    // const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/chats/addMessage`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     chatID: chatID,
+    //     userID: userID,
+    //     text: text,
+    //     date: currentDate,
+    //   }),
+    // });
+    // if (response.ok) {
+    //   //want to return the chatID
+    //   console.log("response ok");
+    //   // const myMessage = await response.json();
+    //   // console.log("addNewMessage:", myMessage);
+    // } else {
+    //   console.log("response not ok");
+    // }
+    try {
+      const response = await api.post("/chats/addMessage", {
         chatID: chatID,
         userID: userID,
         text: text,
         date: currentDate,
-      }),
-    });
-    if (response.ok) {
-      //want to return the chatID
-      console.log("response ok");
-      // const myMessage = await response.json();
-      // console.log("addNewMessage:", myMessage);
-    } else {
-      console.log("response not ok");
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error adding new message", error);
     }
   };
 
   const getMessagesFromChatID = async () => {
+    // try {
+    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/chats/getMessagesFromChat/${chatID}`);
+    //   const messages = await response.json();
+    //   setMessageList(messages);
+    //   // console.log("Messages:", messages);
+    // } catch (error) {
+    //   console.error("Error fetching messages", error);
+    // }
     try {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/chats/getMessagesFromChat/${chatID}`);
-      const messages = await response.json();
-      setMessageList(messages);
-      // console.log("Messages:", messages);
+      const response = await api.get(`/chats/getMessagesFromChat/${chatID}`);
+      setMessageList(response.data);
+      // console.log("Messages:", response.data);
     } catch (error) {
       console.error("Error fetching messages", error);
     }

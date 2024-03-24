@@ -6,7 +6,9 @@ import "./Chat.scss";
 import ChatMessages from "./ChatMessages";
 import { useUser } from "../../hooks/UserContext";
 import { User } from "../../models/User";
+import { api } from "../../api";
 
+// const socket = io("wss://collabhub-dot-collabhub-418107.uc.r.appspot.com/");
 const socket = io("http://localhost:8080", {
   transports: ["websocket"],
 });
@@ -27,16 +29,11 @@ const Chat = () => {
   // maybe make this change everytime userList is changed
   const getRecentChats = async () => {
     try {
-        if (user != null) {
-          console.log("User not null!");
-          const response = await fetch(
-            `${import.meta.env.VITE_APP_API_URL}/chats/getChats/${user!.id}`
-          );
-          const chats = await response.json();
-          setRecentChatters(chats);
-          console.log("Chats", chats);
-        }
-        // console.log("Chats:", chats);
+      if (user != null) {
+        const response = await api.get(`/chats/getChats/${user!.id}`);
+        const chats = response.data;
+        setRecentChatters(chats);
+      }
     } catch (error) {
       console.error("Error fetching recent Chats", error);
     }
@@ -44,22 +41,19 @@ const Chat = () => {
 
   useEffect(() => {
     if (user != null) {
-        setUsername(user!.name);
+      setUsername(user!.name);
     } else {
-        setUsername("");
+      setUsername("");
     }
     const getAllUsers = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users`);
-        if (!response.ok) {
-          throw new Error("Failed to get all users");
-        }
-        const allUsers = await response.json();
+        const response = await api.get("/users");
+        const users = response.data;
         if (user != null) {
-            const filteredAllUsers: User[] = allUsers.filter(
-              (myUser: User) => myUser.id != user!.id
-            );
-            setUserList(filteredAllUsers);
+          const filteredAllUsers: User[] = users.filter(
+            (myUser: User) => myUser.id != user!.id
+          );
+          setUserList(filteredAllUsers);
         }
       } catch (error) {
         console.error("Error fetching all users:", error);
@@ -71,25 +65,38 @@ const Chat = () => {
   }, []);
 
   const addNewChat = async (chatName: any, userID: any, otherID: any) => {
-    const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/chats/addChat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    // const response = await fetch(
+    //   `${import.meta.env.VITE_APP_API_URL}/chats/addChat`,
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       chatName: chatName,
+    //       userID: userID,
+    //       otherID: otherID,
+    //     }),
+    //   }
+    // );
+    // if (response.ok) {
+    //   //want to return the chatID
+    //   console.log("response ok");
+    //   // const myChat = await response.json();
+    //   // console.log("addNewChat:", myChat);
+    //   // setChat(myChat);
+    // } else {
+    //   console.log("response not ok");
+    // }
+    try {
+      const response = await api.post("/chats/addChat", {
         chatName: chatName,
         userID: userID,
         otherID: otherID,
-      }),
-    });
-    if (response.ok) {
-      //want to return the chatID
-      console.log("response ok");
-      // const myChat = await response.json();
-      // console.log("addNewChat:", myChat);
-      // setChat(myChat);
-    } else {
-      console.log("response not ok");
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error adding new chat", error);
     }
   };
 

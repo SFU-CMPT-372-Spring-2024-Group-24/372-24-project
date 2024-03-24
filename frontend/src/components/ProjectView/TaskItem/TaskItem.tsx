@@ -20,6 +20,8 @@ import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 import Priority from "./Priority";
 import Description from "./Description";
 import DueDate from "./DueDate";
+// API
+import { api } from "../../../api";
 
 interface Props {
   listId: number;
@@ -40,17 +42,29 @@ const TaskItem = ({ listName, task, setTask, deleteTask }: Props) => {
 
   // Delete Task
   const handleDeleteTask = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${task.id}`, {
-        method: "DELETE",
-      });
+    // try {
+    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${task.id}`, {
+    //     method: "DELETE",
+    //   });
 
-      if (response.ok) {
+    //   if (response.ok) {
+    //     deleteTask(task.id);
+    //     setModalIsOpen(false);
+    //   } else {
+    //     const errorData = await response.json();
+    //     console.error("Error deleting task:", errorData.message);
+    //   }
+    // } catch (error) {
+    //   console.error("Error deleting task:", error);
+    // }
+
+    try {
+      const response = await api.delete(`/tasks/${task.id}`);
+      if (response.data.message === 'Task deleted') {
         deleteTask(task.id);
         setModalIsOpen(false);
       } else {
-        const errorData = await response.json();
-        console.error("Error deleting task:", errorData.message);
+        console.error("Error deleting task:", response.data);
       }
     } catch (error) {
       console.error("Error deleting task:", error);

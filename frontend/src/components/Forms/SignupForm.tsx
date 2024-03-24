@@ -1,5 +1,5 @@
 // Libraries
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // Icons
 import { FaUser } from "react-icons/fa6";
@@ -9,11 +9,13 @@ import { RiContactsBook2Fill, RiLockPasswordFill } from "react-icons/ri";
 import { useUser } from "../../hooks/UserContext";
 // Styles
 import "./LoginSignupForm.scss";
+// API
+import { api } from "../../api";
 
 interface Props {}
 
 const SignupForm = ({}: Props) => {
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
   const navigate = useNavigate();
 
   const [name, setName] = useState<string>("");
@@ -24,35 +26,87 @@ const SignupForm = ({}: Props) => {
 
   const [errorMsg, setErrorMsg] = useState<string>("");
 
+  useEffect(() => {
+    if (user) {
+      navigate("/projects", { replace: true });
+    }
+  }, [user]);
+
   // Todo: clean console error, only display error message on the app
+  // const handleCreateAccount = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   try {
+  //     const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/signup`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         name,
+  //         username,
+  //         email,
+  //         password,
+  //         passwordConfirmation,
+  //       }),
+  //     });
+
+  //     if (response.ok) {
+  //       const user = await response.json();
+  //       setUser(user);
+  //       navigate("/projects", { replace: true });
+  //     } else {
+  //       const errorData = await response.json();
+  //       setErrorMsg(errorData.message);
+  //     }
+  //   } catch (error) {
+  //     console.error(`An error occurred while creating your account: ${error}`);
+  //     setErrorMsg("An error occurred while creating your account");
+  //   }
+  // };
+
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // axios
+    //   .post(`${import.meta.env.VITE_APP_API_URL}/users/signup`, {
+    //     name,
+    //     username,
+    //     email,
+    //     password,
+    //     passwordConfirmation,
+    //   })
+    //   .then((response) => {
+    //     setUser(response.data.user);
+
+    //     if (response.data.loggedIn) {
+    //       navigate("/projects");
+    //     } else {
+    //       setErrorMsg(response.data.message);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error(`An error occurred while creating your account: ${error}`);
+    //   });
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          username,
-          email,
-          password,
-          passwordConfirmation,
-        }),
+      const response = await api.post("/users/signup", {
+        name,
+        username,
+        email,
+        password,
+        passwordConfirmation,
       });
 
-      if (response.ok) {
-        const user = await response.json();
-        setUser(user);
-        navigate("/", { replace: true });
+      setUser(response.data.user);
+
+      if (response.data.loggedIn) {
+        navigate("/projects");
       } else {
-        const errorData = await response.json();
-        setErrorMsg(errorData.message);
+        setErrorMsg(response.data.message);
       }
     } catch (error) {
       console.error(`An error occurred while creating your account: ${error}`);
-      setErrorMsg("An error occurred while creating your account");
     }
   };
 

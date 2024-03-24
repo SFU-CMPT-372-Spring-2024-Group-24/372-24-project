@@ -9,6 +9,8 @@ import { Project } from "../../models/Project";
 // Styles
 import "./ProjectViewPage.scss";
 import { List } from "../../models/List";
+// API
+import { api } from "../../api";
 
 // Project View Page
 // Contains the project info component and 3 task list components
@@ -20,14 +22,24 @@ const ProjectViewPage = () => {
 
   // Fetch project data from server
   useEffect(() => {
-    const fetchProject = async () => {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/projects/${id}`);
-      const projectData = await response.json();
+    // const fetchProject = async () => {
+    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/projects/${id}`);
+    //   const projectData = await response.json();
 
-      if (projectData) {
-        setProject(projectData);
+    //   if (projectData) {
+    //     setProject(projectData);
+    //   } else {
+    //     navigate("/404");
+    //   }
+    // };
+
+    const fetchProject = async () => {
+      const response = await api.get(`/projects/${id}`);
+      
+      if (response.data) {
+        setProject(response.data);
       } else {
-        navigate("/404");
+        navigate("/projects/404");
       }
     };
 
@@ -36,15 +48,27 @@ const ProjectViewPage = () => {
 
   // Fetch lists data from server
   useEffect(() => {
-    const fetchLists = async () => {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/lists/${id}`);
+    // const fetchLists = async () => {
+    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/lists/${id}`);
       
-      if (response.ok) {
-        const listsData = await response.json();
-        setLists(listsData);
+    //   if (response.ok) {
+    //     const listsData = await response.json();
+    //     setLists(listsData);
+    //   } else {
+    //     const errorData = await response.json();
+    //     console.error("Error fetching lists:", errorData.message);
+    //   }
+    // };
+
+    // fetchLists();
+
+    const fetchLists = async () => {
+      const response = await api.get(`/lists/${id}`);
+      
+      if (response.data) {
+        setLists(response.data);
       } else {
-        const errorData = await response.json();
-        console.error("Error fetching lists:", errorData.message);
+        console.error("Error fetching lists:", response.data.message);
       }
     };
 
