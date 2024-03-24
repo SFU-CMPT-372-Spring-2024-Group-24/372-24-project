@@ -48,17 +48,21 @@ function Layout() {
 
 interface AuthRouteProps {
   children: React.ReactNode;
-  path: string;
+  // path: string;
 }
-const AuthRoute = ({ children, path }: AuthRouteProps) => {
+const AuthRoute = ({ children }: AuthRouteProps) => {
   const { user } = useUser();
 
-  if (!user && path !== "/landing") {
-    return <Navigate to="/landing" />;
-  }
+  // if (!user && path !== "/landing") {
+  //   return <Navigate to="/landing" />;
+  // }
 
-  if (user && path === "/landing") {
-    return <Navigate to="/" />;
+  // if (user && path === "/landing") {
+  //   return <Navigate to="/" />;
+  // }
+
+  if (!user) {
+    return <Navigate to="/login" />;
   }
 
   return children;
@@ -66,40 +70,41 @@ const AuthRoute = ({ children, path }: AuthRouteProps) => {
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />} path="/">
-          <Route
-            path="/"
-            element={
-              <AuthRoute path="/">
-                <Homepage />
-              </AuthRoute>
-            }
-          />
-          <Route
-            path="/project/:id"
-            element={
-              <AuthRoute path="/project/:id">
-                <ProjectViewPage />
-              </AuthRoute>
-            }
-          />
-          <Route path="404" element={<NotFoundPage />} />
-          <Route path="*" element={<Navigate to={"/404"} />} />
-        </Route>
-        <Route path="/login" element={<LoginSignup />} />
-        <Route path="/admin" element={<Adminpage />} />
-        <Route path="/landing" element={<LandingPage />} /> 
-      </Routes>
-    </BrowserRouter>
+    <UserProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />} path="/projects">
+            <Route
+              path="/projects"
+              element={
+                <AuthRoute>
+                  <Homepage />
+                </AuthRoute>
+              }
+            />
+            <Route
+              path="/projects/:id"
+              element={
+                <AuthRoute>
+                  <ProjectViewPage />
+                </AuthRoute>
+              }
+            />
+            <Route path="/projects/404" element={<NotFoundPage />} />
+            <Route path="/projects/*" element={<Navigate to={"/projects/404"} />} />
+          </Route>
+          <Route path="/login" element={<LoginSignup />} />
+          <Route path="/admin" element={<Adminpage />} />
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/" element={<Navigate to={"/landing"}/>} />
+        </Routes>
+      </BrowserRouter>
+    </UserProvider>
   );
 };
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <UserProvider>
-      <App />
-    </UserProvider>
+    <App />
   </React.StrictMode>
 );

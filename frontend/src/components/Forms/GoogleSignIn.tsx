@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { jwtDecode } from "jwt-decode";
 import { useUser } from "../../hooks/UserContext";
 import { useNavigate } from "react-router-dom";
+// import { api } from "../../api";
 
 const GoogleSignIn = () => {
   const { setUser } = useUser();
@@ -16,7 +17,7 @@ const GoogleSignIn = () => {
       const { given_name, name, email, picture } = decodedToken;
 
       // POST request to server 
-      const res = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/google-login`, {
+      const res = await fetch(`api/users/google-login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -28,7 +29,7 @@ const GoogleSignIn = () => {
         const newUser = await res.json();
         console.log('New user:', newUser);
         setUser(newUser); 
-        navigate("/"); 
+        navigate("/projects"); 
       } else {
         console.error('Failed to create user:', await res.text());
       }

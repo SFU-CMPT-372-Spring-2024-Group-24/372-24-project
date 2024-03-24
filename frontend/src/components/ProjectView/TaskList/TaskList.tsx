@@ -9,6 +9,8 @@ import "./TaskList.scss";
 import TaskItem from "../TaskItem/TaskItem";
 // Models
 import { Task } from "../../../models/Task";
+// API
+import { api } from "../../../api";
 
 interface Props {
   listId: number;
@@ -22,13 +24,18 @@ const TaskList = ({ listId, listName }: Props) => {
 
   // Fetch tasks by listId from server
   useEffect(() => {
-    const fetchTasks = async () => {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${listId}`);
-      const tasksData = await response.json();
+    // const fetchTasks = async () => {
+    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${listId}`);
+    //   const tasksData = await response.json();
 
-      if (tasksData) {
-        setTasks(tasksData);
-      }
+    //   if (tasksData) {
+    //     setTasks(tasksData);
+    //   }
+    // };
+
+    const fetchTasks = async () => {
+      const response = await api.get(`/tasks/${listId}`);
+      setTasks(response.data);
     };
 
     fetchTasks();
@@ -44,15 +51,18 @@ const TaskList = ({ listId, listName }: Props) => {
   const handleAddTask = async () => {
     if (taskName.trim() === "") return;
 
-    const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name: taskName, listId }),
-    });
+    // const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ name: taskName, listId }),
+    // });
 
-    const newTask = await response.json();
+    // const newTask = await response.json();
+
+    const response = await api.post("/tasks", { name: taskName, listId });
+    const newTask = response.data;
 
     setTasks([...tasks, newTask]);
     setTaskName("");

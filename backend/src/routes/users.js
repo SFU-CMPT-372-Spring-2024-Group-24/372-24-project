@@ -35,8 +35,7 @@ router.post("/google-login", async (req, res) => {
       });
     }
 
-    // req.session.userId = user.id;
-    req.session.user = user;
+    req.session.userId = user.id;
 
     res.json(user);
   } catch (error) {
@@ -87,15 +86,15 @@ router.post("/signup", async (req, res) => {
 
     // Create user
     const user = await User.create({ name, username, email, password: hash });
-    // req.session.userId = user.id;
-    req.session.user = user;
+    req.session.userId = user.id;
 
     const userJSON = user.toJSON();
     delete userJSON.password;
     delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
-    res.json(userJSON);
+    // res.json(userJSON);
+    return res.json({ loggedIn: true, userId: req.session.userId, user: userJSON});
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -134,15 +133,15 @@ router.post("/login", async (req, res) => {
         .json({ message: "Invalid email/username or password" });
     }
 
-    // req.session.userId = user.id;
-    req.session.user = user;
+    req.session.userId = user.id;
 
     const userJSON = user.toJSON();
     delete userJSON.password;
     delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
-    res.json(userJSON);
+    // res.json(userJSON);
+    return res.status(200).json({ loggedIn: true, userId: req.session.userId, user: userJSON});
   } catch (err) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -152,35 +151,52 @@ router.post("/login", async (req, res) => {
 router.post("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return res
-        .status(500)
-        .json({ message: "Internal server error: unable to log out" });
+      return res.status(500).json({ message: "Internal server error: unable to log out" });
     }
-    res.clearCookie("cmpt372project.sid");
-    res.json({ message: "Logged out" });
+    res.clearCookie("collabhub.sid");
+    return res.json({ message: "Logged out" });
   });
 });
 
 // Check if user is authenticated
-const isAuthenticated = (req, res, next) => {
-  if (req.session.user) {
-    return next();
-  } else {
-    res.status(401).json({ message: "Unauthorized" });
-  }
-};
+// const isAuthenticated = (req, res, next) => {
+//   // if (req.session.user.id) {
+//   if (req.session.userId) {
+//     return next();
+//   } else {
+//     res.status(401).json({ message: "Unauthorized" });
+//   }
+// };
 
 // Restore current user session
-router.get("/me", isAuthenticated, async (req, res) => {
-  const user = await User.findByPk(req.session.user.id);
-  if (user) {
-    const userJSON = user.toJSON();
-    delete userJSON.password;
-    delete userJSON.createdAt;
-    delete userJSON.updatedAt;
-    res.json(userJSON);
+// router.get("/me", isAuthenticated, async (req, res) => {
+//   // const user = await User.findByPk(req.session.user.id);
+//   const user = await User.findByPk(req.session.userId);
+//   if (user) {
+//     const userJSON = user.toJSON();
+//     delete userJSON.password;
+//     delete userJSON.createdAt;
+//     delete userJSON.updatedAt;
+//     res.json(userJSON);
+//   } else {
+//     res.status(404).json({ message: "User not found" });
+//   }
+// });
+
+router.get("/me", async (req, res) => {
+  if (req.session.userId) {
+    const user = await User.findByPk(req.session.userId);
+    if (user) {
+      const userJSON = user.toJSON();
+      delete userJSON.password;
+      delete userJSON.createdAt;
+      delete userJSON.updatedAt;
+      return res.json({ valid: true, user: userJSON, userId: req.session.userId });
+    } else {
+      return res.status(404).json({ message: "User not found" });
+    }
   } else {
-    res.status(404).json({ message: "User not found" });
+    return res.json({ valid: false });
   }
 });
 

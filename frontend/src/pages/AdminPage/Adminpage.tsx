@@ -1,15 +1,26 @@
 import { useState, useEffect } from 'react';
+// API
+import { api } from '../../api';
 
 const Adminpage = () => {
     const [users, setUsers] = useState<any[]>([]); 
     
 
     useEffect(() => {
+        // const fetchUsers = async () => {
+        //     try {
+        //         const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users`);
+        //         const userData = await response.json();
+        //         setUsers(userData);
+        //     } catch (error) {
+        //         console.error('Error fetching users', error);
+        //     }
+        // };
+
         const fetchUsers = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users`);
-                const userData = await response.json();
-                setUsers(userData);
+                const response = await api.get('/users');
+                setUsers(response.data);
             } catch (error) {
                 console.error('Error fetching users', error);
             }
