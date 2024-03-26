@@ -2,24 +2,26 @@
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 // Icons
-import { IoMdAdd, IoMdTrash } from "react-icons/io";
+import { IoMdTrash } from "react-icons/io";
 // Styles
 import "./ProjectInfo.scss";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 // Models
 import { Project } from "../../../models/Project";
 // Utils
 import { getFileIcon } from "../../../utils/fileUtils";
 // Files
-import defaultProfilePicture from "../../../assets/default-profile-picture.png";
+// import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // API
 import { api } from "../../../api";
+// Components
+import Members from "./Members";
 
 interface Props {
   project: Project;
   setProject: (project: Project) => void;
 }
-const ProjectInfo = ({ project }: Props) => {
+const ProjectInfo = ({ project, setProject }: Props) => {
   const navigate = useNavigate();
 
   const handleDeleteProject = async () => {
@@ -43,22 +45,7 @@ const ProjectInfo = ({ project }: Props) => {
         <p>{project.description}</p>
       </div>
 
-      <div className="members">
-        <div className="title">
-          <h2>Members</h2>
-          <IoMdAdd size={20} className="add-member-icon" />
-        </div>
-
-        {project.Users.map((user) => (
-          <div className="member" key={user.id}>
-            <img
-              src={user.profilePicture || defaultProfilePicture}
-              alt="User Avatar"
-            />
-            <p>{user.name}</p>
-          </div>
-        ))}
-      </div>
+      <Members project={project} setProject={setProject} />
 
       <div className="files">
         <h2>Files</h2>

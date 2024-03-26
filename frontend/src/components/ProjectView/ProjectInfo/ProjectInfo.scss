@@ -34,10 +34,17 @@ aside.project-info {
 
     .add-member-icon {
       cursor: pointer;
+      opacity: 0.5;
+
+      &:hover {
+        box-shadow: none;
+        opacity: 1;
+      }
     }
   }
 
-  .member, .file {
+  .member,
+  .file {
     display: flex;
     gap: 0.5rem;
     align-items: center;
@@ -71,4 +78,106 @@ aside.project-info {
       margin: 0;
     }
   }
+}
+
+.add-member-modal-backdrop {
+  opacity: 0.1 !important;
+}
+
+.add-member-modal {
+  button {
+    font-size: 14px;
+  }
+
+  .search-member {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0;
+
+    .search-bar {
+      flex-grow: 1;
+      position: relative;
+
+      .search-icon {
+        position: absolute;
+        top: 50%;
+        left: .5rem;
+        transform: translateY(-50%);
+      }
+
+      input {
+        width: 100%;
+        border-radius: 10px;
+        padding: .5rem .5rem .5rem 2rem;
+      }
+    }
+
+    button.btn-search {
+      height: fit-content;
+      background: $purple;
+      color: $white;
+    }
+  }
+
+  .members-list {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin-top: 1rem;
+
+    .member {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      border: 1px solid;
+      border-radius: 10px;
+      padding: .25rem .5rem;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+
+      img {
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      .member-info {
+        flex-grow: 1;
+
+        p:nth-child(2) {
+          color: rgba($color: $black, $alpha: 0.5)
+        }
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+  }
+
+  .modal-footer {
+    justify-content: center;
+    gap: 1rem;
+
+    button.btn-add-member {
+      background: $purple;
+      color: $white;
+    }
+
+    button.btn-cancel {
+      border: none;
+      border-bottom: 2px solid transparent;
+      border-radius: 0;
+
+      &:hover {
+        box-shadow: none;
+        border-bottom: 2px solid $dark-gray;
+      }
+    }
+  }
+
 }
