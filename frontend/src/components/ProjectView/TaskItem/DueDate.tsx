@@ -44,33 +44,12 @@ const DueDate = ({ task, setTask }: Props) => {
   const handleTaskDoneChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const isDone = event.target.checked;
 
-    // try {
-    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${task.id}`, {
-    //     method: "PUT",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ isDone }),
-    //   });
-
-    //   if (response.ok) {
-    //     setTask({ ...task, isDone });
-    //     setErrorMsg("");
-    //   } else {
-    //     const errorData = await response.json();
-    //     setErrorMsg(errorData.message);
-    //   }
-    // } catch (error) {
-    //   console.error("Error updating task done:", error);
-    //   setErrorMsg("An error occurred while updating the task done status.");
-    // }
-
     try {
       const response = await api.put(`/tasks/${task.id}`, {
         isDone,
       });
 
-      setTask({ ...task, isDone: response.data.task.isDone });
+      setTask({ ...task, isDone: response.data.isDone });
       setErrorMsg("");
     } catch (error) {
       console.error("Error updating task done:", error);
@@ -87,34 +66,12 @@ const DueDate = ({ task, setTask }: Props) => {
       return;
     }
 
-    // try {
-    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${task.id}`, {
-    //     method: "PUT",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ dueDate: selectedDate }),
-    //   });
-
-    //   if (response.ok) {
-    //     setTask({ ...task, dueDate: selectedDate });
-    //     setErrorMsg("");
-    //     setShowDueDateModal(false);
-    //   } else {
-    //     const errorData = await response.json();
-    //     setErrorMsg(errorData.message);
-    //   }
-    // } catch (error) {
-    //   console.error("Error updating due date:", error);
-    //   setErrorMsg("An error occurred while updating the due date.");
-    // }
-
     try {
       const response = await api.put(`/tasks/${task.id}`, {
         dueDate: selectedDate,
       });
-
-      setTask({ ...task, dueDate: response.data.task.dueDate });
+      
+      setTask({ ...task, dueDate: response.data.dueDate });
       setErrorMsg("");
       setShowDueDateModal(false);
     } catch (error) {

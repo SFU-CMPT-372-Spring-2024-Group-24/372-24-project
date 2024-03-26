@@ -22,23 +22,11 @@ const ProjectViewPage = () => {
 
   // Fetch project data from server
   useEffect(() => {
-    // const fetchProject = async () => {
-    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/projects/${id}`);
-    //   const projectData = await response.json();
-
-    //   if (projectData) {
-    //     setProject(projectData);
-    //   } else {
-    //     navigate("/404");
-    //   }
-    // };
-
     const fetchProject = async () => {
-      const response = await api.get(`/projects/${id}`);
-      
-      if (response.data) {
+      try {
+        const response = await api.get(`/projects/${id}`);
         setProject(response.data);
-      } else {
+      } catch (error) {
         navigate("/projects/404");
       }
     };
@@ -48,32 +36,19 @@ const ProjectViewPage = () => {
 
   // Fetch lists data from server
   useEffect(() => {
-    // const fetchLists = async () => {
-    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/lists/${id}`);
-      
-    //   if (response.ok) {
-    //     const listsData = await response.json();
-    //     setLists(listsData);
-    //   } else {
-    //     const errorData = await response.json();
-    //     console.error("Error fetching lists:", errorData.message);
-    //   }
-    // };
+    if (project) {
+      const fetchLists = async () => {
+        try {
+          const response = await api.get(`/lists/${id}`);
+          setLists(response.data);
+        } catch (error) {
+          console.error("Error fetching lists:", error);
+        }
+      };
 
-    // fetchLists();
-
-    const fetchLists = async () => {
-      const response = await api.get(`/lists/${id}`);
-      
-      if (response.data) {
-        setLists(response.data);
-      } else {
-        console.error("Error fetching lists:", response.data.message);
-      }
-    };
-
-    fetchLists();
-  }, [id]);
+      fetchLists();
+    }
+  }, [id, project]);
 
   return (
     <>
@@ -86,11 +61,7 @@ const ProjectViewPage = () => {
 
             <div className="project-columns">
               {lists.map((list) => (
-                <TaskList
-                  key={list.id}
-                  listId={list.id}
-                  listName={list.name}
-                />
+                <TaskList key={list.id} listId={list.id} listName={list.name} />
               ))}
             </div>
           </section>

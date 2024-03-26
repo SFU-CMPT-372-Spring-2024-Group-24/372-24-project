@@ -39,33 +39,12 @@ const Priority = ({ task, setTask }: Props) => {
 
   // For updating the priority
   const handlePriorityChange = async (priority: PriorityTypes) => {
-    // try {
-    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${task.id}`, {
-    //     method: "PUT",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ priority }),
-    //   });
-
-    //   if (response.ok) {
-    //     setTask({ ...task, priority });
-    //     setPriorityValue(priority);
-    //     togglePriorityModal();
-    //   } else {
-    //     const errorData = await response.json();
-    //     throw new Error(errorData.message);
-    //   }
-    // } catch (error) {
-    //   console.error("Error updating priority:", error);
-    // }
-
     try {
       const response = await api.put(`/tasks/${task.id}`, {
         priority,
       });
 
-      setTask({ ...task, priority: response.data.task.priority });
+      setTask({ ...task, priority: response.data.priority });
       setPriorityValue(response.data.task.priority);
       togglePriorityModal();
     } catch (error) {

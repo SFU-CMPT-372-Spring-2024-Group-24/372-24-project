@@ -9,7 +9,7 @@ import { useUser } from "../../hooks/UserContext";
 // Models
 import { Project } from "../../models/Project";
 // API
-import { api } from "../../api";
+import { api, AxiosError } from "../../api";
 
 interface Props {
   showModal: boolean;
@@ -22,41 +22,24 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
   const [errorMsg, setErrorMsg] = useState<string>("");
   const navigate = useNavigate();
   const { user } = useUser();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const closeModal = () => setShowModal(false);
+  const closeModal = () => {
+    setErrorMsg("");
+    setProjectName("");
+    setProjectDescription("");
+    setShowModal(false);
+  }
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    setLoading(true);
 
     if (!user) {
       setErrorMsg("You must be logged in to create a project.");
       return;
     }
-
-    // const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/projects`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     name: projectName,
-    //     description: projectDescription,
-    //     userId: user.id,
-    //   }),
-    // });
-
-    // if (response.ok) {
-    //   const project: Project = await response.json();
-      
-    //   navigate(`/project/${project.id}`);
-
-    //   setProjectName("");
-    //   setProjectDescription("");
-    //   closeModal();
-    // } else {
-    //   const errorData = await response.json();
-    //   setErrorMsg(errorData.message);
-    // }
 
     try {
       const response = await api.post("/projects", {
@@ -66,14 +49,17 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
       });
 
       const project: Project = response.data;
-      
       navigate(`/projects/${project.id}`);
-
-      setProjectName("");
-      setProjectDescription("");
       closeModal();
     } catch (error) {
-      setErrorMsg("An error occurred while creating the project.");
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        setErrorMsg(axiosError.response.data.message);
+      } else {
+        setErrorMsg("An error occurred while creating the project.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,6 +73,8 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
       centered
     >
       <h2>Create new project</h2>
+
+      {loading && <div className="loading">Creating your project...</div>}
 
       <div className="error-msg">{errorMsg}</div>
 
