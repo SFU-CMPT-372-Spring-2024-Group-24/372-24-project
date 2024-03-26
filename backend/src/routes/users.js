@@ -94,7 +94,7 @@ router.post("/signup", async (req, res) => {
     delete userJSON.updatedAt;
 
     // res.json(userJSON);
-    return res.json({ loggedIn: true, userId: req.session.userId, user: userJSON});
+    return res.json({ loggedIn: true, userId: req.session.userId, user: userJSON });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -141,7 +141,7 @@ router.post("/login", async (req, res) => {
     delete userJSON.updatedAt;
 
     // res.json(userJSON);
-    return res.status(200).json({ loggedIn: true, userId: req.session.userId, user: userJSON});
+    return res.status(200).json({ loggedIn: true, userId: req.session.userId, user: userJSON });
   } catch (err) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -197,6 +197,41 @@ router.get("/me", async (req, res) => {
     }
   } else {
     return res.json({ valid: false });
+  }
+});
+
+// Search users
+router.get("/search", async (req, res) => {
+  const { query, exclude } = req.query;
+
+  // Convert exclude to array of excluded user ids
+  const excludeIds = JSON.parse(exclude);
+
+  try {
+    // Search users by name, username, or email, excluding specified user ids
+    const users = await User.findAll({
+      where: {
+        [Sequelize.Op.and]: [
+          {
+            [Sequelize.Op.or]: [
+              { name: { [Sequelize.Op.iLike]: `%${query}%` } },
+              { username: { [Sequelize.Op.iLike]: `%${query}%` } },
+              { email: { [Sequelize.Op.iLike]: `%${query}%` } },
+            ],
+          },
+          {
+            id: {
+              [Sequelize.Op.notIn]: excludeIds,
+            },
+          },
+        ],
+      },
+      attributes: ["id", "name", "username", "email", "profilePicture"],
+    });
+
+    res.json({ users });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 });
 
