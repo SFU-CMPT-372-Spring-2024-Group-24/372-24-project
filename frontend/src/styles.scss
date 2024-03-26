@@ -87,3 +87,27 @@ input, textarea {
   margin: 0 auto;
   font-weight: 700;
 }
+
+.toast-success {
+  background-color: $green !important;
+  color: $white !important;
+
+  .Toastify__toast-icon {
+    svg {
+      fill: $white;
+    }
+  }
+
+  button {
+    opacity: 0.7;
+    color: $white;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
+
+  .Toastify__progress-bar--success {
+    background: $white;
+  }
+}

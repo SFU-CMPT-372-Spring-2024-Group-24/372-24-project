@@ -2,6 +2,7 @@
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
 import moment from "moment";
+import { toast } from "react-toastify";
 // Styles
 import "./TaskItem.scss";
 // Icons
@@ -42,29 +43,15 @@ const TaskItem = ({ listName, task, setTask, deleteTask }: Props) => {
 
   // Delete Task
   const handleDeleteTask = async () => {
-    // try {
-    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${task.id}`, {
-    //     method: "DELETE",
-    //   });
-
-    //   if (response.ok) {
-    //     deleteTask(task.id);
-    //     setModalIsOpen(false);
-    //   } else {
-    //     const errorData = await response.json();
-    //     console.error("Error deleting task:", errorData.message);
-    //   }
-    // } catch (error) {
-    //   console.error("Error deleting task:", error);
-    // }
-
     try {
       const response = await api.delete(`/tasks/${task.id}`);
-      if (response.data.message === 'Task deleted') {
+
+      if (response.status === 200) {
         deleteTask(task.id);
         setModalIsOpen(false);
-      } else {
-        console.error("Error deleting task:", response.data);
+        toast.success(response.data.message, {
+          className: "toast-success",
+        });
       }
     } catch (error) {
       console.error("Error deleting task:", error);

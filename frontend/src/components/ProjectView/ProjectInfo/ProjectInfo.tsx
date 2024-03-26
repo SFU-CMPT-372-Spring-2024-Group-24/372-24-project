@@ -1,19 +1,41 @@
+// Libraries
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 // Icons
 import { IoMdAdd, IoMdTrash } from "react-icons/io";
 // Styles
 import "./ProjectInfo.scss";
+import 'react-toastify/dist/ReactToastify.css';
 // Models
 import { Project } from "../../../models/Project";
 // Utils
 import { getFileIcon } from "../../../utils/fileUtils";
 // Files
 import defaultProfilePicture from "../../../assets/default-profile-picture.png";
+// API
+import { api } from "../../../api";
 
 interface Props {
   project: Project;
   setProject: (project: Project) => void;
 }
 const ProjectInfo = ({ project }: Props) => {
+  const navigate = useNavigate();
+
+  const handleDeleteProject = async () => {
+    try {
+      const response = await api.delete(`/projects/${project.id}`);
+      if (response.status === 200) {
+        toast.success(response.data.message, {
+          className: "toast-success",
+        });
+        navigate("/projects");
+      }
+    } catch (error) {
+      console.error("Failed to delete project: ", error);
+    }
+  };
+
   return (
     <aside className="project-info">
       <div className="project-description">
@@ -50,10 +72,14 @@ const ProjectInfo = ({ project }: Props) => {
         </div>
       </div>
 
-      <div className="delete-project">
+      <button
+        type="button"
+        className="btn-delete-project"
+        onClick={handleDeleteProject}
+      >
         <IoMdTrash size={18} />
-        <p>Delete this project</p>
-      </div>
+        Delete this project
+      </button>
     </aside>
   );
 };

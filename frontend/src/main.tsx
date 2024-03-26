@@ -7,6 +7,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 // Bootstrap
 import "bootstrap/dist/css/bootstrap.css";
@@ -22,9 +23,10 @@ import NotFoundPage from "./pages/NotFoungPage/NotFoundPage";
 import ProjectViewPage from "./pages/ProjectViewPage/ProjectViewPage";
 import LoginSignup from "./pages/SignupLoginpage/LoginSignup";
 import LandingPage from "./pages/LandingPage/LandingPage";
+import Adminpage from "./pages/AdminPage/Adminpage";
+
 // Contexts
 import { UserProvider, useUser } from "./hooks/UserContext";
-import Adminpage from "./pages/AdminPage/Adminpage";
 
 // Declaration for google
 declare global {
@@ -63,6 +65,13 @@ const AuthRoute = ({ children }: AuthRouteProps) => {
 const App = () => {
   return (
     <UserProvider>
+      <ToastContainer 
+        position = "bottom-center"
+        autoClose = {5000}
+        hideProgressBar = {false}
+        draggable
+        pauseOnHover
+      />
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />} path="/projects">
