@@ -52,15 +52,7 @@ interface AuthRouteProps {
 }
 const AuthRoute = ({ children }: AuthRouteProps) => {
   const { user } = useUser();
-
-  // if (!user && path !== "/landing") {
-  //   return <Navigate to="/landing" />;
-  // }
-
-  // if (user && path === "/landing") {
-  //   return <Navigate to="/" />;
-  // }
-
+  
   if (!user) {
     return <Navigate to="/login" />;
   }
@@ -95,8 +87,8 @@ const App = () => {
           </Route>
           <Route path="/login" element={<LoginSignup />} />
           <Route path="/admin" element={<Adminpage />} />
-          <Route path="/landing" element={<LandingPage />} />
-          <Route path="/" element={<Navigate to={"/landing"}/>} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="*" element={<Navigate to={"/"}/>} />
         </Routes>
       </BrowserRouter>
     </UserProvider>
