@@ -15,7 +15,7 @@ import "./Header.scss";
 const Header = () => {
   return (
     <header>
-      <Link to={"/"} className="">
+      <Link to={"/projects"} className="">
         <h1 className="logo">
           <FaHandshakeSimple />
           CollabHub

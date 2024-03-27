@@ -10,6 +10,8 @@ import defaultProfilePicture from "../../assets/default-profile-picture.png";
 import "./UserModal.scss";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
+// API
+import { api } from "../../api";
 
 interface Props {}
 
@@ -23,17 +25,30 @@ const UserModal = ({}: Props) => {
   const closeModal = () => setProfileIsOpen(false);
 
   const handleLogout = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/logout`, {
-        method: "POST",
-      });
+    // try {
+    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/logout`, {
+    //     method: "POST",
+    //     credentials: "include",
+    //   });
 
-      if (response.ok) {
+    //   if (response.ok) {
+    //     setUser(null);
+    //     navigate("/login");
+    //   } else {
+    //     const errorData = await response.json();
+    //     console.error("Logout failed: ", errorData);
+    //   }
+    // } catch (error) {
+    //   console.error("Failed to logout: ", error);
+    // }
+
+    try {
+      const response = await api.post("/users/logout");
+      if (response.data.message === 'Logged out') {
         setUser(null);
         navigate("/login");
       } else {
-        const errorData = await response.json();
-        console.error("Logout failed: ", errorData);
+        console.error("Logout failed: ", response.data);
       }
     } catch (error) {
       console.error("Failed to logout: ", error);

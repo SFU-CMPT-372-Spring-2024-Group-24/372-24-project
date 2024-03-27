@@ -11,6 +11,8 @@ import CreateProjectModal from "../../components/Modals/CreateProjectModal";
 import { Project } from "../../models/Project";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
+// API
+import { api } from "../../api";
 
 const Homepage = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -20,13 +22,23 @@ const Homepage = () => {
   const handleShowModal = () => setShowModal(true);
 
   useEffect(() => {
+    // const fetchUserProjects = async () => {
+    //   try {
+    //     const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/projects?userId=${user!.id}`);
+
+    //     const projectsData = await response.json();
+
+    //     setProjects(projectsData);
+    //   } catch (error) {
+    //     console.error("Error fetching user projects", error);
+    //   }
+    // };
+
     const fetchUserProjects = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/projects?userId=${user!.id}`);
+        const response = await api.get(`/projects?userId=${user!.id}`);
 
-        const projectsData = await response.json();
-
-        setProjects(projectsData);
+        setProjects(response.data);
       } catch (error) {
         console.error("Error fetching user projects", error);
       }
@@ -51,7 +63,7 @@ const Homepage = () => {
 
         {projects.map((project) => (
           <li key={project.id} className="project">
-            <Link to={`/project/${project.id}`}>{project.name}</Link>
+            <Link to={`/projects/${project.id}`}>{project.name}</Link>
           </li>
         ))}
       </ul>

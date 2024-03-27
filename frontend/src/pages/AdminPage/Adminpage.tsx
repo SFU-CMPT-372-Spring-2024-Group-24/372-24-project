@@ -1,6 +1,8 @@
 
 import { useEffect, useState } from "react";
 import { Project } from "../../models/Project";
+// API
+import { api } from '../../api';
 
 const Adminpage = () => {
   const [users, setUsers] = useState<any[]>([]);

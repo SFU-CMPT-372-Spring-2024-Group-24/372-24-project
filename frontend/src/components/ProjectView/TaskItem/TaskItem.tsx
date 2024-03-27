@@ -2,6 +2,7 @@
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
 import moment from "moment";
+import { toast } from "react-toastify";
 // Styles
 import "./TaskItem.scss";
 // Icons
@@ -20,6 +21,8 @@ import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 import Priority from "./Priority";
 import Description from "./Description";
 import DueDate from "./DueDate";
+// API
+import { api } from "../../../api";
 
 interface Props {
   listId: number;
@@ -41,16 +44,14 @@ const TaskItem = ({ listName, task, setTask, deleteTask }: Props) => {
   // Delete Task
   const handleDeleteTask = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${task.id}`, {
-        method: "DELETE",
-      });
+      const response = await api.delete(`/tasks/${task.id}`);
 
-      if (response.ok) {
+      if (response.status === 200) {
         deleteTask(task.id);
         setModalIsOpen(false);
-      } else {
-        const errorData = await response.json();
-        console.error("Error deleting task:", errorData.message);
+        toast.success(response.data.message, {
+          className: "toast-success",
+        });
       }
     } catch (error) {
       console.error("Error deleting task:", error);

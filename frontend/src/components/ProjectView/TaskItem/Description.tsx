@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 // Models
 import { Task } from "../../../models/Task";
+// API
+import { api } from "../../../api";
 
 interface Props {
   task: Task;
@@ -26,22 +28,13 @@ const Description = ({ task, setTask }: Props) => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${task.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ description: trimmedDescription }),
+      const response = await api.put(`/tasks/${task.id}`, {
+        description: trimmedDescription,
       });
 
-      if (response.ok) {
-        setTask({ ...task, description: trimmedDescription });
-        setErrorMsg("");
-        setShowTextArea(false);
-      } else {
-        const errorData = await response.json();
-        setErrorMsg(errorData.message);
-      }
+      setTask({ ...task, description: response.data.description });
+      setErrorMsg("");
+      setShowTextArea(false);
     } catch (error) {
       console.error("Error updating description:", error);
       setErrorMsg("An error occurred while updating the description.");
