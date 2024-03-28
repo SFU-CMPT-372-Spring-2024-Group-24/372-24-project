@@ -80,6 +80,14 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { name, description } = req.body;
+  const fieldsToUpdate = {};
+
+  if (name) {
+    fieldsToUpdate.name = name;
+  }
+  if (description) {
+    fieldsToUpdate.description = description;
+  }
 
   try {
     const project = await Project.findByPk(id);
@@ -88,9 +96,8 @@ router.put("/:id", async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    project.name = name;
-    project.description = description;
-    await project.save();
+    // Update only the specified fields
+    await project.update(fieldsToUpdate);
 
     res.json(project);
   } catch (err) {

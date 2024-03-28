@@ -45,7 +45,7 @@ const Priority = ({ task, setTask }: Props) => {
       });
 
       setTask({ ...task, priority: response.data.priority });
-      setPriorityValue(response.data.task.priority);
+      setPriorityValue(response.data.priority);
       togglePriorityModal();
     } catch (error) {
       console.error("Error updating priority:", error);

@@ -12,34 +12,15 @@ aside.project-info {
 
   h2 {
     font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
   }
 
   .project-description {
     p {
       word-break: break-all;
-    }
-  }
-
-  .members {
-    .title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: .5rem;
-
-      h2 {
-        margin: 0;
-      }
-    }
-
-    .add-member-icon {
-      cursor: pointer;
-      opacity: 0.5;
-
-      &:hover {
-        box-shadow: none;
-        opacity: 1;
-      }
     }
   }
 
@@ -80,15 +61,27 @@ aside.project-info {
   }
 }
 
+.project-about-modal {
+  min-width: 40%;
+  margin-top: 6rem;
+
+  .input-field {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    align-items: center;
+    gap: 1rem;
+
+    label {
+      font-weight: 600;
+    }
+  }
+}
+
 .add-member-modal-backdrop {
   opacity: 0.1 !important;
 }
 
 .add-member-modal {
-  button {
-    font-size: 14px;
-  }
-
   .search-member {
     display: flex;
     flex-direction: row;
@@ -112,12 +105,6 @@ aside.project-info {
         border-radius: 10px;
         padding: .5rem .5rem .5rem 2rem;
       }
-    }
-
-    button.btn-search {
-      height: fit-content;
-      background: $purple;
-      color: $white;
     }
   }
 
@@ -158,26 +145,4 @@ aside.project-info {
       }
     }
   }
-
-  .modal-footer {
-    justify-content: center;
-    gap: 1rem;
-
-    button.btn-add-member {
-      background: $purple;
-      color: $white;
-    }
-
-    button.btn-cancel {
-      border: none;
-      border-bottom: 2px solid transparent;
-      border-radius: 0;
-
-      &:hover {
-        box-shadow: none;
-        border-bottom: 2px solid $dark-gray;
-      }
-    }
-  }
-
 }

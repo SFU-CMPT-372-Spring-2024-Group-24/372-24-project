@@ -15,10 +15,12 @@ import { api } from "../../../api";
 
 interface Props {
   project: Project;
-  setProject: (project: Project) => void;
+  // setProject: (project: Project) => void;
+  members: User[];
+  setMembers: (members: User[]) => void;
 }
 
-const Members = ({ project, setProject }: Props) => {
+const Members = ({ project, members, setMembers }: Props) => {
   const [showAddMemberModal, setShowAddMemberModal] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<User[]>([]);
@@ -35,11 +37,10 @@ const Members = ({ project, setProject }: Props) => {
   const handleAddMembers = async () => {
     try {
       const response = await api.post(`/projects/${project.id}/addUsers`, {
-        userIds: selectedUsers.map((user) => user.id)
+        userIds: selectedUsers.map((user) => user.id),
       });
 
-      setProject(response.data);
-
+      setMembers(response.data.Users);
       closeAddMemberModal();
     } catch (error) {
       console.error("Failed to add member: ", error);
@@ -50,8 +51,10 @@ const Members = ({ project, setProject }: Props) => {
     e.preventDefault();
 
     try {
-      const userIds = project.Users.map((user) => user.id);
-      const response = await api.get(`/users/search?query=${searchQuery}&exclude=${JSON.stringify(userIds)}`);
+      const userIds = members.map((user) => user.id);
+      const response = await api.get(
+        `/users/search?query=${searchQuery}&exclude=${JSON.stringify(userIds)}`
+      );
       setSearchResults(response.data.users);
     } catch (error) {
       console.error("Failed to search for users: ", error);
@@ -68,19 +71,19 @@ const Members = ({ project, setProject }: Props) => {
 
   return (
     <>
-      <div className="members">
-        <div className="title">
-          <h2>Members</h2>
+      <div className="project-members">
+        <h2>
+          Members
           <button
             type="button"
-            className="add-member-icon"
+            className="btn-icon"
             onClick={openAddMemberModal}
           >
             <IoMdAdd size={20} />
           </button>
-        </div>
+        </h2>
 
-        {project.Users.map((user) => (
+        {members.map((user) => (
           <div className="member" key={user.id}>
             <img
               src={user.profilePicture || defaultProfilePicture}
@@ -118,7 +121,7 @@ const Members = ({ project, setProject }: Props) => {
               />
             </div>
 
-            <button className="btn-search">Search</button>
+            <button className="btn-text">Search</button>
           </form>
 
           <ul className="members-list">
@@ -126,7 +129,9 @@ const Members = ({ project, setProject }: Props) => {
               <li
                 className="member"
                 key={user.id}
-                onClick={() => {handleSelectUser(user)}}
+                onClick={() => {
+                  handleSelectUser(user);
+                }}
               >
                 <img
                   src={user.profilePicture || defaultProfilePicture}
@@ -139,9 +144,9 @@ const Members = ({ project, setProject }: Props) => {
                 </div>
 
                 {selectedUsers.includes(user) ? (
-                  <FaCheck size={16} color="#8C54FB" className="icon"/>
+                  <FaCheck size={16} color="#8C54FB" className="icon" />
                 ) : (
-                  <IoMdAdd size={20} className="icon"/>
+                  <IoMdAdd size={20} className="icon" />
                 )}
               </li>
             ))}
@@ -149,21 +154,22 @@ const Members = ({ project, setProject }: Props) => {
         </Modal.Body>
 
         <Modal.Footer>
-          <button
-            type="button"
-            className="btn-add-member"
-            onClick={handleAddMembers}
-          >
-            Add
-          </button>
-
-          <button
-            type="button"
-            className="btn-cancel"
-            onClick={closeAddMemberModal}
-          >
-            Cancel
-          </button>
+          <div className="button-group">
+            <button
+              type="button"
+              className="btn-cancel"
+              onClick={closeAddMemberModal}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="btn-text"
+              onClick={handleAddMembers}
+            >
+              Save changes
+            </button>
+          </div>
         </Modal.Footer>
       </Modal>
     </>
