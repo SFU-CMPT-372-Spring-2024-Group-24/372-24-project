@@ -24,18 +24,13 @@ const TaskList = ({ listId, listName }: Props) => {
 
   // Fetch tasks by listId from server
   useEffect(() => {
-    // const fetchTasks = async () => {
-    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${listId}`);
-    //   const tasksData = await response.json();
-
-    //   if (tasksData) {
-    //     setTasks(tasksData);
-    //   }
-    // };
-
     const fetchTasks = async () => {
-      const response = await api.get(`/tasks/${listId}`);
-      setTasks(response.data);
+      try {
+        const response = await api.get(`/tasks/${listId}`);
+        setTasks(response.data);
+      } catch (error) {
+        console.error("Failed to fetch tasks: ", error);
+      }
     };
 
     fetchTasks();
@@ -51,21 +46,15 @@ const TaskList = ({ listId, listName }: Props) => {
   const handleAddTask = async () => {
     if (taskName.trim() === "") return;
 
-    // const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ name: taskName, listId }),
-    // });
+    try {
+      const response = await api.post("/tasks", { name: taskName, listId });
+      const newTask = response.data;
 
-    // const newTask = await response.json();
-
-    const response = await api.post("/tasks", { name: taskName, listId });
-    const newTask = response.data;
-
-    setTasks([...tasks, newTask]);
-    setTaskName("");
+      setTasks([...tasks, newTask]);
+      setTaskName("");
+    } catch (error) {
+      console.error("Failed to add task: ", error);
+    }
   };
 
   // Update task in state
@@ -86,10 +75,10 @@ const TaskList = ({ listId, listName }: Props) => {
 
         <button
           type="button"
-          className="show-add-task"
+          className="btn-iconTxt"
           onClick={handleToggleTaskInputField}
         >
-          <IoMdAdd size={20} />
+          <IoMdAdd size={16} />
           Add Task
         </button>
       </div>
@@ -99,8 +88,8 @@ const TaskList = ({ listId, listName }: Props) => {
           <>
             <input
               type="text"
-              id = "taskName"
-              name = "taskName"
+              id="taskName"
+              name="taskName"
               value={taskName}
               onChange={(e) => setTaskName(e.target.value)}
               placeholder="Enter task name"
@@ -110,10 +99,15 @@ const TaskList = ({ listId, listName }: Props) => {
             />
 
             <div className="button-group">
-              <button className="add-task" onClick={handleAddTask}>Add</button>
+              <button
+                className="btn-cancel"
+                onClick={handleToggleTaskInputField}
+              >
+                Cancel
+              </button>
 
-              <button className="close-btn" onClick={handleToggleTaskInputField}>
-                <IoClose size={22}/>
+              <button className="btn-text" onClick={handleAddTask}>
+                Save task
               </button>
             </div>
           </>

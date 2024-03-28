@@ -129,7 +129,7 @@ const DueDate = ({ task, setTask }: Props) => {
             />
 
             <div className="button-group">
-              <button type="submit" className="btn-save">
+              <button type="submit" className="btn-text">
                 Save
               </button>
               <button

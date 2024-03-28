@@ -70,7 +70,7 @@ const TaskItem = ({ listName, task, setTask, deleteTask }: Props) => {
         {task.dueDate && (
           <div className="info">
             <div className="due-date">
-              <FaRegClock size={14} />
+              <FaRegClock size={12} />
               {moment(task.dueDate).format("MMM D hh:mma")}
             </div>
 
@@ -98,11 +98,11 @@ const TaskItem = ({ listName, task, setTask, deleteTask }: Props) => {
 
           <Priority task={task} setTask={setTask} />
 
-          <button className="move-btn">
+          <button className="btn-icon move-btn">
             <TbArrowsExchange size={20} />
           </button>
 
-          <button className="delete-btn" onClick={handleDeleteTask}>
+          <button className="btn-icon delete-btn" onClick={handleDeleteTask}>
             <IoMdTrash size={20} />
           </button>
 

@@ -6,6 +6,7 @@ import ProjectInfo from "../../components/ProjectView/ProjectInfo/ProjectInfo";
 import TaskList from "../../components/ProjectView/TaskList/TaskList";
 // Models
 import { Project } from "../../models/Project";
+import { User } from "../../models/User";
 // Styles
 import "./ProjectViewPage.scss";
 import { List } from "../../models/List";
@@ -17,6 +18,7 @@ import { api } from "../../api";
 const ProjectViewPage = () => {
   const { id } = useParams();
   const [project, setProject] = useState<Project | null>(null);
+  const [members, setMembers] = useState<User[]>([]);
   const [lists, setLists] = useState<List[]>([]);
   const navigate = useNavigate();
 
@@ -25,6 +27,8 @@ const ProjectViewPage = () => {
     const fetchProject = async () => {
       try {
         const response = await api.get(`/projects/${id}`);
+
+        setMembers(response.data.Users);
         setProject(response.data);
       } catch (error) {
         navigate("/projects/404");
@@ -54,7 +58,7 @@ const ProjectViewPage = () => {
     <>
       {project && (
         <div className="project-view-page">
-          <ProjectInfo project={project} setProject={setProject} />
+          <ProjectInfo project={project} setProject={setProject} members={members} setMembers={setMembers} />
 
           <section className="project">
             <h1 className="gradient-text">{project.name}</h1>

@@ -73,7 +73,7 @@ const Description = ({ task, setTask }: Props) => {
             <div className="button-group">
               <button
                 type="submit"
-                className="btn-save"
+                className="btn-text"
               >
                 Save
               </button>

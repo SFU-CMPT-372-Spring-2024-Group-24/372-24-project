@@ -5,5 +5,5 @@ export interface Project {
   description: string;
   createdAt: Date;
   updatedAt: Date;
-  Users: User[];
+  // Users: User[];
 }
