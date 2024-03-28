@@ -51,7 +51,7 @@ const Chat = () => {
         const users = response.data;
         if (user != null) {
           const filteredAllUsers: User[] = users.filter(
-            (myUser: User) => myUser.id != user!.id
+            (myUser: User) => myUser.id != user!.id && myUser.isAdmin != true
           );
           setUserList(filteredAllUsers);
         }
