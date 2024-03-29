@@ -2,23 +2,24 @@ import { useState, useEffect } from 'react';
 import { api } from '../../api';
 
 const AdminDashboard = () => {
-  // const [totalProjects, setTotalProjects] = useState(0); 
-  // const [totalUsers, setTotalUsers] = useState(0); 
+  const [totalProjects, setTotalProjects] = useState(0); 
+  const [totalUsers, setTotalUsers] = useState(0); 
 
-  // useEffect(() => {
-  //   const fetchTotalUsers = async () => {
-  //     try {
-  //       const response = await api.get('/users');
-  //       const userData = response.data;
-  //       const numUsers = userData.length; 
-  //       setTotalUsers(numUsers);
-  //     } catch (error) {
-  //       console.error('Error fetching users', error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchTotalUsers = async () => {
+      try {
+        const response = await api.get('/users');
+        const userData = response.data;
+        const numUsers = userData.length; 
+        setTotalUsers(numUsers);
+      } catch (error) {
+        console.error('Error fetching users', error);
+      }
+    };
+    
 
-  //   fetchTotalUsers();
-  // }, []);
+    fetchTotalUsers();
+  }, []);
 
 
   // useEffect(() => {
@@ -39,8 +40,8 @@ const AdminDashboard = () => {
   return (
     <div>
       <h2>Dashboard</h2>
-      {/* <p>Total number of users: {totalUsers}</p>
-      <p>Total number of projects: {totalProjects}</p> */}
+      <p>Total number of users: {totalUsers}</p>
+      {/* <p>Total number of projects: {totalProjects}</p> */}
 
     </div>
   );

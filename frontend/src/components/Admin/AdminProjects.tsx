@@ -7,7 +7,6 @@ const AdminProjects = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [userIDArray, setUserIDArray] = useState<string[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
-  const [projectsCount, setProjectsCount] = useState(0);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -44,17 +43,6 @@ const AdminProjects = () => {
         const projectsArray = Object.values(allProjects);
         setProjects(projectsArray);
 
-        fetchProjectsCount();
-      } catch (error) {
-        console.error('Error fetching projects', error);
-      }
-    };
-
-    const fetchProjectsCount = async () => {
-      try {
-        const response = await api.get('/admin');
-        const projectsData = response.data;
-        setProjectsCount(projectsData.length);
       } catch (error) {
         console.error('Error fetching projects', error);
       }
@@ -77,7 +65,6 @@ const AdminProjects = () => {
   return (
     <div>
       <h2>All Projects In Database</h2>
-      <p>Total number of projects: {projectsCount}</p>
       <ul>
         {projects.map((project) => (
           <li key={project.id}>
