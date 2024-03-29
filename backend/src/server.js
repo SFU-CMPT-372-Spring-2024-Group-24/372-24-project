@@ -67,6 +67,7 @@ app.use("/api/projects", require("./routes/projects"));
 app.use("/api/chats", require("./routes/chats"));
 app.use("/api/lists", require("./routes/lists"));
 app.use("/api/tasks", require("./routes/tasks"));
+app.use("/api/admin", require("./routes/admin"));
 
 // Catch-all route
 // if (process.env.NODE_ENV === "production") {

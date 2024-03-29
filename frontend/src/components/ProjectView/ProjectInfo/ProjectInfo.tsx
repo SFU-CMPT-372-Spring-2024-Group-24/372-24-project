@@ -8,6 +8,7 @@ import "./ProjectInfo.scss";
 import "react-toastify/dist/ReactToastify.css";
 // Models
 import { Project } from "../../../models/Project";
+import { User } from "../../../models/User";
 // Utils
 import { getFileIcon } from "../../../utils/fileUtils";
 // Files
@@ -16,12 +17,15 @@ import { getFileIcon } from "../../../utils/fileUtils";
 import { api } from "../../../api";
 // Components
 import Members from "./Members";
+import About from "./About";
 
 interface Props {
   project: Project;
   setProject: (project: Project) => void;
+  members: User[];
+  setMembers: (members: User[]) => void;
 }
-const ProjectInfo = ({ project, setProject }: Props) => {
+const ProjectInfo = ({ project, setProject, members, setMembers }: Props) => {
   const navigate = useNavigate();
 
   const handleDeleteProject = async () => {
@@ -40,12 +44,9 @@ const ProjectInfo = ({ project, setProject }: Props) => {
 
   return (
     <aside className="project-info">
-      <div className="project-description">
-        <h2>About</h2>
-        <p>{project.description}</p>
-      </div>
+      <About project={project} setProject={setProject} />
 
-      <Members project={project} setProject={setProject} />
+      <Members project={project} members={members} setMembers={setMembers} />
 
       <div className="files">
         <h2>Files</h2>

@@ -93,7 +93,7 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
       <div className="button-group">
         <button
           type="submit"
-          className="btn-create-project"
+          className="btn-text"
           onClick={handleCreateProject}
         >
           Create

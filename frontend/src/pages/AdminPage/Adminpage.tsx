@@ -1,48 +1,51 @@
-import { useState, useEffect } from 'react';
-// API
-import { api } from '../../api';
+import { useState } from 'react';
+import './Adminpage.scss';
+import AdminMenu from '../../components/Admin/AdminMenu';
+import AdminLogout from '../../components/Admin/AdminLogout';
+import AdminUsers from '../../components/Admin/AdminUsers';
+import AdminProjects from '../../components/Admin/AdminProjects';
+import AdminDashboard from '../../components/Admin/AdminDashboard';
 
-const Adminpage = () => {
-    const [users, setUsers] = useState<any[]>([]); 
-    
+const AdminPage = () => {
+  const [showUsers, setShowUsers] = useState(false);
+  const [showProjects, setShowProjects] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(true);
 
-    useEffect(() => {
-        // const fetchUsers = async () => {
-        //     try {
-        //         const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users`);
-        //         const userData = await response.json();
-        //         setUsers(userData);
-        //     } catch (error) {
-        //         console.error('Error fetching users', error);
-        //     }
-        // };
+  const toggleUsers = () => {
+    setShowUsers(!showUsers);
+    setShowProjects(false);
+    setShowDashboard(false);
+  };
 
-        const fetchUsers = async () => {
-            try {
-                const response = await api.get('/users');
-                setUsers(response.data);
-            } catch (error) {
-                console.error('Error fetching users', error);
-            }
-        };
+  const toggleProjects = () => {
+    setShowProjects(!showProjects);
+    setShowUsers(false);
+    setShowDashboard(false);
+  };
 
-        fetchUsers();
-    }, []);
+  const toggleDashboard = () => {
+    setShowDashboard(!showDashboard);
+    setShowUsers(false);
+    setShowProjects(false);
+  };
 
-    return (
-        <div>
-            <h1>Admin Page</h1>
-
-            <h2>All Users In Database</h2>
-            <ul>
-                {users.map((user) => (
-                    <li key={user.id}>
-                        {user.name} - {user.email}
-                    </li>
-                ))}
-            </ul>
+  return (
+    <div className="admin-page-container">
+      <div className="admin-menu-container">
+        <AdminMenu toggleUsers={toggleUsers} toggleProjects={toggleProjects} toggleDashboard={toggleDashboard} />
+      </div>
+      <div className="admin-content-container">
+        <div className="admin-logout-container">
+          <AdminLogout />
         </div>
-    );
+        <div className="admin-content">
+          {showUsers && <AdminUsers />}
+          {showProjects && <AdminProjects />}
+          {showDashboard && <AdminDashboard />}
+        </div>
+      </div>
+    </div>
+  );
 };
 
-export default Adminpage;
+export default AdminPage;

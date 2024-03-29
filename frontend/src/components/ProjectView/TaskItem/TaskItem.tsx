@@ -3,6 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
 import moment from "moment";
 import { toast } from "react-toastify";
+import { Draggable } from "@hello-pangea/dnd";
 // Styles
 import "./TaskItem.scss";
 // Icons
@@ -12,9 +13,10 @@ import { TbArrowsExchange } from "react-icons/tb";
 import { FaRegClock } from "react-icons/fa6";
 // Utils
 import { getFileIcon } from "../../../utils/fileUtils";
-import { priorities } from "../../../utils/priorityColorUtils";
+// import { priorities } from "../../../utils/priorityColorUtils";
 // Models
 import { Task } from "../../../models/Task";
+import { List } from "../../../models/List";
 // Files
 import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Components
@@ -23,23 +25,44 @@ import Description from "./Description";
 import DueDate from "./DueDate";
 // API
 import { api } from "../../../api";
+// Custom hooks
+import { useTasks } from "../../../hooks/TaskContext";
 
 interface Props {
-  listId: number;
-  listName: string;
+  list: List;
   task: Task;
-  setTask: (updatedTask: Task) => void;
-  deleteTask: (taskId: number) => void;
+  index: number;
 }
 
-const TaskItem = ({ listName, task, setTask, deleteTask }: Props) => {
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-  const priorityColor = priorities.find(
-    (p) => p.value === task.priority
-  )?.color;
+const TaskItem = ({ list, task, index }: Props) => {
+  const [showTaskItemModal, setShowTaskItemModal] = useState<boolean>(false);
+  const [showMoveTaskModal, setShowMoveTaskModal] = useState<boolean>(false);
+  const { lists, moveTask, removeTask } = useTasks();
+  const [selectedListId, setSelectedListId] = useState<number>(list.id);
+  const [selectedPosition, setSelectedPosition] = useState<number>(index);
+  // const priorityColor = priorities.find(
+  //   (p) => p.value === task.priority
+  // )?.color;
 
-  // Toggle Task Item details visibility
-  const toggleModal = () => setModalIsOpen(!modalIsOpen);
+  // Toggle Task Item Modal visibility
+  const toggleTaskItemModal = () => setShowTaskItemModal(!showTaskItemModal);
+
+  // Toggle Move Task Modal visibility
+  const toggleMoveTaskModal = () => setShowMoveTaskModal(!showMoveTaskModal);
+
+  // Move task
+  const handleMoveTask = async () => {
+    try {
+      const response = await moveTask(list.id, selectedListId, index, selectedPosition);
+
+      if (response) {
+        setShowTaskItemModal(false);
+        setShowMoveTaskModal(false);
+      }
+    } catch (error) {
+      console.error("Error moving task:", error);
+    }
+  };
 
   // Delete Task
   const handleDeleteTask = async () => {
@@ -47,8 +70,9 @@ const TaskItem = ({ listName, task, setTask, deleteTask }: Props) => {
       const response = await api.delete(`/tasks/${task.id}`);
 
       if (response.status === 200) {
-        deleteTask(task.id);
-        setModalIsOpen(false);
+        // deleteTask(task.id);
+        removeTask(list.id, task.id);
+        setShowTaskItemModal(false);
         toast.success(response.data.message, {
           className: "toast-success",
         });
@@ -60,61 +84,63 @@ const TaskItem = ({ listName, task, setTask, deleteTask }: Props) => {
 
   return (
     <>
-      <li
-        className="task-item"
-        onClick={toggleModal}
-        style={{ borderColor: priorityColor }}
-      >
-        <h3>{task.name}</h3>
+      <Draggable draggableId={task.id.toString()} index={index}>
+        {(provided) => (
+          <li
+            className="task-item"
+            onClick={toggleTaskItemModal}
+            // style={{ borderColor: priorityColor }}
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+          >
+            <h3>
+              {task.name}
+            </h3>
 
-        {task.dueDate && (
-          <div className="info">
-            <div className="due-date">
-              <FaRegClock size={14} />
-              {moment(task.dueDate).format("MMM D hh:mma")}
-            </div>
-
-            {/* Todo: Add assignee
-          <img
-            src="https://images.unsplash.com/photo-1707343844152-6d33a0bb32c3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="User Avatar"
-            className="assignee"
-          /> */}
-          </div>
+            {task.dueDate && (
+              <div className="info">
+                <div className="due-date">
+                  <FaRegClock size={12} />
+                  {moment(task.dueDate).format("MMM D hh:mma")}
+                </div>
+              </div>
+            )}
+          </li>
         )}
-      </li>
+      </Draggable>
 
       <Modal
-        show={modalIsOpen}
-        onHide={toggleModal}
+        show={showTaskItemModal}
+        onHide={toggleTaskItemModal}
         dialogClassName="task-item-modal"
       >
         <Modal.Header className="header">
           <div className="task-title">
             <h3>{task.name}</h3>
 
-            <span className="list-name">{listName}</span>
+            <span className="list-name">{list.name}</span>
           </div>
 
-          <Priority task={task} setTask={setTask} />
+          <Priority task={task} />
 
-          <button className="move-btn">
+          <button className="btn-icon move-btn" onClick={toggleMoveTaskModal}>
             <TbArrowsExchange size={20} />
           </button>
 
-          <button className="delete-btn" onClick={handleDeleteTask}>
+          <button className="btn-icon delete-btn" onClick={handleDeleteTask}>
             <IoMdTrash size={20} />
           </button>
 
-          <button className="close-btn" onClick={toggleModal}>
+          <button className="close-btn" onClick={toggleTaskItemModal}>
             <IoMdClose size={20} />
           </button>
         </Modal.Header>
 
         <Modal.Body className="body">
-          <Description task={task} setTask={setTask} />
+          <Description task={task} />
 
-          <DueDate task={task} setTask={setTask} />
+          <DueDate task={task} />
 
           <div className="members">
             <h4>Members</h4>
@@ -187,6 +213,72 @@ const TaskItem = ({ listName, task, setTask, deleteTask }: Props) => {
             </div>
           </div>
         </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={showMoveTaskModal}
+        onHide={toggleMoveTaskModal}
+        dialogClassName="move-task-modal"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Move Task</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>Current List: {list.name}</p>
+          <p>Current Position: {index+1}</p>
+
+          <p>Select List:</p>
+          <select
+            value={selectedListId}
+            onChange={(e) => {
+              setSelectedListId(Number(e.target.value));
+              setSelectedPosition(0);
+            }}
+          >
+            {lists.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.name}
+              </option>
+            ))}
+          </select>
+
+          <p>Select Position:</p>
+          {selectedListId && (
+            <select
+              value={selectedPosition}
+              onChange={(e) => setSelectedPosition(Number(e.target.value))}
+            >
+              {lists
+                .find((l) => l.id === selectedListId)
+                ?.tasks.map((_, i) => (
+                  <option key={i} value={i}>
+                    {i + 1}
+                  </option>
+                ))}
+
+              {selectedListId !== list.id && (
+                <option
+                  key={lists.find((l) => l.id === selectedListId)?.tasks.length}
+                  value={
+                    lists.find((l) => l.id === selectedListId)?.tasks.length
+                  }
+                >
+                  {lists.find((l) => l.id === selectedListId)!.tasks.length + 1}
+                </option>
+              )}
+            </select>
+          )}
+        </Modal.Body>
+
+        <Modal.Footer>
+          <button className="btn-cancel" onClick={toggleMoveTaskModal}>
+            Cancel
+          </button>
+          <button className="btn-text" onClick={handleMoveTask}>
+            Move Task
+          </button>
+        </Modal.Footer>
       </Modal>
     </>
   );

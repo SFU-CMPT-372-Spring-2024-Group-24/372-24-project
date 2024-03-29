@@ -6,17 +6,20 @@ import Modal from "react-bootstrap/Modal";
 import { Task } from "../../../models/Task";
 // API
 import { api } from "../../../api";
+// Custom hooks
+import { useTasks } from "../../../hooks/TaskContext";
 
 interface Props {
   task: Task;
-  setTask: (updatedTask: Task) => void;
+  // setTask: (updatedTask: Task) => void;
 }
 
-const DueDate = ({ task, setTask }: Props) => {
+const DueDate = ({ task }: Props) => {
   const [showDueDateModal, setShowDueDateModal] = useState<boolean>(false);
   const dueDateRef = useRef<HTMLDivElement>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(task.dueDate);
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const { setTask } = useTasks();
 
   // For opening the modal
   const openDueDateModal = () => setShowDueDateModal(true);
@@ -129,7 +132,7 @@ const DueDate = ({ task, setTask }: Props) => {
             />
 
             <div className="button-group">
-              <button type="submit" className="btn-save">
+              <button type="submit" className="btn-text">
                 Save
               </button>
               <button

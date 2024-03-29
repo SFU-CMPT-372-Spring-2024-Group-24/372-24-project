@@ -1,0 +1,11 @@
+.admin-page-container {
+    display: grid;
+    height: 100vh;
+    width: 100vw;
+    grid-template-columns: 1fr 4fr;
+    grid-template-rows: 1fr 4fr;
+}
+
+.admin-menu-container {
+    grid-row: 1/3;
+}

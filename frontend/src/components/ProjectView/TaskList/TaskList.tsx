@@ -1,45 +1,27 @@
 // Icons
 import { IoMdAdd } from "react-icons/io";
-import { IoClose } from "react-icons/io5";
 // Libraries
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // Styles
 import "./TaskList.scss";
 // Components
 import TaskItem from "../TaskItem/TaskItem";
-// Models
-import { Task } from "../../../models/Task";
 // API
 import { api } from "../../../api";
+import { Droppable } from "@hello-pangea/dnd";
+// Custom hooks
+import { useTasks } from "../../../hooks/TaskContext";
 
 interface Props {
   listId: number;
-  listName: string;
 }
 
-const TaskList = ({ listId, listName }: Props) => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+const TaskList = ({ listId }: Props) => {
+  const { lists, addTask, removeTask } = useTasks();
+  const list = lists.find((list) => list.id === listId);
+  const tasks = list?.tasks || [];
   const [showTaskInput, setShowTaskInput] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
-
-  // Fetch tasks by listId from server
-  useEffect(() => {
-    // const fetchTasks = async () => {
-    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks/${listId}`);
-    //   const tasksData = await response.json();
-
-    //   if (tasksData) {
-    //     setTasks(tasksData);
-    //   }
-    // };
-
-    const fetchTasks = async () => {
-      const response = await api.get(`/tasks/${listId}`);
-      setTasks(response.data);
-    };
-
-    fetchTasks();
-  }, [listId]);
 
   // Toggle visibility of add task input field
   const handleToggleTaskInputField = () => {
@@ -51,94 +33,99 @@ const TaskList = ({ listId, listName }: Props) => {
   const handleAddTask = async () => {
     if (taskName.trim() === "") return;
 
-    // const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/tasks`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ name: taskName, listId }),
-    // });
+    try {
+      const response = await api.post("/tasks", { name: taskName, listId });
+      const newTask = response.data;
 
-    // const newTask = await response.json();
+      addTask(listId, newTask);
 
-    const response = await api.post("/tasks", { name: taskName, listId });
-    const newTask = response.data;
-
-    setTasks([...tasks, newTask]);
-    setTaskName("");
+      setTaskName("");
+    } catch (error) {
+      console.error("Failed to add task: ", error);
+    }
   };
 
-  // Update task in state
-  const setTask = (updatedTask: Task) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
-    );
-  };
-
-  const deleteTask = (id: number) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
-  };
+  // const deleteTask = (id: number) => {
+  //   removeTask(listId, id);
+  // };
 
   return (
-    <div className="taskList">
-      <div className="list-header">
-        <h2>{listName}</h2>
+    <>
+      {list && (
+        <div className="taskList">
+          <div className="list-header">
+            <h2>{list.name}</h2>
 
-        <button
-          type="button"
-          className="show-add-task"
-          onClick={handleToggleTaskInputField}
-        >
-          <IoMdAdd size={20} />
-          Add Task
-        </button>
-      </div>
+            <button
+              type="button"
+              className="btn-iconTxt"
+              onClick={handleToggleTaskInputField}
+            >
+              <IoMdAdd size={16} />
+              Add Task
+            </button>
+          </div>
 
-      <div className="task-input-field">
-        {showTaskInput && (
-          <>
-            <input
-              type="text"
-              id = "taskName"
-              name = "taskName"
-              value={taskName}
-              onChange={(e) => setTaskName(e.target.value)}
-              placeholder="Enter task name"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleAddTask();
-              }}
-            />
+          <div className="task-input-field">
+            {showTaskInput && (
+              <>
+                <input
+                  type="text"
+                  id="taskName"
+                  name="taskName"
+                  value={taskName}
+                  onChange={(e) => setTaskName(e.target.value)}
+                  placeholder="Enter task name"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleAddTask();
+                  }}
+                />
 
-            <div className="button-group">
-              <button className="add-task" onClick={handleAddTask}>Add</button>
+                <div className="button-group">
+                  <button
+                    className="btn-cancel"
+                    onClick={handleToggleTaskInputField}
+                  >
+                    Cancel
+                  </button>
 
-              <button className="close-btn" onClick={handleToggleTaskInputField}>
-                <IoClose size={22}/>
-              </button>
-            </div>
-          </>
-        )}
-      </div>
+                  <button className="btn-text" onClick={handleAddTask}>
+                    Save task
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
 
-      <div className="task-count">{tasks.length} tasks</div>
+          <div className="task-count">{tasks.length} tasks</div>
 
-      <ul>
-        {tasks.length === 0 ? (
-          <li>No tasks yet</li>
-        ) : (
-          tasks.map((task) => (
-            <TaskItem
-              key={task.id}
-              task={task}
-              setTask={setTask}
-              listId={listId}
-              listName={listName}
-              deleteTask={deleteTask}
-            />
-          ))
-        )}
-      </ul>
-    </div>
+          <Droppable droppableId={list.id.toString()}>
+            {(provided) => (
+              <ul
+                className="task-list"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {tasks.length === 0 ? (
+                  <li>No tasks yet</li>
+                ) : (
+                  tasks.map((task, index) => (
+                    <TaskItem
+                      key={task.id}
+                      list={list}
+                      task={task}
+                      // deleteTask={deleteTask}
+                      index={index}
+                    />
+                  ))
+                )}
+                {provided.placeholder}
+              </ul>
+            )}
+          </Droppable>
+        </div>
+      )}
+    </>
   );
 };
 
