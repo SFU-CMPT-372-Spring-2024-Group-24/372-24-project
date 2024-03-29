@@ -1,3 +1,47 @@
+// const { DataTypes } = require('sequelize');
+
+// module.exports = (sequelize) => {
+//     const Task = sequelize.define('Task', {
+//         id: {
+//             type: DataTypes.INTEGER,
+//             primaryKey: true,
+//             autoIncrement: true
+//         },
+//         listId: {
+//             type: DataTypes.INTEGER,
+//             allowNull: false
+//         },
+//         name: {
+//             type: DataTypes.STRING,
+//             allowNull: false
+//         },
+//         priority: {
+//             type: DataTypes.ENUM('unset', 'planning', 'low', 'medium', 'high', 'urgent'),
+//             allowNull: true
+//         },
+//         description: {
+//             type: DataTypes.TEXT,
+//             allowNull: true
+//         },
+//         dueDate: {
+//             type: DataTypes.DATE,
+//             allowNull: true
+//         },
+//         isDone: {
+//             type: DataTypes.BOOLEAN,
+//             allowNull: false,
+//             defaultValue: false
+//         },
+//         orderIndex: {
+//             type: DataTypes.INTEGER,
+//             allowNull: false,
+//             defaultValue: 0
+//         }
+//     });
+
+//     return Task;
+// }
+
 const { Task } = require('../db');
 const express = require('express');
 
@@ -9,9 +53,8 @@ router.get('/:listId', async (req, res) => {
 
     try {
         const tasks = await Task.findAll({
-            where: {
-                listId
-            }
+            where: { listId },
+            order: [['orderIndex', 'ASC']]
         });
 
         res.json(tasks);
@@ -30,6 +73,8 @@ router.post('/', async (req, res) => {
             listId
         });
 
+        await task.update({ orderIndex: -task.id });
+
         res.json(task);
     } catch (err) {
         res.status(400).json({ message: err.message });
@@ -44,9 +89,6 @@ router.put('/:id', async (req, res) => {
 
     if (name) {
         fieldsToUpdate.name = name;
-    }
-    if (listId) {
-        fieldsToUpdate.listId = listId;
     }
     if (priority) {
         fieldsToUpdate.priority = priority;
@@ -88,6 +130,27 @@ router.delete('/:id', async (req, res) => {
         });
 
         res.json({ message: 'Task deleted' });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Update task order
+router.put('/:id/order', async (req, res) => {
+    const id = req.params.id;
+
+    const { orderIndex, listId } = req.body;
+
+    try {
+        const task = await Task.findByPk(id);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        // Update the task's listId and orderIndex
+        await task.update({ orderIndex, listId });
+
+        res.json(task);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }

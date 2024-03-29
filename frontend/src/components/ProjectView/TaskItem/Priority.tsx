@@ -8,18 +8,21 @@ import { Task, PriorityTypes } from "../../../models/Task";
 import { priorities } from "../../../utils/priorityColorUtils";
 // API
 import { api } from "../../../api";
+// Custom hooks
+import { useTasks } from "../../../hooks/TaskContext";
 
 interface Props {
   task: Task;
-  setTask: (updatedTask: Task) => void;
+  // setTask: (updatedTask: Task) => void;
 }
 
-const Priority = ({ task, setTask }: Props) => {
+const Priority = ({ task }: Props) => {
   const [showPriorityModal, setShowPriorityModal] = useState<boolean>(false);
   const priorityRef = useRef<HTMLDivElement>(null);
   const [priorityValue, setPriorityValue] = useState<PriorityTypes>(
     task.priority || ""
   );
+  const { setTask } = useTasks();
 
   // For toggling the modal
   const togglePriorityModal = () => setShowPriorityModal(!showPriorityModal);

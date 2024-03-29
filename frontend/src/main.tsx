@@ -67,10 +67,11 @@ const App = () => {
     <UserProvider>
       <ToastContainer 
         position = "bottom-center"
-        autoClose = {5000}
-        hideProgressBar = {false}
+        autoClose = {3000}
+        hideProgressBar = {true}
         draggable
         pauseOnHover
+        stacked = {true}
       />
       <BrowserRouter>
         <Routes>

@@ -4,17 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import { Task } from "../../../models/Task";
 // API
 import { api } from "../../../api";
+// Custom hooks
+import { useTasks } from "../../../hooks/TaskContext";
 
 interface Props {
   task: Task;
-  setTask: (updatedTask: Task) => void;
+  // setTask: (updatedTask: Task) => void;
 }
 
-const Description = ({ task, setTask }: Props) => {
+const Description = ({ task }: Props) => {
   const [showTextArea, setShowTextArea] = useState<boolean>(false);
   const [description, setDescription] = useState<string>(task.description);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const { setTask } = useTasks();
 
   const handleDescriptionChange = async (e: React.FormEvent) => {
     e.preventDefault();
