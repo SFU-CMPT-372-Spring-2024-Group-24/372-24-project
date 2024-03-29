@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { api } from '../../api';
 
-const Adminpage = () => {
+const AdminPage = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [userIDArray, setUserIDArray] = useState<string[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
@@ -47,7 +47,27 @@ const Adminpage = () => {
 
     fetchUsers();
     fetchProjectsForAllUsers();
-  }, [userIDArray]); 
+  }, [userIDArray]);
+
+  const deleteUser = async (userId: string) => {
+    try {
+      await api.delete(`/users/${userId}`);
+      setUsers(users.filter((user) => user.id !== userId));
+      // Also update the user ID array
+      setUserIDArray(userIDArray.filter((id) => id !== userId));
+    } catch (error) {
+      console.error('Error deleting user', error);
+    }
+  };
+
+  const deleteProject = async (projectId: string) => {
+    try {
+      await api.delete(`/projects/${projectId}`);
+      setProjects(projects.filter((project) => project.id !== projectId));
+    } catch (error) {
+      console.error('Error deleting project', error);
+    }
+  };
 
   return (
     <div>
@@ -58,6 +78,7 @@ const Adminpage = () => {
         {users.map((user) => (
           <li key={user.id}>
             {user.name} - {user.email}
+            <button onClick={() => deleteUser(user.id)}>Delete</button>
           </li>
         ))}
       </ul>
@@ -67,6 +88,7 @@ const Adminpage = () => {
         {projects.map((project) => (
           <li key={project.id}>
             {project.name} - {project.description}
+            <button onClick={() => deleteProject(project.id)}>Delete</button>
           </li>
         ))}
       </ul>
@@ -74,4 +96,4 @@ const Adminpage = () => {
   );
 };
 
-export default Adminpage;
+export default AdminPage;
