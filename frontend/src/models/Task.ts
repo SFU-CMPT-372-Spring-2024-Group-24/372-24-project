@@ -10,4 +10,6 @@ export interface Task {
   dueDate: Date;
   assignees: User[];
   isDone: boolean;
+  listId: number;
+  orderIndex: number;
 }
