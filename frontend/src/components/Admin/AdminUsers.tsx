@@ -1,16 +1,11 @@
 import "./AdminUsers.scss";
-
 import { useState, useEffect } from 'react';
-
 import { api } from '../../api';
-
-
 
 const AdminUsers = () => {
 
   const [users, setUsers] = useState<any[]>([]);
   const [userIDArray, setUserIDArray] = useState<string[]>([]);
-  const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -25,14 +20,11 @@ const AdminUsers = () => {
       }
     };
 
-  
-
-    
-
     fetchUsers();
 
   }, [userIDArray]);
 
+  //need to fix: delete all data associated with user (ex. projects, chats)
   const deleteUser = async (userId: string) => {
     try {
       await api.delete(`/users/${userId}`);
@@ -43,21 +35,18 @@ const AdminUsers = () => {
     }
   };
 
- 
-
   return (
-   
-    <div>
-      <ul>
-            {users.map((user) => (
-              <li key={user.id}>
-                {user.name} - {user.email}
-                <button onClick={() => deleteUser(user.id)}>Delete</button>
-              </li>
-            ))}
-          </ul>
 
- 
+    <div>
+      <h2>All Users In Database</h2>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>
+            {user.name} - {user.email}
+            <button onClick={() => deleteUser(user.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

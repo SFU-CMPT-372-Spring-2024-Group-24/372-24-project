@@ -1,10 +1,30 @@
 import defaultProfilePicture from '../../assets/default-profile-picture.png';
-import "./AdminMenu.scss";
+import React, { useState } from 'react';
+import './AdminMenu.scss';
 import { FaUserAlt } from "react-icons/fa";
 import { LuFolderTree } from "react-icons/lu";
 
+interface AdminMenuProps {
+  toggleUsers: () => void;
+  toggleProjects: () => void;
+}
 
-const AdminMenu = () => {
+const AdminMenu: React.FC<AdminMenuProps> = ({ toggleUsers, toggleProjects }) => {
+  const [usersActive, setUsersActive] = useState(false);
+  const [projectsActive, setProjectsActive] = useState(false);
+
+  const handleToggleUsers = () => {
+    toggleUsers();
+    setUsersActive(true);
+    setProjectsActive(false); 
+  };
+
+  const handleToggleProjects = () => {
+    toggleProjects();
+    setProjectsActive(true);
+    setUsersActive(false); 
+  };
+
   return (
     <div className='admin-menu-container'>
       <div className='profile'>
@@ -13,14 +33,14 @@ const AdminMenu = () => {
       <div>
         <span className='greeting'>Hello Admin {/* Add name here */}</span>
       </div>
-      <ul className='admin-menu'>
-        <li>
+      <ul className="admin-menu">
+        <li onClick={() => !usersActive && handleToggleUsers()} className={usersActive ? 'active' : ''}>
           <FaUserAlt />
-          <a href='#'>Users</a>
+          <span>Users</span>
         </li>
-        <li>
+        <li onClick={() => !projectsActive && handleToggleProjects()} className={projectsActive ? 'active' : ''}>
           <LuFolderTree />
-          <a href='#'>Projects</a>
+          <span>Projects</span>
         </li>
       </ul>
     </div>

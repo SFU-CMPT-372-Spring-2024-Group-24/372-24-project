@@ -1,10 +1,15 @@
-import React from 'react'
-import styles from "./AdminLogout.scss";
+import "./AdminLogout.scss";
+import { FiLogOut } from "react-icons/fi";
+
 
 
 const AdminLogout = () => {
   return (
-    <div>AdminLogout</div>
+    <div className="admin-logout">
+      <div className="logout-btn">
+        <FiLogOut size={20} />
+      </div>
+    </div>
   )
 }
 

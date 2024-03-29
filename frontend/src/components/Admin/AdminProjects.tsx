@@ -1,9 +1,6 @@
-import React from 'react'
 import "./AdminProjects.scss";
 import { useState, useEffect } from 'react';
-
 import { api } from '../../api';
-
 
 const AdminProjects = () => {
 

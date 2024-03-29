@@ -1,0 +1,13 @@
+.admin-logout {
+    background-color: var(--eerie-black);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 45px;
+}
+
+.logout-btn {
+    color: white;
+    margin-right: 10px;
+    cursor: pointer;
+}
