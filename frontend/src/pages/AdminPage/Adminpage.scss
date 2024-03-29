@@ -1,0 +1,27 @@
+.admin-page-container {
+    display: grid;
+    /* Full height and width of the viewport */
+    height: 100vh;
+    width: 100vw;
+    grid-template-columns: 1fr 4fr;
+    /* Two columns: AdminMenu takes 1 part and main content takes 4 parts */
+    grid-template-rows: 50px 1fr;
+    /* Two rows: AdminMenu takes 50px height and rest takes remaining space */
+}
+
+.admin-menu-container {
+    grid-row: 1/3;
+    /* AdminMenu spans both rows */
+}
+
+.admin-logout-container {
+    grid-column: 2;
+    /* AdminLogout starts from the second column */
+}
+
+.admin-content {
+    grid-column: 2;
+    /* Main content starts from the second column */
+    grid-row: 2;
+    /* Main content starts from the second row */
+}

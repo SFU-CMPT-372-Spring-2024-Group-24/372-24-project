@@ -1,13 +1,12 @@
+import React from 'react'
+import "./AdminProjects.scss";
 import { useState, useEffect } from 'react';
-import './Adminpage.scss';
 
 import { api } from '../../api';
-import AdminMenu from '../../components/Admin/AdminMenu';
-import AdminLogout from '../../components/Admin/AdminLogout';
-import AdminUsers from '../../components/Admin/AdminUsers';
-import AdminProjects from '../../components/Admin/AdminProjects';
 
-const AdminPage = () => {
+
+const AdminProjects = () => {
+
   const [users, setUsers] = useState<any[]>([]);
   const [userIDArray, setUserIDArray] = useState<string[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
@@ -55,16 +54,6 @@ const AdminPage = () => {
     fetchProjectsForAllUsers();
   }, [userIDArray]);
 
-  const deleteUser = async (userId: string) => {
-    try {
-      await api.delete(`/users/${userId}`);
-      setUsers(users.filter((user) => user.id !== userId));
-      setUserIDArray(userIDArray.filter((id) => id !== userId));
-    } catch (error) {
-      console.error('Error deleting user', error);
-    }
-  };
-
   const deleteProject = async (projectId: string) => {
     try {
       await api.delete(`/projects/${projectId}`);
@@ -75,23 +64,18 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="admin-page-container">
-      <div className="admin-menu-container">
-        <AdminMenu />
-      </div>
-      <div className="admin-content-container">
-        <div className="admin-logout-container">
-          <AdminLogout />
-        </div>
-        <div className="admin-content">
-          <h2>All Users In Database</h2>
-          <AdminUsers />
-          <AdminProjects />
-      
-        </div>
-      </div>
+    <div>
+      <h2>All Projects In Database</h2>
+      <ul>
+        {projects.map((project) => (
+          <li key={project.id}>
+            {project.name} - {project.description}
+            <button onClick={() => deleteProject(project.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
-  );
-};
+  )
+}
 
-export default AdminPage;
+export default AdminProjects
