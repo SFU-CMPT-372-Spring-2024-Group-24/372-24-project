@@ -22,6 +22,7 @@ import Description from "./Description";
 import DueDate from "./DueDate";
 import Comments from "./Comments";
 import TaskMembers from "./TaskMembers";
+import TaskName from "./TaskName";
 // API
 import { api } from "../../../api";
 // Custom hooks
@@ -115,7 +116,7 @@ const TaskItem = ({ list, task, index }: Props) => {
         dialogClassName="task-item-modal"
       >
         <Modal.Header className="header">
-          <h3>{task.name}</h3>
+          <TaskName task={task} />
 
           <div className="sub-header">
             <span className="list-name">{list.name}</span>
