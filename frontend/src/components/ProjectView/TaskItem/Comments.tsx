@@ -30,8 +30,6 @@ const Comments = ({ task }: Props) => {
     const fetchComments = async () => {
       try {
         const response = await api.get(`/comments/${task.id}`);
-        console.log("Comments:", response.data);
-
         setComments(response.data);
       } catch (error) {
         console.error("Error fetching comments:", error);
