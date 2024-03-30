@@ -180,17 +180,39 @@
   }
 
   .header {
-    align-items: flex-start;
+    display: block;
     position: relative;
     margin-top: 0;
     background: $white;
 
-    h3 {
-      margin: 0;
-      font-size: 22px;
+    .task-name {
+      form {
+        margin-top: 0;
+        display: block;
+
+        input {
+          width: 100%;
+        }
+      }
+
+      h3 {
+        margin: 0;
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: .5rem;
+      }
     }
 
     .sub-header {
+      margin-top: .5rem;
       display: flex;
       gap: .5rem;
     }
