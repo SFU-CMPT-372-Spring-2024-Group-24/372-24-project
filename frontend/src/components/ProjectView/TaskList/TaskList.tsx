@@ -17,7 +17,7 @@ interface Props {
 }
 
 const TaskList = ({ listId }: Props) => {
-  const { lists, addTask, removeTask } = useTasks();
+  const { lists, addTask } = useTasks();
   const list = lists.find((list) => list.id === listId);
   const tasks = list?.tasks || [];
   const [showTaskInput, setShowTaskInput] = useState<boolean>(false);
@@ -45,10 +45,6 @@ const TaskList = ({ listId }: Props) => {
     }
   };
 
-  // const deleteTask = (id: number) => {
-  //   removeTask(listId, id);
-  // };
-
   return (
     <>
       {list && (
@@ -58,7 +54,7 @@ const TaskList = ({ listId }: Props) => {
 
             <button
               type="button"
-              className="btn-iconTxt"
+              className="btn-iconTxt add-task"
               onClick={handleToggleTaskInputField}
             >
               <IoMdAdd size={16} />
@@ -114,7 +110,6 @@ const TaskList = ({ listId }: Props) => {
                       key={task.id}
                       list={list}
                       task={task}
-                      // deleteTask={deleteTask}
                       index={index}
                     />
                   ))

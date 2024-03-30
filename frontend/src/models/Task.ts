@@ -13,3 +13,11 @@ export interface Task {
   listId: number;
   orderIndex: number;
 }
+
+export interface Comment {
+  id: number;
+  comment: string;
+  createdAt: Date;
+  User: User;
+  isEdited: boolean;
+}
