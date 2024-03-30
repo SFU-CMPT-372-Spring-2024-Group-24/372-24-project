@@ -4,7 +4,7 @@ import { useState } from "react";
 // Icons
 import { IoMdAdd } from "react-icons/io";
 import { FaCheck } from "react-icons/fa6";
-import { IoSearch } from "react-icons/io5";
+import { IoSearch, IoSettingsOutline } from "react-icons/io5";
 // Files
 import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Models
@@ -15,7 +15,6 @@ import { api } from "../../../api";
 
 interface Props {
   project: Project;
-  // setProject: (project: Project) => void;
   members: User[];
   setMembers: (members: User[]) => void;
 }
@@ -36,12 +35,14 @@ const Members = ({ project, members, setMembers }: Props) => {
 
   const handleAddMembers = async () => {
     try {
-      const response = await api.post(`/projects/${project.id}/addUsers`, {
+      const response = await api.post(`/projects/${project.id}/users`, {
         userIds: selectedUsers.map((user) => user.id),
       });
 
-      setMembers(response.data.Users);
-      closeAddMemberModal();
+      if (response.status === 201) {
+        setMembers([...members, ...selectedUsers]);
+        closeAddMemberModal();
+      }
     } catch (error) {
       console.error("Failed to add member: ", error);
     }
@@ -49,6 +50,10 @@ const Members = ({ project, members, setMembers }: Props) => {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!searchQuery) {
+      return;
+    }
 
     try {
       const userIds = members.map((user) => user.id);
@@ -62,10 +67,24 @@ const Members = ({ project, members, setMembers }: Props) => {
   };
 
   const handleSelectUser = (user: User) => {
-    if (selectedUsers.includes(user)) {
+    if (selectedUsers.some((selected) => selected.id === user.id)) {
       setSelectedUsers(selectedUsers.filter((u) => u !== user));
     } else {
       setSelectedUsers([...selectedUsers, user]);
+    }
+  };
+
+  const handleRemoveUser = async (user: User) => {
+    try {
+      const response = await api.delete(
+        `/projects/${project.id}/users/${user.id}`
+      );
+
+      if (response.status === 200) {
+        setMembers(members.filter((member) => member.id !== user.id));
+      }
+    } catch (error) {
+      console.error("Failed to remove member: ", error);
     }
   };
 
@@ -79,7 +98,7 @@ const Members = ({ project, members, setMembers }: Props) => {
             className="btn-icon"
             onClick={openAddMemberModal}
           >
-            <IoMdAdd size={20} />
+            <IoSettingsOutline size={20} />
           </button>
         </h2>
 
@@ -102,75 +121,111 @@ const Members = ({ project, members, setMembers }: Props) => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>Add a member</Modal.Title>
+          <Modal.Title>Manage project members</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          <form className="search-member" onSubmit={handleSearch}>
-            <div className="search-bar">
-              <IoSearch size={18} className="search-icon" />
-              <input
-                name="search"
-                id="search"
-                type="text"
-                placeholder="Search by name, username or email"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                }}
-              />
-            </div>
+          <section>
+            <h5>Current members</h5>
+            <ul className="members-list">
+              {members.map((user) => (
+                <li className="member" key={user.id}>
+                  <img
+                    src={user.profilePicture || defaultProfilePicture}
+                    alt="User Avatar"
+                  />
 
-            <button className="btn-text">Search</button>
-          </form>
+                  <div className="member-info">
+                    <p>{user.name}</p>
+                    <p>{user.username}</p>
+                  </div>
 
-          <ul className="members-list">
-            {searchResults.map((user) => (
-              <li
-                className="member"
-                key={user.id}
-                onClick={() => {
-                  handleSelectUser(user);
-                }}
-              >
-                <img
-                  src={user.profilePicture || defaultProfilePicture}
-                  alt="User Avatar"
-                />
+                  <button
+                    className="btn-icon btn-remove-user"
+                    onClick={() => handleRemoveUser(user)}
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
 
-                <div className="member-info">
-                  <p>{user.name}</p>
-                  <p>{user.username}</p>
+          <section>
+            <div>
+              <h5>Add members to your project</h5>
+              <form className="search-member" onSubmit={handleSearch}>
+                <div className="search-bar">
+                  <IoSearch size={18} className="search-icon" />
+                  <input
+                    autoFocus
+                    name="search"
+                    id="search"
+                    type="text"
+                    placeholder="Search by name, username or email"
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                    }}
+                  />
                 </div>
 
-                {selectedUsers.includes(user) ? (
-                  <FaCheck size={16} color="#8C54FB" className="icon" />
-                ) : (
-                  <IoMdAdd size={20} className="icon" />
-                )}
-              </li>
-            ))}
-          </ul>
-        </Modal.Body>
+                <button className="btn-text">Search</button>
+              </form>
 
-        <Modal.Footer>
-          <div className="button-group">
-            <button
-              type="button"
-              className="btn-cancel"
-              onClick={closeAddMemberModal}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="btn-text"
-              onClick={handleAddMembers}
-            >
-              Save changes
-            </button>
-          </div>
-        </Modal.Footer>
+              <ul className="members-list">
+                {searchResults.length ? (
+                  searchResults.map((user) => (
+                    <li
+                      className="member"
+                      key={user.id}
+                      onClick={() => {
+                        handleSelectUser(user);
+                      }}
+                    >
+                      <img
+                        src={user.profilePicture || defaultProfilePicture}
+                        alt="User Avatar"
+                      />
+
+                      <div className="member-info">
+                        <p>{user.name}</p>
+                        <p>{user.username}</p>
+                      </div>
+
+                      {selectedUsers.some(
+                        (selected) => selected.id === user.id
+                      ) ? (
+                        <FaCheck size={16} color="#8C54FB" className="icon" />
+                      ) : (
+                        <IoMdAdd size={20} className="icon" />
+                      )}
+                    </li>
+                  ))
+                ) : (
+                  <li className="no-member-found">No members found</li>
+                )}
+              </ul>
+            </div>
+
+            <div className="button-group">
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={closeAddMemberModal}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn-text"
+                onClick={handleAddMembers}
+              >
+                Save changes
+              </button>
+            </div>
+          </section>
+        </Modal.Body>
       </Modal>
     </>
   );
