@@ -16,17 +16,16 @@ import { getFileIcon } from "../../../utils/fileUtils";
 // Models
 import { Task } from "../../../models/Task";
 import { List } from "../../../models/List";
-// Files
-import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Components
 import Priority from "./Priority";
 import Description from "./Description";
 import DueDate from "./DueDate";
+import Comments from "./Comments";
+import TaskMembers from "./TaskMembers";
 // API
 import { api } from "../../../api";
 // Custom hooks
 import { useTasks } from "../../../hooks/TaskContext";
-import Comments from "./Comments";
 
 interface Props {
   list: List;
@@ -145,28 +144,17 @@ const TaskItem = ({ list, task, index }: Props) => {
           <Description task={task} />
 
           <DueDate task={task} />
+          
+          <div className="row">
+            <TaskMembers task={task} />
 
-          <div className="members">
-            <h4>Members</h4>
+            <div className="attachments col">
+              <h4>Attachments</h4>
 
-            {task.assignees &&
-              task.assignees.map((assignee) => (
-                <div className="member" key={assignee.id}>
-                  <img
-                    src={assignee.profilePicture || defaultProfilePicture}
-                    alt="User Avatar"
-                  />
-                  <p>{assignee.name}</p>
-                </div>
-              ))}
-          </div>
-
-          <div className="attachments">
-            <h4>Attachments</h4>
-
-            <div className="file">
-              {getFileIcon("doc")}
-              <p>example.docx</p>
+              <div className="file">
+                {getFileIcon("doc")}
+                <p>example.docx</p>
+              </div>
             </div>
           </div>
         </Modal.Body>

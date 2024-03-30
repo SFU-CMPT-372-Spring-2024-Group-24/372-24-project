@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 // Models
 import { Task } from "../models/Task";
 import { List } from "../models/List";
+import { User } from "../models/User";
 // API
 import { api } from "../api";
 
@@ -19,6 +20,7 @@ interface TaskContextProps {
     oldIndex: number,
     newIndex: number
   ) => Promise<boolean>;
+  projectMembers: User[];
 }
 export const TaskContext = createContext<TaskContextProps | undefined>(undefined);
 
@@ -35,8 +37,9 @@ export const useTasks = (): TaskContextProps => {
 interface TaskProviderProps {
   children: React.ReactNode;
   initialLists: List[];
+  projectMembers: User[];
 }
-export const TaskProvider = ({ children, initialLists }: TaskProviderProps) => {
+export const TaskProvider = ({ children, initialLists, projectMembers }: TaskProviderProps) => {
   const [lists, setLists] = useState<List[]>(initialLists);
 
   const setTask = (updatedTask: Task) => {
@@ -164,7 +167,7 @@ export const TaskProvider = ({ children, initialLists }: TaskProviderProps) => {
 
   return (
     <TaskContext.Provider
-      value={{ lists, setLists, setTask, addTask, removeTask, moveTask }}
+      value={{ lists, setLists, setTask, addTask, removeTask, moveTask, projectMembers }}
     >
       {children}
     </TaskContext.Provider>

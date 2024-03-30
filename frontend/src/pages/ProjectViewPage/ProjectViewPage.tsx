@@ -22,19 +22,18 @@ const ProjectViewPage = () => {
   const [initialLists, setInitialLists] = useState<List[]>([]);
   const navigate = useNavigate();
 
-  // Fetch project data from server
-  const fetchProject = async () => {
-    try {
-      const response = await api.get(`/projects/${id}`);
-
-      setMembers(response.data.Users);
-      setProject(response.data);
-    } catch (error) {
-      navigate("/projects/404");
-    }
-  };
-
   useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const response = await api.get(`/projects/${id}`);
+  
+        setMembers(response.data.Users);
+        setProject(response.data);
+      } catch (error) {
+        navigate("/projects/404");
+      }
+    };
+
     fetchProject();
 
     const fetchListsAndTasks = async () => {
@@ -79,7 +78,7 @@ const ProjectViewPage = () => {
           <section className="project">
             <h1 className="gradient-text">{project.name}</h1>
 
-            <TaskProvider initialLists={initialLists}>
+            <TaskProvider initialLists={initialLists} projectMembers={members}>
               <div className="project-lists">
                 <TaskLists />
               </div>
