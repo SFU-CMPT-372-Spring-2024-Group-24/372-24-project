@@ -1,5 +1,6 @@
 const { Project, User } = require("../db");
 const express = require("express");
+const Sequelize = require("sequelize");
 
 const router = express.Router();
 
@@ -38,11 +39,6 @@ router.get("/", async (req, res) => {
           model: User,
           where: { id: userId },
         },
-        {
-          model: User,
-          attributes: ["id", "name", "username", "email", "profilePicture"],
-          through: { attributes: [] },
-        },
       ],
     });
 
@@ -58,13 +54,7 @@ router.get("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const project = await Project.findByPk(id, {
-      include: {
-        model: User,
-        attributes: ["id", "name", "username", "email", "profilePicture"],
-        through: { attributes: [] },
-      },
-    });
+    const project = await Project.findByPk(id);
 
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
@@ -124,13 +114,35 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Add user to project
-router.post("/:id/addUsers", async (req, res) => {
-  const { id } = req.params;
+// Get users by project id
+router.get("/:id/users", async (req, res) => {
+  const projectId = req.params.id;
+
+  try {
+    const project = await Project.findByPk(projectId);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    const users = await project.getUsers({
+      attributes: ["id", "name", "username", "email", "profilePicture"],
+      joinTableAttributes: [],
+      order: [[Sequelize.literal('"UserProject"."createdAt"'), 'ASC']],
+    });
+
+    res.json(users);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Add users to project
+router.post("/:id/users", async (req, res) => {
+  const projectId = req.params.id;
   const { userIds } = req.body;
 
   try {
-    const project = await Project.findByPk(id);
+    const project = await Project.findByPk(projectId);
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
@@ -138,21 +150,37 @@ router.post("/:id/addUsers", async (req, res) => {
     for (let userId of userIds) {
       const user = await User.findByPk(userId);
       if (!user) {
-        return res.status(400).json({ message: "User not found" });
+        return res.status(404).json({ message: "User not found" });
       }
 
       await project.addUser(user);
     }
 
-    const updatedProject = await Project.findByPk(id, {
-      include: {
-        model: User,
-        attributes: ["id", "name", "username", "email", "profilePicture"],
-        through: { attributes: [] },
-      },
-    });
+    res.status(201).json({ message: "Users added to project" });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 
-    res.json(updatedProject);
+// Remove user from project
+router.delete("/:id/users/:userId", async (req, res) => {
+  const projectId = req.params.id;
+  const userId = req.params.userId;
+
+  try {
+    const project = await Project.findByPk(projectId);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await project.removeUser(user);
+
+    res.status(200).json({ message: "User removed from project" });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

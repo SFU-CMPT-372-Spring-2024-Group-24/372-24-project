@@ -1,5 +1,5 @@
 // Libraries
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 // Models
 import { Task } from "../models/Task";
@@ -36,12 +36,40 @@ export const useTasks = (): TaskContextProps => {
 
 interface TaskProviderProps {
   children: React.ReactNode;
-  initialLists: List[];
   projectMembers: User[];
+  projectId: number;
 }
-export const TaskProvider = ({ children, initialLists, projectMembers }: TaskProviderProps) => {
-  const [lists, setLists] = useState<List[]>(initialLists);
+export const TaskProvider = ({ children, projectMembers, projectId }: TaskProviderProps) => {
+  const [lists, setLists] = useState<List[]>([]);
 
+  // Fetch lists and tasks for the project
+  useEffect(() => {
+    const fetchListsAndTasks = async () => {
+      try {
+        // Fetch lists for the project
+        const response = await api.get(`/lists/${projectId}`);
+        const lists = response.data;
+
+        // Fetch tasks for each list
+        const tasksPromises = lists.map((list: List) =>
+          api.get(`/tasks/${list.id}`)
+        );
+        const tasksResponses = await Promise.all(tasksPromises);
+
+        lists.forEach((list: List, index: number) => {
+          list.tasks = tasksResponses[index].data;
+        });
+
+        setLists(lists);
+      } catch (error) {
+        console.error("Error fetching lists and tasks:", error);
+      }
+    }
+
+    fetchListsAndTasks();
+  }, [projectId]);
+
+  // Update a task in the state
   const setTask = (updatedTask: Task) => {
     const updatedLists = lists.map((list) => ({
       ...list,
@@ -53,6 +81,7 @@ export const TaskProvider = ({ children, initialLists, projectMembers }: TaskPro
     setLists(updatedLists);
   };
 
+  // Add a new task to the list
   const addTask = (listId: number, newTask: Task) => {
     const updatedLists = lists.map((list) => {
       if (list.id === listId) {
@@ -64,6 +93,7 @@ export const TaskProvider = ({ children, initialLists, projectMembers }: TaskPro
     setLists(updatedLists);
   };
 
+  // Remove a task from the list
   const removeTask = (listId: number, taskId: number) => {
     const updatedLists = lists.map((list) => {
       if (list.id === listId) {
@@ -78,6 +108,8 @@ export const TaskProvider = ({ children, initialLists, projectMembers }: TaskPro
     setLists(updatedLists);
   };
 
+  // Move a task to a different list or reorder within the same list
+  // and update the order index in the database
   const moveTask = async (
     sourceListId: number,
     destinationListId: number,
