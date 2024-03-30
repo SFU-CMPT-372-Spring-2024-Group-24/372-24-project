@@ -16,6 +16,16 @@
     h2 {
       margin: 0;
     }
+
+    button.add-task {
+      background: transparent;
+      color: $black;
+
+      &:hover {
+        background: $light-gray;
+        box-shadow: none;
+      }
+    }
   }
 
   .task-count {

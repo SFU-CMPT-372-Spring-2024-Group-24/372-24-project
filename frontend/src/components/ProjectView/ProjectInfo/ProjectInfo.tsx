@@ -11,8 +11,6 @@ import { Project } from "../../../models/Project";
 import { User } from "../../../models/User";
 // Utils
 import { getFileIcon } from "../../../utils/fileUtils";
-// Files
-// import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // API
 import { api } from "../../../api";
 // Components
@@ -32,9 +30,7 @@ const ProjectInfo = ({ project, setProject, members, setMembers }: Props) => {
     try {
       const response = await api.delete(`/projects/${project.id}`);
       if (response.status === 200) {
-        toast.success(response.data.message, {
-          className: "toast-success",
-        });
+        toast(response.data.message);
         navigate("/projects");
       }
     } catch (error) {
