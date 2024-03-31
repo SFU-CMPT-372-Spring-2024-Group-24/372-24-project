@@ -8,7 +8,6 @@ import { Draggable } from "@hello-pangea/dnd";
 import "./TaskItem.scss";
 // Icons
 import { IoMdClose, IoMdTrash } from "react-icons/io";
-import { IoSend } from "react-icons/io5";
 import { TbArrowsExchange } from "react-icons/tb";
 import { FaRegClock } from "react-icons/fa6";
 // Utils
@@ -17,12 +16,13 @@ import { getFileIcon } from "../../../utils/fileUtils";
 // Models
 import { Task } from "../../../models/Task";
 import { List } from "../../../models/List";
-// Files
-import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Components
 import Priority from "./Priority";
 import Description from "./Description";
 import DueDate from "./DueDate";
+import Comments from "./Comments";
+import TaskMembers from "./TaskMembers";
+import TaskName from "./TaskName";
 // API
 import { api } from "../../../api";
 // Custom hooks
@@ -53,7 +53,12 @@ const TaskItem = ({ list, task, index }: Props) => {
   // Move task
   const handleMoveTask = async () => {
     try {
-      const response = await moveTask(list.id, selectedListId, index, selectedPosition);
+      const response = await moveTask(
+        list.id,
+        selectedListId,
+        index,
+        selectedPosition
+      );
 
       if (response) {
         setShowTaskItemModal(false);
@@ -70,12 +75,9 @@ const TaskItem = ({ list, task, index }: Props) => {
       const response = await api.delete(`/tasks/${task.id}`);
 
       if (response.status === 200) {
-        // deleteTask(task.id);
         removeTask(list.id, task.id);
         setShowTaskItemModal(false);
-        toast.success(response.data.message, {
-          className: "toast-success",
-        });
+        toast(response.data.message);
       }
     } catch (error) {
       console.error("Error deleting task:", error);
@@ -94,9 +96,7 @@ const TaskItem = ({ list, task, index }: Props) => {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
           >
-            <h3>
-              {task.name}
-            </h3>
+            <h3>{task.name}</h3>
 
             {task.dueDate && (
               <div className="info">
@@ -116,103 +116,53 @@ const TaskItem = ({ list, task, index }: Props) => {
         dialogClassName="task-item-modal"
       >
         <Modal.Header className="header">
-          <div className="task-title">
-            <h3>{task.name}</h3>
+          <TaskName task={task} />
 
+          <div className="sub-header">
             <span className="list-name">{list.name}</span>
+            <Priority task={task} />
           </div>
 
-          <Priority task={task} />
+          <div className="button-group">
+            <button
+              className="btn-icon close-btn"
+              onClick={toggleTaskItemModal}
+            >
+              <IoMdClose size={20} />
+            </button>
 
-          <button className="btn-icon move-btn" onClick={toggleMoveTaskModal}>
-            <TbArrowsExchange size={20} />
-          </button>
+            <button className="btn-icon move-btn" onClick={toggleMoveTaskModal}>
+              <TbArrowsExchange size={20} />
+            </button>
 
-          <button className="btn-icon delete-btn" onClick={handleDeleteTask}>
-            <IoMdTrash size={20} />
-          </button>
-
-          <button className="close-btn" onClick={toggleTaskItemModal}>
-            <IoMdClose size={20} />
-          </button>
+            <button className="btn-icon delete-btn" onClick={handleDeleteTask}>
+              <IoMdTrash size={20} />
+            </button>
+          </div>
         </Modal.Header>
 
-        <Modal.Body className="body">
+        <Modal.Body>
           <Description task={task} />
 
           <DueDate task={task} />
+          
+          <div className="row">
+            <TaskMembers task={task} />
 
-          <div className="members">
-            <h4>Members</h4>
+            <div className="attachments col">
+              <h4>Attachments</h4>
 
-            {task.assignees &&
-              task.assignees.map((assignee) => (
-                <div className="member" key={assignee.id}>
-                  <img
-                    src={assignee.profilePicture || defaultProfilePicture}
-                    alt="User Avatar"
-                  />
-                  <p>{assignee.name}</p>
-                </div>
-              ))}
-          </div>
-
-          <div className="attachments">
-            <h4>Attachments</h4>
-
-            <div className="file">
-              {getFileIcon("doc")}
-              <p>example.docx</p>
-            </div>
-          </div>
-
-          <div className="comments">
-            <h4>Comments</h4>
-
-            <p className="view-more">View more comments</p>
-
-            <div className="comment">
-              <img
-                src="https://images.unsplash.com/photo-1707343844152-6d33a0bb32c3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="User Avatar"
-              />
-              <div className="comment-details">
-                <span>John Doe</span>
-                <span className="comment-time">1 day ago</span>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Id,
-                  nemo!
-                </p>
+              <div className="file">
+                {getFileIcon("doc")}
+                <p>example.docx</p>
               </div>
-            </div>
-
-            <div className="comment">
-              <img
-                src="https://images.unsplash.com/photo-1707343844152-6d33a0bb32c3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="User Avatar"
-              />
-              <div className="comment-details">
-                <span>Mary Ann</span>
-                <span className="comment-time">Just now</span>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Id,
-                  nemo!
-                </p>
-              </div>
-            </div>
-
-            <div className="add-comment">
-              <textarea
-                name="comment"
-                id="comment"
-                placeholder="Write a comment..."
-              ></textarea>
-              <button>
-                <IoSend size={16} />
-              </button>
             </div>
           </div>
         </Modal.Body>
+
+        <Modal.Footer>
+          <Comments task={task} />
+        </Modal.Footer>
       </Modal>
 
       <Modal
@@ -226,7 +176,7 @@ const TaskItem = ({ list, task, index }: Props) => {
 
         <Modal.Body>
           <p>Current List: {list.name}</p>
-          <p>Current Position: {index+1}</p>
+          <p>Current Position: {index + 1}</p>
 
           <p>Select List:</p>
           <select

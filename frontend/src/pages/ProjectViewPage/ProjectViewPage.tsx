@@ -7,7 +7,6 @@ import TaskLists from "../../components/ProjectView/TaskLists/TaskLists";
 // Models
 import { Project } from "../../models/Project";
 import { User } from "../../models/User";
-import { List } from "../../models/List";
 // Styles
 import "./ProjectViewPage.scss";
 // API
@@ -19,51 +18,37 @@ const ProjectViewPage = () => {
   const { id } = useParams();
   const [project, setProject] = useState<Project | null>(null);
   const [members, setMembers] = useState<User[]>([]);
-  const [initialLists, setInitialLists] = useState<List[]>([]);
   const navigate = useNavigate();
 
-  // Fetch project data from server
-  const fetchProject = async () => {
-    try {
-      const response = await api.get(`/projects/${id}`);
-
-      setMembers(response.data.Users);
-      setProject(response.data);
-    } catch (error) {
-      navigate("/projects/404");
-    }
-  };
-
+  // Fetch project data
   useEffect(() => {
-    fetchProject();
-
-    const fetchListsAndTasks = async () => {
+    const fetchProject = async () => {
       try {
-        // Fetch lists for the project
-        const response = await api.get(`/lists/${id}`);
-        setInitialLists(response.data);
-
-        // Fetch tasks for each list
-        response.data.forEach(async (list: List) => {
-          try {
-            const response = await api.get(`/tasks/${list.id}`);
-            list.tasks = response.data;
-            setInitialLists((prevLists) =>
-              prevLists.map((prevList) =>
-                prevList.id === list.id ? list : prevList
-              )
-            );
-          } catch (error) {
-            console.error("Error fetching tasks:", error);
-          }
-        });
+        const response = await api.get(`/projects/${id}`);
+        setProject(response.data);
       } catch (error) {
-        console.error("Error fetching lists:", error);
+        navigate("/projects/404");
       }
     };
 
-    fetchListsAndTasks();
+    fetchProject();
   }, []);
+
+  // Fetch project members
+  useEffect(() => {
+    if (project) {
+      const fetchMembers = async () => {
+        try {
+          const response = await api.get(`/projects/${project.id}/users`);
+          setMembers(response.data);
+        } catch (error) {
+          console.error("Error fetching members:", error);
+        }
+      };
+
+      fetchMembers();
+    }
+  }, [project]);
 
   return (
     <>
@@ -79,7 +64,7 @@ const ProjectViewPage = () => {
           <section className="project">
             <h1 className="gradient-text">{project.name}</h1>
 
-            <TaskProvider initialLists={initialLists}>
+            <TaskProvider projectId={project.id} projectMembers={members}>
               <div className="project-lists">
                 <TaskLists />
               </div>

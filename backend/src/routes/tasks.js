@@ -1,48 +1,4 @@
-// const { DataTypes } = require('sequelize');
-
-// module.exports = (sequelize) => {
-//     const Task = sequelize.define('Task', {
-//         id: {
-//             type: DataTypes.INTEGER,
-//             primaryKey: true,
-//             autoIncrement: true
-//         },
-//         listId: {
-//             type: DataTypes.INTEGER,
-//             allowNull: false
-//         },
-//         name: {
-//             type: DataTypes.STRING,
-//             allowNull: false
-//         },
-//         priority: {
-//             type: DataTypes.ENUM('unset', 'planning', 'low', 'medium', 'high', 'urgent'),
-//             allowNull: true
-//         },
-//         description: {
-//             type: DataTypes.TEXT,
-//             allowNull: true
-//         },
-//         dueDate: {
-//             type: DataTypes.DATE,
-//             allowNull: true
-//         },
-//         isDone: {
-//             type: DataTypes.BOOLEAN,
-//             allowNull: false,
-//             defaultValue: false
-//         },
-//         orderIndex: {
-//             type: DataTypes.INTEGER,
-//             allowNull: false,
-//             defaultValue: 0
-//         }
-//     });
-
-//     return Task;
-// }
-
-const { Task } = require('../db');
+const { Task, User } = require('../db');
 const express = require('express');
 
 const router = express.Router();
@@ -84,7 +40,7 @@ router.post('/', async (req, res) => {
 // Update task
 router.put('/:id', async (req, res) => {
     const id = req.params.id;
-    const { name, listId, priority, description, dueDate, isDone } = req.body;
+    const { name, priority, description, dueDate, isDone } = req.body;
     const fieldsToUpdate = {};
 
     if (name) {
@@ -151,6 +107,77 @@ router.put('/:id/order', async (req, res) => {
         await task.update({ orderIndex, listId });
 
         res.json(task);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Get users by task id
+router.get('/:id/users', async (req, res) => {
+    const taskId = req.params.id;
+
+    try {
+        const task = await Task.findByPk(taskId);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        // Get users associated with the task, only return the id, name, email, username, and profilePicture
+        const users = await task.getUsers({
+            attributes: ['id', 'name', 'email', 'username', 'profilePicture']
+        });
+
+        res.json(users);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Add user to task
+router.post('/:id/users', async (req, res) => {
+    const taskId = req.params.id;
+    const { userId } = req.body;
+
+    try {
+        const task = await Task.findByPk(taskId);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        await task.addUser(user);
+
+        // res.json({ message: 'User added to task' });
+        res.status(201).json({ message: 'User added to task' });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Remove user from task
+router.delete('/:id/users/:userId', async (req, res) => {
+    const taskId = req.params.id;
+    const userId = req.params.userId;
+
+    try {
+        const task = await Task.findByPk(taskId);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        await task.removeUser(user);
+
+        // res.json({ message: 'User removed from task' });
+        res.status(200).json({ message: 'User removed from task' });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
