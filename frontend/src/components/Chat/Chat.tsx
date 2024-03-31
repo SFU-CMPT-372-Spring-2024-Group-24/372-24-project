@@ -87,9 +87,9 @@ const Chat = () => {
         console.error("Error fetching all users:", error);
       }
     };
-
     getRecentChats();
     getAllUsers();
+    socket.on("refresh_user_list", getRecentChats);
   }, []);
 
   const addNewChat = async (chatName: any, userID: any, otherIDs: any) => {
@@ -175,8 +175,10 @@ const Chat = () => {
       });
       const myName = uuidv4();
       await addNewChat(myName, user?.id, convertedArray);
+      socket.emit("chat_added");
     }
     getRecentChats();
+    //broadcast to others to
     // Insert new chat into chats table, with a random chat name
     // Also add two different users to this new chat
     //then we can pull from database, all the users associated with this chat

@@ -25,17 +25,19 @@ app.use(express.urlencoded({ extended: true }));
 app.set("trust proxy", 1);
 
 // Session
-app.use(session({
-  name: "collabhub.sid",
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-  },
-}));
+app.use(
+  session({
+    name: "collabhub.sid",
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+    },
+  })
+);
 
 // Serve React app (for production)
 // if (process.env.NODE_ENV === "production") {
@@ -46,11 +48,11 @@ app.use(express.static(path.join(__dirname, "../dist")));
 app.use("/test", express.static(path.join(__dirname, "./test.local")));
 
 // Prevent direct access to API routes
-app.use('/api', (req, res, next) => {
-  if (req.headers['x-requested-with'] === 'XMLHttpRequest') {
-    next();  // If the request is an AJAX request, proceed
+app.use("/api", (req, res, next) => {
+  if (req.headers["x-requested-with"] === "XMLHttpRequest") {
+    next(); // If the request is an AJAX request, proceed
   } else {
-    res.status(403).send('You are not allowed to access this route directly');  // If the request is not an AJAX request, send a 403 Forbidden response
+    res.status(403).send("You are not allowed to access this route directly"); // If the request is not an AJAX request, send a 403 Forbidden response
   }
 });
 
@@ -80,7 +82,9 @@ app.get("*", (req, res) => {
 // HTTP server
 const port = process.env.PORT || 8080;
 const httpServer = http.createServer(app);
-httpServer.listen(port, () => console.log(`HTTP server is running on port ${port}`));
+httpServer.listen(port, () =>
+  console.log(`HTTP server is running on port ${port}`)
+);
 
 // Chat server
 const io = new SocketIOServer(httpServer);
@@ -92,6 +96,9 @@ io.on("connection", (socket) => {
     console.log(`User with ID: ${socket.id} joined room: ${data}`);
   });
 
+  socket.on("chat_added", () => {
+    socket.broadcast.emit("refresh_user_list");
+  });
   socket.on("send_message", (data) => {
     socket.to(data).emit("receive_message");
   });
