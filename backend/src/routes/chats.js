@@ -6,8 +6,8 @@ const Sequelize = require("sequelize");
 
 // Add new chat for user
 router.post("/addChat", async (req, res) => {
-  const { chatName, userID, otherID } = req.body;
-  console.log("ChatName is:", chatName);
+  const { chatName, userID, otherIDs } = req.body;
+  console.log("otherIDs is:", otherIDs);
   try {
     //make a new Chat
     // const [chat, user, other] = await Promise.all([
@@ -25,19 +25,28 @@ router.post("/addChat", async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
     console.log("hi2");
-    //get other user by id
-    const other = await User.findByPk(otherID);
-    if (!other) {
-      return res.status(400).json({ message: "User not found" });
-    }
+
+    //get all other user by id
+    const otherUsers = [];
+    otherIDs.forEach(async (otherID) => {
+      //get user
+      let other = await User.findByPk(otherID);
+      if (!other) {
+        return res.status(400).json({ message: "User not found" });
+      }
+      //add user to chat
+      await chat.addUser(other);
+      otherUsers.push(other);
+    });
+
     console.log("hi3");
-    //add both to the chat
-    console.log(chat);
+
+    //add sending user to the chat
     await chat?.addUser(user);
-    await chat?.addUser(other);
     console.log("hi4");
+    console.log("Other users:", otherUsers);
     //return information
-    res.json({ chat, user, other });
+    res.json({ chat, user, otherUsers });
   } catch (err) {
     console.error("Error adding chat:", err);
     res.status(400).json({ message: "Error adding chat", error: err.message });

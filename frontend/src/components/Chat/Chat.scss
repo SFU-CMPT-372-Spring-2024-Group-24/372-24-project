@@ -20,6 +20,17 @@
   background-color: white;
   overflow-y: auto;
 }
+.recentChatters {
+  height: 120px;
+  background-color: beige;
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.recentChatters p {
+  margin: 1em;
+  word-wrap: break-word;
+}
 
 .recentChatters:hover {
   box-shadow: 0.1em 0.1em 0.3em 0.4em #cecece;

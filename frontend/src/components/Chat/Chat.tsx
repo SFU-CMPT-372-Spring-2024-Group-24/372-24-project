@@ -7,6 +7,19 @@ import ChatMessages from "./ChatMessages";
 import { useUser } from "../../hooks/UserContext";
 import { User } from "../../models/User";
 import { api } from "../../api";
+import Select, { MultiValue } from "react-select";
+
+class Option {
+  value: string;
+  label: string;
+  additionalInfo: string;
+
+  constructor(value: string, label: string, additionalInfo: string) {
+    this.value = value;
+    this.label = label;
+    this.additionalInfo = additionalInfo;
+  }
+}
 
 // const socket = io("wss://collabhub-dot-collabhub-418107.uc.r.appspot.com/");
 const socket = io("http://localhost:8080", {
@@ -17,13 +30,15 @@ const Chat = () => {
   //   return <IoMdChatboxes size={40} />;
   //somehow get the user_id here
   const { user } = useUser();
-  const [userList, setUserList] = useState<User[]>([]);
+  const [userList, setUserList] = useState<Option[]>([]);
   const [username, setUsername] = useState("");
   const [room, setRoom] = useState("");
   const [chatVisibility, setChatVisibility] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [recentChatters, setRecentChatters] = useState<any[]>([]);
-  const [currentSelectValue, setCurrentSelectValue] = useState("");
+  const [currentSelectValue, setCurrentSelectValue] = useState<
+    MultiValue<Option>
+  >([]);
   // const [chat, setChat] = useState("");
   const [divIndexValue, setDivIndexValue] = useState(-1);
   // maybe make this change everytime userList is changed
@@ -33,6 +48,7 @@ const Chat = () => {
         const response = await api.get(`/chats/getChats/${user!.id}`);
         const chats = response.data;
         setRecentChatters(chats);
+        //console.log("Recent Chats:", chats);
       }
     } catch (error) {
       console.error("Error fetching recent Chats", error);
@@ -50,10 +66,22 @@ const Chat = () => {
         const response = await api.get("/users");
         const users = response.data;
         if (user != null) {
-          const filteredAllUsers: User[] = users.filter(
+          var filteredAllUsers: User[] = users.filter(
             (myUser: User) => myUser.id != user!.id && myUser.isAdmin != true
           );
-          setUserList(filteredAllUsers);
+          //make the user list here, which will be used as the options thing later
+          var options: Option[] = [];
+          filteredAllUsers.forEach((myUser: User) => {
+            var option: Option = new Option(
+              JSON.stringify(myUser),
+              myUser.name,
+              myUser.username
+            );
+            options.push(option);
+          });
+          //console.log("Users:", users);
+          //console.log("Options:", options);
+          setUserList(options);
         }
       } catch (error) {
         console.error("Error fetching all users:", error);
@@ -64,7 +92,7 @@ const Chat = () => {
     getAllUsers();
   }, []);
 
-  const addNewChat = async (chatName: any, userID: any, otherID: any) => {
+  const addNewChat = async (chatName: any, userID: any, otherIDs: any) => {
     // const response = await fetch(
     //   `${import.meta.env.VITE_APP_API_URL}/chats/addChat`,
     //   {
@@ -89,12 +117,12 @@ const Chat = () => {
     //   console.log("response not ok");
     // }
     try {
-      const response = await api.post("/chats/addChat", {
+      await api.post("/chats/addChat", {
         chatName: chatName,
         userID: userID,
-        otherID: otherID,
+        otherIDs: otherIDs,
       });
-      console.log(response.data);
+      //console.log(response.data);
     } catch (error) {
       console.error("Error adding new chat", error);
     }
@@ -129,24 +157,24 @@ const Chat = () => {
     //set div value back to -1 here
   };
 
-  const updateValue = (event: any) => {
-    setCurrentSelectValue(event.target.value);
+  const updateValue = (selectedOptions: MultiValue<Option>) => {
+    setCurrentSelectValue(selectedOptions);
   };
   const addChatter = async (event: any) => {
     //need to check if you haven't already added someone
     //use current select value to check in recent chatters
     //if already added, then alert the user
     event.preventDefault();
-
+    console.log("CurrentSelectValue", currentSelectValue);
     //add to list of user_id, need to represent each with a div
-    if (currentSelectValue != "") {
-      const convertedSelectValue = JSON.parse(currentSelectValue);
-      // console.log("CurrentSelectValue", currentSelectValue);
+    if (currentSelectValue.length > 0) {
+      let convertedArray: Option[] = [];
+      currentSelectValue.forEach((selectValue: Option) => {
+        var option: Option = selectValue as Option;
+        convertedArray.push(JSON.parse(option.value).id);
+      });
       const myName = uuidv4();
-      await addNewChat(myName, user?.id, convertedSelectValue.id);
-      // setRecentChatters((currentRecentChatters) => {
-      //   return [...currentRecentChatters, chatterDetails];
-      // });
+      await addNewChat(myName, user?.id, convertedArray);
     }
     getRecentChats();
     // Insert new chat into chats table, with a random chat name
@@ -175,7 +203,7 @@ const Chat = () => {
               <>
                 <form onSubmit={addChatter}>
                   <label htmlFor="selectUser">Add a User to chat with:</label>
-                  <select
+                  {/* <select
                     id="selectUser"
                     value={currentSelectValue}
                     onChange={updateValue}
@@ -186,7 +214,18 @@ const Chat = () => {
                         {item.name}
                       </option>
                     ))}
-                  </select>
+                  </select> */}
+                  <Select
+                    isMulti
+                    name="selectUsers"
+                    options={userList}
+                    onChange={updateValue}
+                    getOptionLabel={(option: Option) =>
+                      `${option.label}, ${option.additionalInfo}`
+                    }
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                  />
                   <button type="submit" className="btn btn-primary">
                     Add Person
                   </button>
