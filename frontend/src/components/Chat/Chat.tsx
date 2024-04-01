@@ -216,7 +216,7 @@ const Chat = () => {
             {!showChat ? (
               <>
                 <form onSubmit={addChatter}>
-                  <label htmlFor="selectUser">Add Users to chat with:</label>
+                  <label htmlFor="selectUser">Create a Chat:</label>
                   {/* <select
                     id="selectUser"
                     value={currentSelectValue}
@@ -244,6 +244,7 @@ const Chat = () => {
                     type="text"
                     value={chatName}
                     onChange={handleChatNameChange}
+                    placeholder="Insert chat name here:"
                     required
                   ></input>
                   <button type="submit" className="btn btn-primary">
