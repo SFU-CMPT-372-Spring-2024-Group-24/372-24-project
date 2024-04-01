@@ -5,6 +5,8 @@ import "./ChatMessages.scss";
 import { Socket } from "socket.io-client";
 import { useUser } from "../../hooks/UserContext";
 import { api } from "../../api";
+import { IoSettingsOutline } from "react-icons/io5";
+import Modal from "react-bootstrap/Modal";
 interface Props {
   socket: Socket;
   username: string;
@@ -17,8 +19,17 @@ function ChatMessages({ socket, username, chatID, goBack, chatName }: Props) {
   const { user } = useUser();
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<any[]>([]);
+  const [showEditChatModal, setShowEditChatModal] = useState<boolean>(false);
   //insert message into messages table, need chat_id, and user_id, and message_text
   //pull from the database the past messages
+
+  const openEditChatModal = () => setShowEditChatModal(true);
+  const closeEditChatModal = () => {
+    setShowEditChatModal(false);
+    // setSearchQuery("");
+    // setSearchResults([]);
+    // setSelectedUsers([]);
+  };
 
   const addNewMessage = async (chatID: String, userID: any, text: String) => {
     //get current time
@@ -124,7 +135,14 @@ function ChatMessages({ socket, username, chatID, goBack, chatName }: Props) {
           <button id="backButton" className="btn btn-primary" onClick={goBack}>
             GO BACK
           </button>
-          <p> {chatName}</p>
+          <button
+            type="button"
+            className="btn-icon"
+            onClick={openEditChatModal}
+          >
+            <IoSettingsOutline size={20} />
+          </button>
+          <p> {chatName} </p>
         </div>
         <div className="chat-body">
           <ScrollToBottom className="message-container">
@@ -163,6 +181,37 @@ function ChatMessages({ socket, username, chatID, goBack, chatName }: Props) {
           />
           <button onClick={sendMessage}>&#9658;</button>
         </div>
+        <Modal
+          show={showEditChatModal}
+          onHide={closeEditChatModal}
+          dialogClassName="add-member-modal"
+          backdropClassName="add-member-modal-backdrop"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Manage chat members</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <section>
+              <div className="button-group">
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={closeEditChatModal}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn-text"
+                  //onClick={handleAddMembers}
+                >
+                  Save changes
+                </button>
+              </div>
+            </section>
+          </Modal.Body>
+        </Modal>
       </div>
     </div>
   );
