@@ -69,6 +69,7 @@ router.get("/getChats/:id", async (req, res) => {
       chats.map(async (chat) => {
         const users = await chat.getUsers();
         return {
+          chatName: chat.name,
           chatID: chat.id,
           users: users.map((user) => ({
             id: user.id,

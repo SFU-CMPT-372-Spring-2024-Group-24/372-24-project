@@ -7,12 +7,13 @@ import { useUser } from "../../hooks/UserContext";
 import { api } from "../../api";
 interface Props {
   socket: Socket;
-  username: String;
-  chatID: String;
+  username: string;
+  chatID: string;
   goBack: () => void;
+  chatName: string;
 }
 
-function ChatMessages({ socket, username, chatID, goBack }: Props) {
+function ChatMessages({ socket, username, chatID, goBack, chatName }: Props) {
   const { user } = useUser();
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<any[]>([]);
@@ -123,7 +124,7 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
           <button id="backButton" className="btn btn-primary" onClick={goBack}>
             GO BACK
           </button>
-          <p> Live Chat</p>
+          <p> {chatName}</p>
         </div>
         <div className="chat-body">
           <ScrollToBottom className="message-container">

@@ -1,6 +1,5 @@
 // // import { IoMdChatboxes } from "react-icons/io";
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import io from "socket.io-client";
 import "./Chat.scss";
 import ChatMessages from "./ChatMessages";
@@ -39,6 +38,7 @@ const Chat = () => {
   const [currentSelectValue, setCurrentSelectValue] = useState<
     MultiValue<Option>
   >([]);
+  const [chatName, setChatName] = useState("");
   // const [chat, setChat] = useState("");
   const [divIndexValue, setDivIndexValue] = useState(-1);
   // maybe make this change everytime userList is changed
@@ -117,12 +117,12 @@ const Chat = () => {
     //   console.log("response not ok");
     // }
     try {
-      await api.post("/chats/addChat", {
+      const response = await api.post("/chats/addChat", {
         chatName: chatName,
         userID: userID,
         otherIDs: otherIDs,
       });
-      //console.log(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error("Error adding new chat", error);
     }
@@ -138,9 +138,10 @@ const Chat = () => {
     }
   }, [room, divIndexValue]);
 
-  const joinRoom = (roomVal: string, index: number) => {
+  const joinRoom = (roomVal: string, index: number, chatName: string) => {
     setRoom(roomVal);
     setDivIndexValue(index);
+    setChatName(chatName);
     // console.log("Username:", username);
     // console.log(room);
     // if (username !== "" && room !== "") {
@@ -154,6 +155,7 @@ const Chat = () => {
     setDivIndexValue(-1);
     setShowChat(false);
     setRoom("");
+    setChatName("");
     //set div value back to -1 here
   };
 
@@ -166,6 +168,10 @@ const Chat = () => {
     //if already added, then alert the user
     event.preventDefault();
     console.log("CurrentSelectValue", currentSelectValue);
+    if (chatName.trim() == "") {
+      alert("Please re-enter your chat name.");
+    }
+
     //add to list of user_id, need to represent each with a div
     if (currentSelectValue.length > 0) {
       let convertedArray: Option[] = [];
@@ -173,9 +179,11 @@ const Chat = () => {
         var option: Option = selectValue as Option;
         convertedArray.push(JSON.parse(option.value).id);
       });
-      const myName = uuidv4();
-      await addNewChat(myName, user?.id, convertedArray);
+      // const myName = uuidv4();
+      await addNewChat(chatName, user?.id, convertedArray);
       socket.emit("chat_added");
+    } else {
+      alert("Please add some users to your chat.");
     }
     getRecentChats();
     //broadcast to others to
@@ -186,6 +194,10 @@ const Chat = () => {
     //this list of recent chatters gets refreshed and used to make the divs
     //when you click on div, it sends the chatID to the joinRoom
     //still need to pull from chats_users to get the information
+  };
+
+  const handleChatNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChatName(event.target.value);
   };
 
   return (
@@ -204,7 +216,7 @@ const Chat = () => {
             {!showChat ? (
               <>
                 <form onSubmit={addChatter}>
-                  <label htmlFor="selectUser">Add a User to chat with:</label>
+                  <label htmlFor="selectUser">Add Users to chat with:</label>
                   {/* <select
                     id="selectUser"
                     value={currentSelectValue}
@@ -228,8 +240,14 @@ const Chat = () => {
                     className="basic-multi-select"
                     classNamePrefix="select"
                   />
+                  <input
+                    type="text"
+                    value={chatName}
+                    onChange={handleChatNameChange}
+                    required
+                  ></input>
                   <button type="submit" className="btn btn-primary">
-                    Add Person
+                    Create Chat
                   </button>
                 </form>
                 <br></br>
@@ -248,10 +266,9 @@ const Chat = () => {
                   <div
                     className="recentChatters"
                     key={index}
-                    onClick={() => joinRoom(item.chatID, index)}
+                    onClick={() => joinRoom(item.chatID, index, item.chatName)}
                   >
-                    Chat#
-                    {item.chatID}
+                    {item.chatName}
                     {item.users.map((person: any, userIndex: number) => (
                       <p key={userIndex}> {person.username}</p>
                     ))}
@@ -264,6 +281,7 @@ const Chat = () => {
                 username={username}
                 chatID={room}
                 goBack={goBack}
+                chatName={chatName}
               />
             )}
             <button
