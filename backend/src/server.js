@@ -45,6 +45,9 @@ app.use(express.static(path.join(__dirname, "../dist")));
 // Static files (for testing)
 app.use("/test", express.static(path.join(__dirname, "./test.local")));
 
+// Files
+app.use("/files", express.static(path.join(__dirname, "../uploads")));
+
 // Prevent direct access to API routes
 app.use('/api', (req, res, next) => {
   if (req.headers['x-requested-with'] === 'XMLHttpRequest') {

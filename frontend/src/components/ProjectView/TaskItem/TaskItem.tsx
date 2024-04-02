@@ -23,6 +23,7 @@ import DueDate from "./DueDate";
 import Comments from "./Comments";
 import TaskMembers from "./TaskMembers";
 import TaskName from "./TaskName";
+import Attachments from "./Attachments";
 // API
 import { api } from "../../../api";
 // Custom hooks
@@ -148,15 +149,7 @@ const TaskItem = ({ list, task, index }: Props) => {
           
           <div className="row">
             <TaskMembers task={task} />
-
-            <div className="attachments col">
-              <h4>Attachments</h4>
-
-              <div className="file">
-                {getFileIcon("doc")}
-                <p>example.docx</p>
-              </div>
-            </div>
+            <Attachments task={task} />
           </div>
         </Modal.Body>
 

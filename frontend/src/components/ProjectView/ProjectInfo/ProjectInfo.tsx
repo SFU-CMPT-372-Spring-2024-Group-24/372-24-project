@@ -9,21 +9,23 @@ import "react-toastify/dist/ReactToastify.css";
 // Models
 import { Project } from "../../../models/Project";
 import { User } from "../../../models/User";
-// Utils
-import { getFileIcon } from "../../../utils/fileUtils";
+import { FileModel } from "../../../models/FileModel";
 // API
 import { api } from "../../../api";
 // Components
 import Members from "./Members";
 import About from "./About";
+import Files from "./Files";
 
 interface Props {
   project: Project;
   setProject: (project: Project) => void;
   members: User[];
   setMembers: (members: User[]) => void;
+  files: FileModel[];
+  setFiles: (files: FileModel[]) => void;
 }
-const ProjectInfo = ({ project, setProject, members, setMembers }: Props) => {
+const ProjectInfo = ({ project, setProject, members, setMembers, files, setFiles }: Props) => {
   const navigate = useNavigate();
 
   const handleDeleteProject = async () => {
@@ -41,26 +43,9 @@ const ProjectInfo = ({ project, setProject, members, setMembers }: Props) => {
   return (
     <aside className="project-info">
       <About project={project} setProject={setProject} />
-
       <Members project={project} members={members} setMembers={setMembers} />
-
-      <div className="files">
-        <h2>Files</h2>
-        <div className="file">
-          {getFileIcon("doc")}
-          <p>example.docx</p>
-        </div>
-        <div className="file">
-          {getFileIcon("xls")}
-          <p>example.xsl</p>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        className="btn-delete-project"
-        onClick={handleDeleteProject}
-      >
+      <Files project={project} files={files} setFiles={setFiles} />
+      <button type="button" className="btn-delete-project" onClick={handleDeleteProject}>
         <IoMdTrash size={18} />
         Delete this project
       </button>

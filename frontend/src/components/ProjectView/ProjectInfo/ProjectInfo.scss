@@ -179,3 +179,15 @@ aside.project-info {
     }
   }
 }
+
+.files .truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  // width: 100%;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
