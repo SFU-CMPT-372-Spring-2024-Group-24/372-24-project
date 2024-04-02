@@ -132,7 +132,7 @@ const Comments = ({ task }: Props) => {
                       className="btn-icon"
                       onClick={() => handleEditComment(comment.id)}
                     >
-                      <FiEdit2 size={14} />
+                      <FiEdit2 size={12} />
                     </button>
 
                     <button
