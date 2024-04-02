@@ -52,6 +52,7 @@ router.get("/", async (req, res) => {
 // Todo: check if user is part of project
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
+  const userId = req.session.userId;
 
   try {
     const project = await Project.findByPk(id);
@@ -60,7 +61,13 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    res.json(project);
+    // Check if user is part of project
+    const isUserPartOfProject = await project.hasUser(userId);
+    if (!isUserPartOfProject) {
+      return res.status(403).json({ message: "User is not in this project" });
+    }
+
+    res.status(200).json(project);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
