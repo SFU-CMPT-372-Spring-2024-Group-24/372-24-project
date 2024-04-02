@@ -1,21 +1,33 @@
 // a lot of code taken from: https://www.youtube.com/watch?v=NU-HfZY3ATQ&t=610s
 import ScrollToBottom from "react-scroll-to-bottom";
 import { useEffect, useState } from "react";
+import defaultProfilePicture from "../../assets/default-profile-picture.png";
 import "./ChatMessages.scss";
 import { Socket } from "socket.io-client";
 import { useUser } from "../../hooks/UserContext";
 import { api } from "../../api";
 import { IoSettingsOutline } from "react-icons/io5";
 import Modal from "react-bootstrap/Modal";
+import { User } from "../../models/User";
 interface Props {
   socket: Socket;
   username: string;
   chatID: string;
   goBack: () => void;
   chatName: string;
+  members: User[];
+  setMembers: (members: User[]) => void;
 }
 
-function ChatMessages({ socket, username, chatID, goBack, chatName }: Props) {
+function ChatMessages({
+  socket,
+  username,
+  chatID,
+  goBack,
+  chatName,
+  members,
+  setMembers,
+}: Props) {
   const { user } = useUser();
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<any[]>([]);
@@ -34,27 +46,6 @@ function ChatMessages({ socket, username, chatID, goBack, chatName }: Props) {
   const addNewMessage = async (chatID: String, userID: any, text: String) => {
     //get current time
     var currentDate = new Date();
-    // console.log(currentDate);
-    // const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/chats/addMessage`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     chatID: chatID,
-    //     userID: userID,
-    //     text: text,
-    //     date: currentDate,
-    //   }),
-    // });
-    // if (response.ok) {
-    //   //want to return the chatID
-    //   console.log("response ok");
-    //   // const myMessage = await response.json();
-    //   // console.log("addNewMessage:", myMessage);
-    // } else {
-    //   console.log("response not ok");
-    // }
     try {
       await api.post("/chats/addMessage", {
         chatID: chatID,
@@ -105,6 +96,22 @@ function ChatMessages({ socket, username, chatID, goBack, chatName }: Props) {
     }
   };
 
+  const handleRemoveUser = async (user: User) => {
+    try {
+      const response = await api.delete(
+        `/chats/${chatID}/removeUser/${user.id}`
+      );
+      if (response.status === 200) {
+        console.log("Got 200 response!");
+        console.log("Members before: ", members);
+        setMembers(members.filter((member) => member.id !== user.id));
+        console.log("Members after", members);
+      }
+    } catch (error) {
+      console.error("Failed to remove member: ", error);
+    }
+  };
+
   //when change in socket server
   useEffect(() => {
     socket.off("receive_message").on("receive_message", async () => {
@@ -116,6 +123,7 @@ function ChatMessages({ socket, username, chatID, goBack, chatName }: Props) {
 
   useEffect(() => {
     getMessagesFromChatID();
+    //console.log(members);
   }, []);
 
   function convertTime(isoString: string) {
@@ -137,7 +145,7 @@ function ChatMessages({ socket, username, chatID, goBack, chatName }: Props) {
           </button>
           <button
             type="button"
-            className="btn-icon"
+            className="chat-edit-button"
             onClick={openEditChatModal}
           >
             <IoSettingsOutline size={20} />
@@ -192,6 +200,32 @@ function ChatMessages({ socket, username, chatID, goBack, chatName }: Props) {
             <Modal.Title>Manage chat members</Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            <section>
+              <h5>Current members</h5>
+              <ul className="members-list">
+                {members.map((user) => (
+                  <li className="member" key={user.id}>
+                    <img
+                      src={user.profilePicture || defaultProfilePicture}
+                      alt="User Avatar"
+                    />
+
+                    <div className="member-info">
+                      <p>{user.name}</p>
+                      <p>{user.username}</p>
+                    </div>
+
+                    <button
+                      className="btn-icon btn-remove-user"
+                      onClick={() => handleRemoveUser(user)}
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
             <section>
               <div className="button-group">
                 <button

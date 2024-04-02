@@ -39,16 +39,16 @@ const Chat = () => {
     MultiValue<Option>
   >([]);
   const [chatName, setChatName] = useState("");
-  // const [chat, setChat] = useState("");
   const [divIndexValue, setDivIndexValue] = useState(-1);
-  // maybe make this change everytime userList is changed
+  const [usersForChat, setUsersForChat] = useState<User[]>([]);
+
   const getRecentChats = async () => {
     try {
       if (user != null) {
         const response = await api.get(`/chats/getChats/${user!.id}`);
         const chats = response.data;
         setRecentChatters(chats);
-        //console.log("Recent Chats:", chats);
+        console.log("Recent Chats:", chats);
       }
     } catch (error) {
       console.error("Error fetching recent Chats", error);
@@ -138,10 +138,17 @@ const Chat = () => {
     }
   }, [room, divIndexValue]);
 
-  const joinRoom = (roomVal: string, index: number, chatName: string) => {
+  const joinRoom = (
+    roomVal: string,
+    index: number,
+    chatName: string,
+    users: User[]
+  ) => {
     setRoom(roomVal);
     setDivIndexValue(index);
     setChatName(chatName);
+    setUsersForChat(users);
+    console.log("Users for chat when joining room:", usersForChat);
     // console.log("Username:", username);
     // console.log(room);
     // if (username !== "" && room !== "") {
@@ -151,11 +158,20 @@ const Chat = () => {
     // }
   };
 
+  const changeMembersOfChat = (chatID: string, membersOfChat: User[]) => {
+    //find the object in recentChatters, replace its users
+    const myObject = recentChatters.find((item) => item.chatID === chatID);
+    myObject.users = membersOfChat;
+    console.log("my object: ", myObject);
+  };
   const goBack = () => {
     setDivIndexValue(-1);
+    changeMembersOfChat(room, usersForChat);
     setShowChat(false);
     setRoom("");
     setChatName("");
+    setUsersForChat([]);
+    //console.log("Users for chat after pressing back");
     //set div value back to -1 here
   };
 
@@ -267,7 +283,9 @@ const Chat = () => {
                   <div
                     className="recentChatters"
                     key={index}
-                    onClick={() => joinRoom(item.chatID, index, item.chatName)}
+                    onClick={() =>
+                      joinRoom(item.chatID, index, item.chatName, item.users)
+                    }
                   >
                     {item.chatName}
                     {item.users.map((person: any, userIndex: number) => (
@@ -283,6 +301,10 @@ const Chat = () => {
                 chatID={room}
                 goBack={goBack}
                 chatName={chatName}
+                members={usersForChat}
+                setMembers={setUsersForChat}
+                //temp solution to refresh chats
+                //getRecentChats = {getRecentChats()}
               />
             )}
             <button

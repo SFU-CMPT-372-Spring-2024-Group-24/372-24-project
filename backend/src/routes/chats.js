@@ -73,7 +73,9 @@ router.get("/getChats/:id", async (req, res) => {
           chatID: chat.id,
           users: users.map((user) => ({
             id: user.id,
+            name: user.name,
             username: user.username,
+            email: user.email,
           })),
         };
       })
@@ -126,4 +128,30 @@ router.get("/getMessagesFromChat/:chatID", async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+
+//remove user from chat
+router.delete("/:chatID/removeUser/:userID", async (req, res) => {
+  const chatID = req.params.chatID;
+  const userID = req.params.userID;
+
+  try {
+    const chat = await Chat.findByPk(chatID);
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+
+    const user = await User.findByPk(userID);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await chat.removeUser(user);
+    console.log(chat);
+
+    res.status(200).json({ message: "User removed from project" });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 module.exports = router;
