@@ -10,7 +10,6 @@
   border: 2px solid transparent;
 
   &:hover {
-    // transform: scale(1.02);
     border-color: $purple;
     transition: 0.5s ease-in-out;
   }
@@ -48,7 +47,7 @@
   margin: 0.5rem 0;
 
   .modal-content {
-    box-shadow: 0 0 10px 3px $light-gray;
+    box-shadow: 0 0 5px 0 $dark-gray;
   }
 
   .modal-header {
@@ -97,7 +96,7 @@
   margin: 0.5rem 0;
 
   .modal-content {
-    box-shadow: 0 0 10px 3px $light-gray;
+    box-shadow: 0 0 5px 0 $dark-gray;
   }
 
   .modal-header {
@@ -109,7 +108,7 @@
   }
 
   .modal-body {
-    padding: 1rem;
+    padding-top: 0;
 
     form {
       margin-top: 0;
@@ -366,6 +365,7 @@
         padding: 10px;
         z-index: 1;
         width: fit-content;
+        box-shadow: 0 0 5px 0 $dark-gray;
         button {
           font-size: var(--bs-body-font-size);
           font-weight: var(--bs-body-font-weight);
@@ -566,4 +566,63 @@
       }
     }
   }
+}
+
+// React-datepicker styles
+.react-datepicker {
+  padding: .5rem;
+  background: $white !important;
+
+  .react-datepicker__header {
+    background: $white;
+  }
+
+  .react-datepicker__day, .react-datepicker__time-list-item {
+    &:hover {
+      background: $light-gray !important;
+    }
+  }
+
+  .react-datepicker__day--today {
+    color: $purple;
+
+    &.react-datepicker__day--selected {
+      color: $white;
+    }
+  }
+
+  .react-datepicker__day--selected {
+    background: $purple;
+
+    &:hover {
+      background: $purple;
+    }
+  }
+
+  .react-datepicker__day--keyboard-selected {
+    color: $white;
+    background: $light-purple;
+
+    &:hover {
+      background: $light-purple;
+    }
+  }
+
+  .react-datepicker__day--outside-month {
+    color: $light-gray;
+  }
+
+  .react-datepicker__time-list {
+    background: $white;
+  }
+
+  .react-datepicker__time-list-item--selected {
+    background: $purple !important;
+  } 
+
+  li.react-datepicker__time-list-item {
+    height: unset !important;
+  }
+
+  
 }
