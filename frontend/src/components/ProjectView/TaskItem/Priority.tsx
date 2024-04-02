@@ -63,8 +63,8 @@ const Priority = ({ task }: Props) => {
             className="task-priority"
             onClick={togglePriorityModal}
             style={{
-              color: priorities.find((p) => p.value === task.priority)?.color,
               borderColor: priorities.find((p) => p.value === task.priority)?.color,
+              backgroundColor: priorities.find((p) => p.value === task.priority)?.color,
             }}
           >
             {task.priority}
