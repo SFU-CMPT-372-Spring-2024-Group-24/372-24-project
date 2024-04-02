@@ -13,11 +13,11 @@ git clone https://github.com/SFU-CMPT-372-Spring-2024-Group-24/372-24-project.gi
 Change to the `backend/` directory.
 
 > [!IMPORTANT]  
-> **NEW: Set Up Google Cloud Storage**
+> **NEW! Set Up Google Cloud Storage**
 >
 > 1. Log onto https://console.cloud.google.com (make sure you're in the right project).
 > 2. Go to IAM & Admin > Service Accounts > Create Service Account. Name the account and set the role to Cloud Storage > Storage Admin.
-> 3. Note the email address of the account you just created.
+> 3. Note the email address of the account you just created. Request the bucket owner to add you via this email.
 > 4. Select the account > Keys > Add key > Create new key > JSON > Create. This will download a JSON file. Place the file in `backend/ignore/`.
 > 5. Update the `.env/` file like so:
 > 
@@ -26,16 +26,17 @@ Change to the `backend/` directory.
 > GCLOUD_STORAGE_BUCKET=bucket-name
 > ```
 
-<details>
-    <summary>Generate a self-signed SSL certificate (only needed for HTTPS)</summary>
+<del>
+<p>
+Generate a self-signed SSL certificate
 
 ```bash
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
 ```
 
 This will create the `key.pem` and `cert.pem` files, which are your private key and certificate respectively.
-
-</details>
+</p>
+</del>
 
 Then, while still in the `backend/` directory, create a `.env` file with the following information:
 
