@@ -40,15 +40,27 @@ app.use(
 );
 
 // Serve React app (for production)
-// if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
 app.use(express.static(path.join(__dirname, "../dist")));
-// }
+}
 
 // Static files (for testing)
 app.use("/test", express.static(path.join(__dirname, "./test.local")));
 
-// Prevent direct access to API routes
-app.use("/api", (req, res, next) => {
+// Check if user is authenticated
+const isAuthenticated = (req, res, next) => {
+  if (req.session.userId) {
+    return next();
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+};
+
+// API user routes (unnecessary to use isAuthenticated middleware because these routes are for authentication)
+app.use("/api/users", require("./routes/users"));
+
+// Only allow authenticated users with AJAX requests to access API routes
+app.use("/api", isAuthenticated, (req, res, next) => {
   if (req.headers["x-requested-with"] === "XMLHttpRequest") {
     next(); // If the request is an AJAX request, proceed
   } else {
@@ -56,7 +68,7 @@ app.use("/api", (req, res, next) => {
   }
 });
 
-// API routes
+// Protected API routes
 app.get("/api/test", (req, res) => {
   if (req.session.userId) {
     res.send(`Hello, User ${req.session.userId}!`);
@@ -64,7 +76,7 @@ app.get("/api/test", (req, res) => {
     res.send(`Hello, World!`);
   }
 });
-app.use("/api/users", require("./routes/users"));
+app.use("/api/search", require("./routes/search"));
 app.use("/api/projects", require("./routes/projects"));
 app.use("/api/chats", require("./routes/chats"));
 app.use("/api/lists", require("./routes/lists"));
@@ -73,11 +85,11 @@ app.use("/api/admin", require("./routes/admin"));
 app.use("/api/comments", require("./routes/comments"));
 
 // Catch-all route
-// if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../dist", "index.html"));
 });
-// }
+}
 
 // HTTP server
 const port = process.env.PORT || 8080;
@@ -88,6 +100,7 @@ httpServer.listen(port, () =>
 
 // Chat server
 const io = new SocketIOServer(httpServer);
+// io.on("connection", (socket) => {
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
   // this would be the chat_id instead of room

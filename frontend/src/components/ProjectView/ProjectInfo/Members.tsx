@@ -58,7 +58,7 @@ const Members = ({ project, members, setMembers }: Props) => {
     try {
       const userIds = members.map((user) => user.id);
       const response = await api.get(
-        `/users/search?query=${searchQuery}&exclude=${JSON.stringify(userIds)}`
+        `/search/users?query=${searchQuery}&exclude=${JSON.stringify(userIds)}`
       );
       setSearchResults(response.data.users);
     } catch (error) {
