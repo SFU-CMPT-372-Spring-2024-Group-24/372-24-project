@@ -6,6 +6,12 @@
   .project {
     flex-grow: 1;
     padding: 1rem;
+    // border: 1px solid;
+    // margin: .5rem;
+
+    h1 {
+      font-size: 25px;
+    }
 
     .project-lists {
       display: flex;

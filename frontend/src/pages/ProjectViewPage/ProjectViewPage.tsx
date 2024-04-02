@@ -27,7 +27,10 @@ const ProjectViewPage = () => {
     const fetchProject = async () => {
       try {
         const response = await api.get(`/projects/${id}`);
-        setProject(response.data);
+
+        if (response.status === 200) {
+          setProject(response.data);
+        }
       } catch (error) {
         navigate("/projects/notfound");
       }

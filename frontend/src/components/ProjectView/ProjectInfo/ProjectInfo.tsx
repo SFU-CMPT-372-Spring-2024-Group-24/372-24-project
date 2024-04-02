@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 // Icons
 import { IoMdTrash } from "react-icons/io";
+import { BiLogOutCircle } from "react-icons/bi";
 // Styles
 import "./ProjectInfo.scss";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,6 +17,8 @@ import { api } from "../../../api";
 import Members from "./Members";
 import About from "./About";
 import Files from "./Files";
+// Custom hooks
+import { useUser } from "../../../hooks/UserContext";
 
 interface Props {
   project: Project;
@@ -27,12 +30,13 @@ interface Props {
 }
 const ProjectInfo = ({ project, setProject, members, setMembers, files, setFiles }: Props) => {
   const navigate = useNavigate();
+  const { user } = useUser();
 
   const handleDeleteProject = async () => {
     try {
       const response = await api.delete(`/projects/${project.id}`);
       if (response.status === 200) {
-        toast(response.data.message);
+        toast("Project has been deleted for you and all members.");
         navigate("/projects");
       }
     } catch (error) {
@@ -40,15 +44,48 @@ const ProjectInfo = ({ project, setProject, members, setMembers, files, setFiles
     }
   };
 
+  const handleLeaveProject = async () => {
+    try {
+      const response = await api.delete(`/projects/${project.id}/users/${user!.id}`);
+      if (response.status === 200) {
+        toast("You have left the project.");
+        navigate("/projects");
+      }
+    } catch (error) {
+      console.error("Failed to leave project: ", error);
+    }
+  };
+
   return (
     <aside className="project-info">
-      <About project={project} setProject={setProject} />
-      <Members project={project} members={members} setMembers={setMembers} />
-      <Files project={project} files={files} setFiles={setFiles} />
-      <button type="button" className="btn-delete-project" onClick={handleDeleteProject}>
-        <IoMdTrash size={18} />
-        Delete this project
-      </button>
+      
+      <div className="project-info">
+        <About project={project} setProject={setProject} />
+
+        <Members project={project} members={members} setMembers={setMembers} />
+
+        <Files project={project} files={files} setFiles={setFiles} />
+      </div>
+
+      <div className="button-group">
+        <button
+          type="button"
+          className="btn-leave-delete-project"
+          onClick={handleLeaveProject}
+        >
+          <BiLogOutCircle size={18} />
+          Leave this project
+        </button>
+
+        <button
+          type="button"
+          className="btn-leave-delete-project"
+          onClick={handleDeleteProject}
+        >
+          <IoMdTrash size={18} />
+          Delete this project
+        </button>
+      </div>
     </aside>
   );
 };

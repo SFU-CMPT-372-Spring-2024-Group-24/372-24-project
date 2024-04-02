@@ -62,62 +62,68 @@ const TaskList = ({ listId }: Props) => {
             </button>
           </div>
 
-          <div className="task-input-field">
-            {showTaskInput && (
-              <>
-                <input
-                  type="text"
-                  id="taskName"
-                  name="taskName"
-                  value={taskName}
-                  onChange={(e) => setTaskName(e.target.value)}
-                  placeholder="Enter task name"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleAddTask();
-                  }}
-                />
+          <div className="list-main">
+            <div className="task-input-field">
+              {showTaskInput && (
+                <>
+                  <input
+                    type="text"
+                    id="taskName"
+                    name="taskName"
+                    value={taskName}
+                    onChange={(e) => setTaskName(e.target.value)}
+                    placeholder="Enter task name"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleAddTask();
+                    }}
+                  />
 
-                <div className="button-group">
-                  <button
-                    className="btn-cancel"
-                    onClick={handleToggleTaskInputField}
-                  >
-                    Cancel
-                  </button>
+                  <div className="button-group">
+                    <button
+                      className="btn-cancel"
+                      onClick={handleToggleTaskInputField}
+                    >
+                      Cancel
+                    </button>
 
-                  <button className="btn-text" onClick={handleAddTask}>
-                    Save task
-                  </button>
-                </div>
-              </>
+                    <button className="btn-text" onClick={handleAddTask}>
+                      Save task
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {tasks.length > 0 && (
+              <div className="task-count">
+                {tasks.length} {tasks.length === 1 ? "task" : "tasks"}
+              </div>
             )}
+
+            <Droppable droppableId={list.id.toString()}>
+              {(provided) => (
+                <ul
+                  className="task-list"
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  {tasks.length === 0 ? (
+                    <li>No tasks yet</li>
+                  ) : (
+                    tasks.map((task, index) => (
+                      <TaskItem
+                        key={task.id}
+                        list={list}
+                        task={task}
+                        index={index}
+                      />
+                    ))
+                  )}
+                  {provided.placeholder}
+                </ul>
+              )}
+            </Droppable>
           </div>
-
-          <div className="task-count">{tasks.length} tasks</div>
-
-          <Droppable droppableId={list.id.toString()}>
-            {(provided) => (
-              <ul
-                className="task-list"
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {tasks.length === 0 ? (
-                  <li>No tasks yet</li>
-                ) : (
-                  tasks.map((task, index) => (
-                    <TaskItem
-                      key={task.id}
-                      list={list}
-                      task={task}
-                      index={index}
-                    />
-                  ))
-                )}
-                {provided.placeholder}
-              </ul>
-            )}
-          </Droppable>
         </div>
       )}
     </>

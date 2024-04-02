@@ -2,15 +2,15 @@
 
 // The task item displayed in the list
 .task-item {
-  background: #fff;
-  margin: 1rem 0;
-  padding: 0.5rem 1rem;
+  background: #FFF;
+  margin: .5rem 0;
+  padding: .5rem 1rem;
   border-radius: 10px;
   cursor: pointer;
   border: 2px solid transparent;
 
   &:hover {
-    transform: scale(1.02);
+    // transform: scale(1.02);
     border-color: $purple;
     transition: 0.5s ease-in-out;
   }
