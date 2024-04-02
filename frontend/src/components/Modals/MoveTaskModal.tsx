@@ -16,11 +16,17 @@ interface Props {
   setShowTaskItemModal: (showModal: boolean) => void;
 }
 
-const MoveTaskModal = ({ list, index, showModal, setShowModal, setShowTaskItemModal  }: Props) => {
+const MoveTaskModal = ({
+  list,
+  index,
+  showModal,
+  setShowModal,
+  setShowTaskItemModal,
+}: Props) => {
   const { lists, moveTask } = useTasks();
   const [selectedListId, setSelectedListId] = useState<number>(list.id);
   const [selectedPosition, setSelectedPosition] = useState<number>(index);
-  
+
   // Close modal
   const closeModal = () => setShowModal(false);
 
@@ -45,71 +51,99 @@ const MoveTaskModal = ({ list, index, showModal, setShowModal, setShowTaskItemMo
 
   return (
     <Modal
-        show={showModal}
-        onHide={closeModal}
-        dialogClassName="move-task-modal"
-        backdropClassName="task-subModal-backdrop"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Move Task</Modal.Title>
-        </Modal.Header>
+      show={showModal}
+      onHide={closeModal}
+      dialogClassName="move-task-modal"
+      backdropClassName="task-subModal-backdrop"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>Move task</Modal.Title>
+      </Modal.Header>
 
-        <Modal.Body>
-          <p>Current List: {list.name}</p>
-          <p>Current Position: {index + 1}</p>
+      <Modal.Body>
+        <section className="current-location">
+          <h5>Current location</h5>
+          <div className="row">
+            <p className="col">List: {list.name}</p>
+            <p className="col">Position: {index + 1}</p>
+          </div>
+        </section>
 
-          <p>Select List:</p>
-          <select
-            value={selectedListId}
-            onChange={(e) => {
-              setSelectedListId(Number(e.target.value));
-              setSelectedPosition(0);
-            }}
-          >
-            {lists.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.name}
-              </option>
-            ))}
-          </select>
+        <section className="new-location">
+          <h5>Select destination:</h5>
 
-          <p>Select Position:</p>
-          {selectedListId && (
-            <select
-              value={selectedPosition}
-              onChange={(e) => setSelectedPosition(Number(e.target.value))}
-            >
-              {lists
-                .find((l) => l.id === selectedListId)
-                ?.tasks.map((_, i) => (
-                  <option key={i} value={i}>
-                    {i + 1}
+          <div className="row">
+            <div className="col">
+              <label htmlFor="list-select">List:</label>
+              <select
+                id="list-select"
+                name="list-select"
+                value={selectedListId}
+                onChange={(e) => {
+                  setSelectedListId(Number(e.target.value));
+                  setSelectedPosition(0);
+                }}
+              >
+                {lists.map((l) => (
+                  <option key={l.id} value={l.id}>
+                    {l.name}
                   </option>
                 ))}
+              </select>
+            </div>
 
-              {selectedListId !== list.id && (
-                <option
-                  key={lists.find((l) => l.id === selectedListId)?.tasks.length}
-                  value={
-                    lists.find((l) => l.id === selectedListId)?.tasks.length
-                  }
-                >
-                  {lists.find((l) => l.id === selectedListId)!.tasks.length + 1}
-                </option>
+            <div className="col">
+              {selectedListId && (
+                <>
+                  <label htmlFor="position-select">Position:</label>
+                  <select
+                    id="position-select"
+                    name="position-select"
+                    value={selectedPosition}
+                    onChange={(e) =>
+                      setSelectedPosition(Number(e.target.value))
+                    }
+                  >
+                    {lists
+                      .find((l) => l.id === selectedListId)
+                      ?.tasks.map((_, i) => (
+                        <option key={i} value={i}>
+                          {i + 1}
+                        </option>
+                      ))}
+
+                    {selectedListId !== list.id && (
+                      <option
+                        key={
+                          lists.find((l) => l.id === selectedListId)?.tasks
+                            .length
+                        }
+                        value={
+                          lists.find((l) => l.id === selectedListId)?.tasks
+                            .length
+                        }
+                      >
+                        {lists.find((l) => l.id === selectedListId)!.tasks
+                          .length + 1}
+                      </option>
+                    )}
+                  </select>
+                </>
               )}
-            </select>
-          )}
-        </Modal.Body>
+            </div>
+          </div>
+        </section>
+      </Modal.Body>
 
-        <Modal.Footer>
-          <button className="btn-cancel" onClick={closeModal}>
-            Cancel
-          </button>
-          <button className="btn-text" onClick={handleMoveTask}>
-            Move Task
-          </button>
-        </Modal.Footer>
-      </Modal>
+      <Modal.Footer>
+        <button className="btn-cancel" onClick={closeModal}>
+          Cancel
+        </button>
+        <button className="btn-text" onClick={handleMoveTask}>
+          Move Task
+        </button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 
