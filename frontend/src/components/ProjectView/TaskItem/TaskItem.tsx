@@ -23,6 +23,7 @@ import Comments from "./Comments";
 import TaskMembers from "./TaskMembers";
 import TaskName from "./TaskName";
 import Attachments from "./Attachments";
+import MoveTaskModal from "../../Modals/MoveTaskModal";
 // API
 import { api } from "../../../api";
 // Custom hooks
@@ -37,9 +38,7 @@ interface Props {
 const TaskItem = ({ list, task, index }: Props) => {
   const [showTaskItemModal, setShowTaskItemModal] = useState<boolean>(false);
   const [showMoveTaskModal, setShowMoveTaskModal] = useState<boolean>(false);
-  const { lists, moveTask, removeTask } = useTasks();
-  const [selectedListId, setSelectedListId] = useState<number>(list.id);
-  const [selectedPosition, setSelectedPosition] = useState<number>(index);
+  const { removeTask } = useTasks();
   // const priorityColor = priorities.find(
   //   (p) => p.value === task.priority
   // )?.color;
@@ -47,27 +46,8 @@ const TaskItem = ({ list, task, index }: Props) => {
   // Toggle Task Item Modal visibility
   const toggleTaskItemModal = () => setShowTaskItemModal(!showTaskItemModal);
 
-  // Toggle Move Task Modal visibility
-  const toggleMoveTaskModal = () => setShowMoveTaskModal(!showMoveTaskModal);
-
-  // Move task
-  const handleMoveTask = async () => {
-    try {
-      const response = await moveTask(
-        list.id,
-        selectedListId,
-        index,
-        selectedPosition
-      );
-
-      if (response) {
-        setShowTaskItemModal(false);
-        setShowMoveTaskModal(false);
-      }
-    } catch (error) {
-      console.error("Error moving task:", error);
-    }
-  };
+  // Open Move Task Modal
+  const openMoveTaskModal = () => setShowMoveTaskModal(true);
 
   // Delete Task
   const handleDeleteTask = async () => {
@@ -130,11 +110,9 @@ const TaskItem = ({ list, task, index }: Props) => {
             >
               <IoMdClose size={20} />
             </button>
-
-            <button className="btn-icon move-btn" onClick={toggleMoveTaskModal}>
+            <button className="btn-icon move-btn" onClick={openMoveTaskModal}>
               <TbArrowsExchange size={20} />
             </button>
-
             <button className="btn-icon delete-btn" onClick={handleDeleteTask}>
               <IoMdTrash size={20} />
             </button>
@@ -143,9 +121,7 @@ const TaskItem = ({ list, task, index }: Props) => {
 
         <Modal.Body>
           <Description task={task} />
-
           <DueDate task={task} />
-          
           <div className="row">
             <TaskMembers task={task} />
             <Attachments task={task} />
@@ -157,71 +133,7 @@ const TaskItem = ({ list, task, index }: Props) => {
         </Modal.Footer>
       </Modal>
 
-      <Modal
-        show={showMoveTaskModal}
-        onHide={toggleMoveTaskModal}
-        dialogClassName="move-task-modal"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Move Task</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
-          <p>Current List: {list.name}</p>
-          <p>Current Position: {index + 1}</p>
-
-          <p>Select List:</p>
-          <select
-            value={selectedListId}
-            onChange={(e) => {
-              setSelectedListId(Number(e.target.value));
-              setSelectedPosition(0);
-            }}
-          >
-            {lists.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.name}
-              </option>
-            ))}
-          </select>
-
-          <p>Select Position:</p>
-          {selectedListId && (
-            <select
-              value={selectedPosition}
-              onChange={(e) => setSelectedPosition(Number(e.target.value))}
-            >
-              {lists
-                .find((l) => l.id === selectedListId)
-                ?.tasks.map((_, i) => (
-                  <option key={i} value={i}>
-                    {i + 1}
-                  </option>
-                ))}
-
-              {selectedListId !== list.id && (
-                <option
-                  key={lists.find((l) => l.id === selectedListId)?.tasks.length}
-                  value={
-                    lists.find((l) => l.id === selectedListId)?.tasks.length
-                  }
-                >
-                  {lists.find((l) => l.id === selectedListId)!.tasks.length + 1}
-                </option>
-              )}
-            </select>
-          )}
-        </Modal.Body>
-
-        <Modal.Footer>
-          <button className="btn-cancel" onClick={toggleMoveTaskModal}>
-            Cancel
-          </button>
-          <button className="btn-text" onClick={handleMoveTask}>
-            Move Task
-          </button>
-        </Modal.Footer>
-      </Modal>
+      <MoveTaskModal list={list} index={index} showModal={showMoveTaskModal} setShowModal={setShowMoveTaskModal} setShowTaskItemModal={setShowTaskItemModal}/>
     </>
   );
 };
