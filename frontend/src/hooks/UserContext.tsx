@@ -1,3 +1,4 @@
+// Libraries
 import {
   createContext,
   useContext,
@@ -5,6 +6,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
+// Models
 import { User } from "../models/User";
 // API
 import { api } from "../api";
@@ -30,61 +32,8 @@ export const UserProvider = ({ children }: Props) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/me`, {
-  //       // const response = await fetch(`api/users/me`, {
-  //         method: "GET",
-  //         credentials: "include",
-  //       });
-  //       // const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/users/me`, {
-  //       //   withCredentials: true,
-  //       // });
-  //       // setUser(response.data);
-  //       if (response.ok) {
-  //         const userData = await response.json();
-  //         setUser(userData);
-  //       } else {
-  //         setUser(null);
-  //       }
-  //     } catch (error) {
-  //       console.error("An error occurred while fetching user", error);
-  //       setUser(null);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   // if (window.location.pathname !== "/login") {
-  //   //   fetchUser();
-  //   // } else {
-  //   //   setLoading(false);
-  //   // }
-  //   fetchUser();
-  // }, []);
-
+  // Check if user is logged in
   useEffect(() => {
-    // axios
-    //   .get(`${import.meta.env.VITE_APP_API_URL}/users/me`, {
-    //     withCredentials: true,
-    //   })
-    //   .then((res) => {
-    //     if (res.data.valid) {
-    //       console.log(res.data);
-          
-    //       setUser(res.data.user);
-    //     } else {
-    //       setUser(null);
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.error(err);
-    //   })
-    //   .finally(() => {
-    //     setLoading(false);
-    //   });
-
     api.get("/users/me").then((res) => {
       if (res.data.valid) {
         setUser(res.data.user);

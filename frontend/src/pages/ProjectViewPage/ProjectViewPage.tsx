@@ -29,7 +29,7 @@ const ProjectViewPage = () => {
         const response = await api.get(`/projects/${id}`);
         setProject(response.data);
       } catch (error) {
-        navigate("/projects/404");
+        navigate("/projects/notfound");
       }
     };
 
