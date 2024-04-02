@@ -11,22 +11,34 @@ const TaskLists = () => {
   const handleOnDragEnd = async (result: DropResult) => {
     const { source, destination } = result;
 
-    if (!destination || (source.droppableId === destination.droppableId && source.index === destination.index)) return;
+    if (
+      !destination ||
+      (source.droppableId === destination.droppableId &&
+        source.index === destination.index)
+    )
+      return;
 
     try {
-      await moveTask(parseInt(source.droppableId), parseInt(destination.droppableId), source.index, destination.index);
+      await moveTask(
+        parseInt(source.droppableId),
+        parseInt(destination.droppableId),
+        source.index,
+        destination.index
+      );
     } catch (error) {
       console.error("Error moving task:", error);
     }
   };
-  
+
   return (
     <>
-      <DragDropContext onDragEnd={handleOnDragEnd}>
-        {lists.map((list) => (
-          <TaskList key={list.id} listId={list.id} />
-        ))}
-      </DragDropContext>
+      <div className="project-lists">
+        <DragDropContext onDragEnd={handleOnDragEnd}>
+          {lists.map((list) => (
+            <TaskList key={list.id} listId={list.id} />
+          ))}
+        </DragDropContext>
+      </div>
     </>
   );
 };

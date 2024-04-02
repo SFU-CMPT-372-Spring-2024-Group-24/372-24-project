@@ -17,4 +17,5 @@ $font: 'Archivo', Helvetica, sans-serif;
 // Color styles
 $background: $white;
 $text: $black;
-$gradient: radial-gradient(ellipse farthest-corner at center center, $purple 0%, $red 100%);
+// $gradient: radial-gradient(ellipse farthest-corner at center center, $purple 0%, $red 100%);
+$gradient: linear-gradient(to right, #CE4F51 0%, #8C54FB 100%);

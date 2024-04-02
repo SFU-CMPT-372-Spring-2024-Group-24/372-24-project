@@ -11,7 +11,6 @@ import { IoMdClose, IoMdTrash } from "react-icons/io";
 import { TbArrowsExchange } from "react-icons/tb";
 import { FaRegClock } from "react-icons/fa6";
 // Utils
-import { getFileIcon } from "../../../utils/fileUtils";
 // import { priorities } from "../../../utils/priorityColorUtils";
 // Models
 import { Task } from "../../../models/Task";

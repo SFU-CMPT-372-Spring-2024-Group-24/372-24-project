@@ -4,7 +4,7 @@
   width: 33%;
   border: 2px solid $light-gray;
   border-radius: 10px;
-  padding: 1rem;
+  padding: 1rem 1rem .75rem 1rem;
   user-select: none;
 
   .list-header {
@@ -31,7 +31,7 @@
   }
 
   .list-main {
-    height: 72vh;
+    height: 71vh;
     overflow-y: auto;
     overflow-x: hidden;
     padding-right: .5rem;
@@ -48,6 +48,7 @@
 
     .task-count {
       text-align: right;
+      font-size: 14px;
     }
 
     .task-list {
