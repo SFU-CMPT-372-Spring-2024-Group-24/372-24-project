@@ -77,18 +77,30 @@ aside.project-info {
   }
 }
 
-.add-member-modal-backdrop {
+.manage-member-modal-backdrop {
   opacity: 0.1 !important;
 }
 
-.add-member-modal {
+.manage-member-modal {
   width: 60%;
   max-width: none;
+
+  .modal-header {
+    border-bottom: none;
+    padding: 1rem 1rem .5rem 1rem;
+  }
 
   .modal-body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
+    padding-top: 0;
+  }
+
+  section {
+    border: 1px solid $dark-gray;
+    padding: 1rem .5rem;
+    border-radius: 10px;
   }
 
   section:nth-child(2) {
@@ -143,7 +155,7 @@ aside.project-info {
       font-size: 14px;
       font-weight: 500;
       border: 1px solid $light-gray;
-      border-radius: 10px;
+      border-radius: 5px;
       padding: .25rem .5rem;
     }
 
@@ -175,6 +187,17 @@ aside.project-info {
 
       p {
         margin: 0;
+      }
+    }
+
+    li.loggedIn-user {
+      cursor: default;
+      background: $white;
+
+      p.you {
+        color: $dark-gray;
+        padding: .25rem .5rem;
+        font-weight: 600;
       }
     }
   }

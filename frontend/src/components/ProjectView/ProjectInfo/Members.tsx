@@ -12,6 +12,8 @@ import { Project } from "../../../models/Project";
 import { User } from "../../../models/User";
 // API
 import { api } from "../../../api";
+// Custom hooks
+import { useUser } from "../../../hooks/UserContext";
 
 interface Props {
   project: Project;
@@ -22,8 +24,10 @@ interface Props {
 const Members = ({ project, members, setMembers }: Props) => {
   const [showAddMemberModal, setShowAddMemberModal] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [hasSearched, setHasSearched] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const { user } = useUser();
 
   const openAddMemberModal = () => setShowAddMemberModal(true);
   const closeAddMemberModal = () => {
@@ -31,6 +35,7 @@ const Members = ({ project, members, setMembers }: Props) => {
     setSearchQuery("");
     setSearchResults([]);
     setSelectedUsers([]);
+    setHasSearched(false);
   };
 
   const handleAddMembers = async () => {
@@ -60,7 +65,11 @@ const Members = ({ project, members, setMembers }: Props) => {
       const response = await api.get(
         `/search/users?query=${searchQuery}&exclude=${JSON.stringify(userIds)}`
       );
-      setSearchResults(response.data.users);
+
+      if (response.status === 200) {
+        setSearchResults(response.data.users);
+        setHasSearched(true);
+      }
     } catch (error) {
       console.error("Failed to search for users: ", error);
     }
@@ -116,8 +125,8 @@ const Members = ({ project, members, setMembers }: Props) => {
       <Modal
         show={showAddMemberModal}
         onHide={closeAddMemberModal}
-        dialogClassName="add-member-modal"
-        backdropClassName="add-member-modal-backdrop"
+        dialogClassName="manage-member-modal"
+        backdropClassName="manage-member-modal-backdrop"
         centered
       >
         <Modal.Header closeButton>
@@ -128,26 +137,44 @@ const Members = ({ project, members, setMembers }: Props) => {
           <section>
             <h5>Current members</h5>
             <ul className="members-list">
-              {members.map((user) => (
-                <li className="member" key={user.id}>
-                  <img
-                    src={user.profilePicture || defaultProfilePicture}
-                    alt="User Avatar"
-                  />
+              <li className="member loggedIn-user">
+                <img
+                  src={user!.profilePicture || defaultProfilePicture}
+                  alt="User Avatar"
+                />
 
-                  <div className="member-info">
-                    <p>{user.name}</p>
-                    <p>{user.username}</p>
-                  </div>
+                <div className="member-info">
+                  <p>{user!.name}</p>
+                  <p>{user!.username}</p>
+                </div>
 
-                  <button
-                    className="btn-icon btn-remove-user"
-                    onClick={() => handleRemoveUser(user)}
-                  >
-                    Remove
-                  </button>
-                </li>
-              ))}
+                <p className="you">You</p>
+              </li>
+
+              {members.map((member) => {
+                if (member.id !== user!.id) {
+                  return (
+                    <li className="member" key={member.id}>
+                      <img
+                        src={member.profilePicture || defaultProfilePicture}
+                        alt="User Avatar"
+                      />
+
+                      <div className="member-info">
+                        <p>{member.name}</p>
+                        <p>{member.username}</p>
+                      </div>
+
+                      <button
+                        className="btn-icon btn-remove-user"
+                        onClick={() => handleRemoveUser(member)}
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  );
+                }
+              })}
             </ul>
           </section>
 
@@ -174,37 +201,37 @@ const Members = ({ project, members, setMembers }: Props) => {
               </form>
 
               <ul className="members-list">
-                {searchResults.length ? (
-                  searchResults.map((user) => (
-                    <li
-                      className="member"
-                      key={user.id}
-                      onClick={() => {
-                        handleSelectUser(user);
-                      }}
-                    >
-                      <img
-                        src={user.profilePicture || defaultProfilePicture}
-                        alt="User Avatar"
-                      />
-
-                      <div className="member-info">
-                        <p>{user.name}</p>
-                        <p>{user.username}</p>
-                      </div>
-
-                      {selectedUsers.some(
-                        (selected) => selected.id === user.id
-                      ) ? (
-                        <FaCheck size={16} color="#8C54FB" className="icon" />
-                      ) : (
-                        <IoMdAdd size={20} className="icon" />
-                      )}
-                    </li>
-                  ))
-                ) : (
-                  <li className="no-member-found">No members found</li>
+                {hasSearched && !searchResults.length && (
+                  <li className="no-member-found">User not found</li>
                 )}
+
+                {searchResults.map((user) => (
+                  <li
+                    className="member"
+                    key={user.id}
+                    onClick={() => {
+                      handleSelectUser(user);
+                    }}
+                  >
+                    <img
+                      src={user.profilePicture || defaultProfilePicture}
+                      alt="User Avatar"
+                    />
+
+                    <div className="member-info">
+                      <p>{user.name}</p>
+                      <p>{user.username}</p>
+                    </div>
+
+                    {selectedUsers.some(
+                      (selected) => selected.id === user.id
+                    ) ? (
+                      <FaCheck size={16} color="#8C54FB" className="icon" />
+                    ) : (
+                      <IoMdAdd size={20} className="icon" />
+                    )}
+                  </li>
+                ))}
               </ul>
             </div>
 

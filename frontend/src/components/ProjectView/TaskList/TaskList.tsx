@@ -93,7 +93,9 @@ const TaskList = ({ listId }: Props) => {
             )}
           </div>
 
-          <div className="task-count">{tasks.length} tasks</div>
+          <div className="task-count">
+            {tasks.length} {tasks.length === 1 ? "task" : "tasks"}
+          </div>
 
           <Droppable droppableId={list.id.toString()}>
             {(provided) => (

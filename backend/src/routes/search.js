@@ -32,7 +32,7 @@ router.get("/users", async (req, res) => {
       attributes: ["id", "name", "username", "email", "profilePicture"],
     });
 
-    res.json({ users });
+    res.status(200).json({ users });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
