@@ -50,7 +50,6 @@ function Layout() {
 
 interface AuthRouteProps {
   children: React.ReactNode;
-  // path: string;
 }
 const AuthRoute = ({ children }: AuthRouteProps) => {
   const { user } = useUser();
@@ -92,8 +91,8 @@ const App = () => {
                 </AuthRoute>
               }
             />
-            <Route path="/projects/404" element={<NotFoundPage />} />
-            <Route path="/projects/*" element={<Navigate to={"/projects/404"} />} />
+            <Route path="/projects/notfound" element={<NotFoundPage />} />
+            <Route path="/projects/*" element={<Navigate to={"/projects/notfound"} />} />
           </Route>
           <Route path="/login" element={<LoginSignup />} />
           <Route path="/admin" element={<Adminpage />} />
