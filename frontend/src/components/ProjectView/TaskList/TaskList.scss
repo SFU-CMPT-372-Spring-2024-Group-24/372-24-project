@@ -13,8 +13,10 @@
     align-items: center;
     margin-bottom: 1rem;
 
+    // list name heading
     h2 {
       margin: 0;
+      font-size: 20px;
     }
 
     button.add-task {
@@ -28,17 +30,28 @@
     }
   }
 
-  .task-count {
-    text-align: right;
-  }
+  .list-main {
+    height: 72vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: .5rem;
 
-  .task-input-field {
-    input {
-      width: 100%;
+    .task-input-field {
+      input {
+        width: 100%;
+      }
+
+      .button-group {
+        margin-top: .5rem;
+      }
     }
 
-    .button-group {
-      margin-top: .5rem;
+    .task-count {
+      text-align: right;
+    }
+
+    .task-list {
+      height: 95%;
     }
   }
 }

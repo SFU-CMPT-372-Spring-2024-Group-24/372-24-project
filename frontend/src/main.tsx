@@ -48,12 +48,24 @@ function Layout() {
   );
 }
 
+function LayoutWithHeader() {
+  return (
+    <>
+      <Header />
+      <main>
+        <Outlet />
+      </main>
+      <Chat />
+    </>
+  );
+}
+
 interface AuthRouteProps {
   children: React.ReactNode;
 }
 const AuthRoute = ({ children }: AuthRouteProps) => {
   const { user } = useUser();
-  
+
   if (!user) {
     return <Navigate to="/login" />;
   }
@@ -64,17 +76,17 @@ const AuthRoute = ({ children }: AuthRouteProps) => {
 const App = () => {
   return (
     <UserProvider>
-      <ToastContainer 
-        position = "bottom-center"
-        autoClose = {3000}
-        hideProgressBar = {true}
+      <ToastContainer
+        position="bottom-center"
+        autoClose={3000}
+        hideProgressBar={true}
         draggable
         pauseOnHover
-        stacked = {true}
+        stacked={true}
       />
       <BrowserRouter>
         <Routes>
-          <Route element={<Layout />} path="/projects">
+          <Route element={<Layout />}>
             <Route
               path="/projects"
               element={
@@ -83,6 +95,13 @@ const App = () => {
                 </AuthRoute>
               }
             />
+            <Route path="/projects/notfound" element={<NotFoundPage />} />
+            <Route
+              path="/projects/*"
+              element={<Navigate to={"/projects/notfound"} />}
+            />
+          </Route>
+          <Route element={<LayoutWithHeader />}>
             <Route
               path="/projects/:id"
               element={
@@ -91,13 +110,11 @@ const App = () => {
                 </AuthRoute>
               }
             />
-            <Route path="/projects/notfound" element={<NotFoundPage />} />
-            <Route path="/projects/*" element={<Navigate to={"/projects/notfound"} />} />
           </Route>
           <Route path="/login" element={<LoginSignup />} />
           <Route path="/admin" element={<Adminpage />} />
           <Route path="/" element={<LandingPage />} />
-          <Route path="*" element={<Navigate to={"/"}/>} />
+          <Route path="*" element={<Navigate to={"/"} />} />
         </Routes>
       </BrowserRouter>
     </UserProvider>

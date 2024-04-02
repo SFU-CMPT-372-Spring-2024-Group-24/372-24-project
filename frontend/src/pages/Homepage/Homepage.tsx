@@ -22,18 +22,6 @@ const Homepage = () => {
   const handleShowModal = () => setShowModal(true);
 
   useEffect(() => {
-    // const fetchUserProjects = async () => {
-    //   try {
-    //     const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/projects?userId=${user!.id}`);
-
-    //     const projectsData = await response.json();
-
-    //     setProjects(projectsData);
-    //   } catch (error) {
-    //     console.error("Error fetching user projects", error);
-    //   }
-    // };
-
     const fetchUserProjects = async () => {
       try {
         const response = await api.get(`/projects?userId=${user!.id}`);
