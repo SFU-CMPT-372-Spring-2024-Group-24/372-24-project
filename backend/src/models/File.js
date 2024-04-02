@@ -10,9 +10,9 @@ module.exports = (sequelize) => {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true
+            unique: false
         },
-        path: {
+        url: {
             type: DataTypes.STRING,
             allowNull: true
         },

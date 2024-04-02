@@ -47,6 +47,9 @@ app.use(express.static(path.join(__dirname, "../dist")));
 // Static files (for testing)
 app.use("/test", express.static(path.join(__dirname, "./test.local")));
 
+// Files
+// app.use("/files", express.static(path.join(__dirname, "../uploads")));
+
 // Check if user is authenticated
 const isAuthenticated = (req, res, next) => {
   if (req.session.userId) {

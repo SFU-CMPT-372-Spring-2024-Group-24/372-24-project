@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { Task } from "../models/Task";
 import { List } from "../models/List";
 import { User } from "../models/User";
+import { FileModel } from "../models/FileModel";
 // API
 import { api } from "../api";
 
@@ -21,6 +22,9 @@ interface TaskContextProps {
     newIndex: number
   ) => Promise<boolean>;
   projectMembers: User[];
+  projectId: number;
+  projectFiles: FileModel[];
+  setProjectFiles: (files: FileModel[]) => void;
 }
 export const TaskContext = createContext<TaskContextProps | undefined>(undefined);
 
@@ -38,8 +42,10 @@ interface TaskProviderProps {
   children: React.ReactNode;
   projectMembers: User[];
   projectId: number;
+  projectFiles: FileModel[];
+  setProjectFiles: (files: FileModel[]) => void;
 }
-export const TaskProvider = ({ children, projectMembers, projectId }: TaskProviderProps) => {
+export const TaskProvider = ({ children, projectMembers, projectId, projectFiles, setProjectFiles }: TaskProviderProps) => {
   const [lists, setLists] = useState<List[]>([]);
 
   // Fetch lists and tasks for the project
@@ -199,7 +205,7 @@ export const TaskProvider = ({ children, projectMembers, projectId }: TaskProvid
 
   return (
     <TaskContext.Provider
-      value={{ lists, setLists, setTask, addTask, removeTask, moveTask, projectMembers }}
+      value={{ lists, setLists, setTask, addTask, removeTask, moveTask, projectMembers, projectId, projectFiles, setProjectFiles}}
     >
       {children}
     </TaskContext.Provider>

@@ -1,4 +1,4 @@
-const { Task, User } = require('../db');
+const { Task, User, File } = require('../db');
 const express = require('express');
 
 const router = express.Router();
@@ -178,6 +178,71 @@ router.delete('/:id/users/:userId', async (req, res) => {
 
         // res.json({ message: 'User removed from task' });
         res.status(200).json({ message: 'User removed from task' });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Get files
+router.get('/:id/files', async (req, res) => {
+    const taskId = req.params.id;
+
+    try {
+        const task = await Task.findByPk(taskId);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        const files = await task.getFiles();
+
+        res.json(files);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Add file to task
+router.post('/:id/files', async (req, res) => {
+    const taskId = req.params.id;
+    const { fileId } = req.body;
+    try {
+        const task = await Task.findByPk(taskId);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+        
+        const file = await File.findByPk(fileId);
+        if (!file) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        await task.addFile(file);
+
+        res.status(201).json({ message: 'File added to task' });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Remove file from task
+router.delete('/:id/files/:fileId', async (req, res) => {
+    const taskId = req.params.id;
+    const fileId = req.params.fileId;
+
+    try {
+        const task = await Task.findByPk(taskId);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        const file = await File.findByPk(fileId);
+        if (!file) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        await task.removeFile(file);
+
+        res.status(200).json({ message: 'File removed from task' });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }

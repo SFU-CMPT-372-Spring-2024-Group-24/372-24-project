@@ -1,0 +1,41 @@
+@import "../../styles.scss";
+
+.file-preview-modal {
+  min-width: 800px;
+  .modal-header {
+    width: 100%;
+
+    .modal-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    a {
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .modal-header-content {
+      .buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
+        align-items: center;
+        // justify-content: center;
+        & .delete-file {
+          color: $red;
+          font-size: var(--bs-body-font-size);
+          font-weight: var(--bs-body-font-weight);
+        }
+      }
+    }
+  }
+  
+  .modal-body * {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+  }
+}
