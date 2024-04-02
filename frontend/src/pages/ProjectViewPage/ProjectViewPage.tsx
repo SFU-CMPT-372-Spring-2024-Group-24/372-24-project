@@ -79,7 +79,9 @@ const ProjectViewPage = () => {
   const handleEditProjectName = async () => {
     if (!project) return;
 
-    if (!newName || newName === project.name) {
+    const trimmedName = newName.trim();
+
+    if (!trimmedName || trimmedName === project.name) {
       setNewName(project.name);
       setEditingName(false);
       return;
@@ -87,11 +89,12 @@ const ProjectViewPage = () => {
 
     try {
       const response = await api.put(`/projects/${project.id}`, {
-        name: newName,
+        name: trimmedName,
       });
 
       if (response.status === 200) {
-        setProject({ ...project, name: newName });
+        setProject(response.data);
+        setNewName(response.data.name);
         setEditingName(false);
       }
     } catch (error) {
