@@ -52,7 +52,7 @@ router.put('/:id', async (req, res) => {
     if (description !== undefined) {
         fieldsToUpdate.description = description;
     }
-    if (dueDate) {
+    if (dueDate !== undefined) {
         fieldsToUpdate.dueDate = dueDate;
     }
     if (isDone !== undefined) {

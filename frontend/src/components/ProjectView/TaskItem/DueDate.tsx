@@ -2,22 +2,24 @@
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import Modal from "react-bootstrap/Modal";
+import ReactDatePicker from "react-datepicker";
 // Models
 import { Task } from "../../../models/Task";
 // API
 import { api } from "../../../api";
 // Custom hooks
 import { useTasks } from "../../../hooks/TaskContext";
+// Styles
+import "react-datepicker/dist/react-datepicker.css";
 
 interface Props {
   task: Task;
-  // setTask: (updatedTask: Task) => void;
 }
 
 const DueDate = ({ task }: Props) => {
   const [showDueDateModal, setShowDueDateModal] = useState<boolean>(false);
   const dueDateRef = useRef<HTMLDivElement>(null);
-  const [selectedDate, setSelectedDate] = useState<Date>(task.dueDate);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(task.dueDate);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const { setTask } = useTasks();
 
@@ -73,7 +75,7 @@ const DueDate = ({ task }: Props) => {
       const response = await api.put(`/tasks/${task.id}`, {
         dueDate: selectedDate,
       });
-      
+
       setTask({ ...task, dueDate: response.data.dueDate });
       setErrorMsg("");
       setShowDueDateModal(false);
@@ -124,23 +126,34 @@ const DueDate = ({ task }: Props) => {
           <form onSubmit={handleDueDateChange}>
             {errorMsg && <div className="error-msg">{errorMsg}</div>}
 
-            <input
-              id="dueDate"
-              type="datetime-local"
-              value={moment(selectedDate).format("YYYY-MM-DDTHH:mm")}
-              onChange={(e) => setSelectedDate(new Date(e.target.value))}
+            <ReactDatePicker
+              selected={selectedDate ? new Date(selectedDate) : null}
+              onChange={(date: Date) => setSelectedDate(date)}
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeIntervals={15}
+              timeCaption="Time due"
+              dateFormat="MMMM d, yyyy h:mm aa"
+              inline
             />
 
             <div className="button-group">
-              <button type="submit" className="btn-text">
-                Save
-              </button>
               <button
                 type="button"
                 className="btn-cancel"
                 onClick={closeDueDateModal}
               >
                 Cancel
+              </button>
+
+              <button type="button" className="btn-cancel"
+                onClick={() => setSelectedDate(null)}
+              >
+                Clear due date
+              </button>
+
+              <button type="submit" className="btn-text">
+                Save changes
               </button>
             </div>
           </form>
