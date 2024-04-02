@@ -308,11 +308,13 @@
     .file,
     .upload-file {
       display: flex;
-      align-items: self-start;
+      align-items: center;
       gap: 0.5rem;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+      font-size: 14px;
+      font-weight: 500;
     }
 
     .task-members,
@@ -503,13 +505,19 @@
       top: 50%;
       left: 0.5rem;
       transform: translateY(-50%);
-      color: $purple;
+      transition: color 0.3s;
     }
 
     input {
       width: 100%;
       border-radius: 10px;
       padding: 0.5rem 0.5rem 0.5rem 2rem;
+    }
+
+    &:focus-within {
+      .search-icon {
+        color: $purple;
+      }
     }
   }
 

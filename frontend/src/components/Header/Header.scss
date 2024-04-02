@@ -34,6 +34,13 @@ header {
       top: 50%;
       left: .5rem;
       transform: translateY(-50%);
+      transition: color .3s;
+    }
+
+    &:focus-within {
+      .search-icon {
+        color: $purple;
+      }
     }
   }
 }

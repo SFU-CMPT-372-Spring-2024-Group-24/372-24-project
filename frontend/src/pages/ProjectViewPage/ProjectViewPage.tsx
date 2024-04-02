@@ -22,6 +22,9 @@ const ProjectViewPage = () => {
   const [files, setFiles] = useState<FileModel[]>([]);
   const navigate = useNavigate();
 
+  const [editingName, setEditingName] = useState<boolean>(false);
+  const [newName, setNewName] = useState<string>("");
+
   // Fetch project data
   useEffect(() => {
     const fetchProject = async () => {
@@ -30,6 +33,7 @@ const ProjectViewPage = () => {
 
         if (response.status === 200) {
           setProject(response.data);
+          setNewName(response.data.name);
         }
       } catch (error) {
         navigate("/projects/notfound");
@@ -71,10 +75,38 @@ const ProjectViewPage = () => {
     }
   }, [project]);
 
+  // Edit project name
+  const handleEditProjectName = async () => {
+    if (!project) return;
+
+    const trimmedName = newName.trim();
+
+    if (!trimmedName || trimmedName === project.name) {
+      setNewName(project.name);
+      setEditingName(false);
+      return;
+    }
+
+    try {
+      const response = await api.put(`/projects/${project.id}`, {
+        name: trimmedName,
+      });
+
+      if (response.status === 200) {
+        setProject(response.data);
+        setNewName(response.data.name);
+        setEditingName(false);
+      }
+    } catch (error) {
+      console.error("Error editing project name:", error);
+    }
+  };
+
   return (
     <>
       {project && (
         <div className="project-view-page">
+          {/* Project description, members, files on left panel*/}
           <ProjectInfo
             project={project}
             setProject={setProject}
@@ -83,14 +115,40 @@ const ProjectViewPage = () => {
             files={files}
             setFiles={setFiles}
           />
-
+      
+          {/* Task lists on right panel */}
           <section className="project">
-            <h1 className="gradient-text">{project.name}</h1>
+            {/* Project name */}
+            <div
+              className={`project-title ${editingName ? "editing" : ""}`}
+              onClick={() => setEditingName(true)}
+            >
+              {editingName ? (
+                <input
+                  id="project-name"
+                  name="project-name"
+                  type="text"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  onBlur={handleEditProjectName}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleEditProjectName();
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <h1 className="gradient-text">{project.name}</h1>
+              )}
+            </div>
 
-            <TaskProvider projectId={project.id} projectMembers={members} projectFiles={files} setProjectFiles={setFiles}>
-              <div className="project-lists">
-                <TaskLists />
-              </div>
+            {/* Task Lists */}
+            <TaskProvider
+              projectId={project.id}
+              projectMembers={members}
+              projectFiles={files}
+              setProjectFiles={setFiles}
+            >
+              <TaskLists />
             </TaskProvider>
           </section>
         </div>
