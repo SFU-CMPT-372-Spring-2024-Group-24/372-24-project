@@ -52,7 +52,11 @@ const AdminProjects = () => {
     return project.showDescription ? "Less" : "More";
   };
   const renderDescription = (project: any) => {
-    return project.showDescription ? (project.description || "No description to display") : null;
+    return project.showDescription ? (
+      <p>
+        Description: {project.description || "No description to display"}
+      </p>
+    ) : null;
   };
 
   return (
@@ -64,8 +68,8 @@ const AdminProjects = () => {
             <div className="project-header">
               <span className="project-name">{project.name}</span>
               <div className="action-buttons">
-                <button onClick={() => toggleDescription(project.id)}>{toggleButtonText(project)}</button>
-                <button onClick={() => deleteProject(project.id)}>Delete</button>
+                <button id="more-button" onClick={() => toggleDescription(project.id)}>{toggleButtonText(project)}</button>
+                <button id="delete-button" onClick={() => deleteProject(project.id)}>Delete</button>
               </div>
             </div>
             <div className="project-description">{renderDescription(project)}</div>

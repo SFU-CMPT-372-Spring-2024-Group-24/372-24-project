@@ -20,7 +20,12 @@ const AdminUsers = () => {
     fetchUsers();
   }, []);
 
-  const deleteUser = async (userId: string) => {
+  const deleteUser = async (userId: string, isAdmin: boolean) => {
+    if (isAdmin) {
+      alert('Cannot delete admin user');
+      return;
+    }
+
     try {
       await api.delete(`/users/${userId}`);
       setUsers(users => users.filter(user => user.id !== userId));
@@ -49,14 +54,14 @@ const AdminUsers = () => {
             <div className="user-header">
               <span className="user-name">{user.username}</span>
               <div className="action-buttons">
-                <button onClick={() => toggleMoreInfo(user.id)}>{user.showEmail ? "Less" : "More"}</button>
-                <button onClick={() => deleteUser(user.id)}>Delete</button>
+                <button id="more-button" onClick={() => toggleMoreInfo(user.id)}>{user.showEmail ? "Less" : "More"}</button>
+                <button id="delete-button" onClick={() => deleteUser(user.id, user.isAdmin)}>Delete</button>
               </div>
             </div>
             {user.showEmail && (
               <div className="user-more-info">
-                {user.name && <p>{user.name}</p>}
-                {user.email && <p>{user.email}</p>}
+                {user.name && <p>Name: {user.name}</p>}
+                {user.email && <p>Email: {user.email}</p>}
                 {!user.name && !user.email && <p>No additional information to display</p>}
               </div>
             )}
