@@ -7,20 +7,18 @@ import { toast } from "react-toastify";
 // Icons & styles
 import { IoIosCloudUpload } from 'react-icons/io'
 import './AddFileModal.scss'
-// Models
-import { FileModel } from '../../models/FileModel'
 // API
 import { api } from '../../api'
+// Custom hooks
+import { useTasks } from '../../hooks/TaskContext';
 
 interface Props {
   showAddFileModal: boolean;
   setShowAddFileModal: (show: boolean) => void;
-  projectId: number;
-  files: FileModel[];
-  setFiles: (files: FileModel[]) => void;
 }
 
-const AddFileModal = ({ showAddFileModal, setShowAddFileModal, projectId, files, setFiles }: Props) => {
+const AddFileModal = ({ showAddFileModal, setShowAddFileModal }: Props) => {
+  const { project, projectFiles, setProjectFiles } = useTasks();
   const [isAddFileModalHovered, setIsAddFileModalHovered] = useState<boolean>(false);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: async (acceptedFiles) => {
@@ -36,8 +34,8 @@ const AddFileModal = ({ showAddFileModal, setShowAddFileModal, projectId, files,
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const response = await api.post(`/projects/${projectId}/files`, formData);
-      setFiles([...files, response.data]);
+      const response = await api.post(`/projects/${project.id}/files`, formData);
+      setProjectFiles([...projectFiles, response.data]);
       setShowAddFileModal(false);
       toast("File uploaded successfully");
     } catch (error) {

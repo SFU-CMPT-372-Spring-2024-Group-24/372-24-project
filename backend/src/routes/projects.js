@@ -1,5 +1,5 @@
 // Models
-const { Project, User } = require("../db");
+const { Project, User, Role, UserProject } = require("../db");
 // Node modules
 const path = require("path");
 const fs = require("fs");
@@ -27,7 +27,15 @@ router.post("/", async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
-    await project.addUser(user);
+
+    // Get Owner role
+    const ownerRole = await Role.findOne({ where: { name: "Owner" } });
+    if (!ownerRole) {
+      return res.status(500).json({ message: "Role not found" });
+    }
+
+    // Add user to project with Owner role
+    await project.addUser(user, { through: { roleId: ownerRole.id } });
 
     res.json(project);
   } catch (err) {
@@ -115,11 +123,30 @@ router.delete("/:id", async (req, res) => {
 
   try {
     const project = await Project.findByPk(id);
-
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
 
+    // Find 'Owner' role
+    const ownerRole = await Role.findOne({ where: { name: "Owner" } });
+    if (!ownerRole) {
+      return res.status(500).json({ message: "Role not found" });
+    }
+
+    // Check if user is an Owner of project
+    const userId = req.session.userId;
+    const isOwner = await UserProject.findOne({
+      where: {
+        ProjectId: id,
+        UserId: userId,
+        roleId: ownerRole.id,
+      },
+    });
+    if (!isOwner) {
+      return res.status(403).json({ message: "User is not an owner of this project" });
+    }
+
+    // Delete project
     await project.destroy();
 
     res.status(200).json({ message: "Project deleted." });
@@ -144,7 +171,7 @@ router.get("/:id/users", async (req, res) => {
       order: [[Sequelize.literal('"UserProject"."createdAt"'), 'ASC']],
     });
 
-    res.json(users);
+    res.status(200).json(users);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -161,13 +188,19 @@ router.post("/:id/users", async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
+    // Find 'Viewer' role
+    const viewerRole = await Role.findOne({ where: { name: "Viewer" } });
+    if (!viewerRole) {
+      return res.status(500).json({ message: "Role not found" });
+    }
+
     for (let userId of userIds) {
       const user = await User.findByPk(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      await project.addUser(user);
+      await project.addUser(user, { through: { roleId: viewerRole.id } });
     }
 
     res.status(201).json({ message: "Users added to project" });

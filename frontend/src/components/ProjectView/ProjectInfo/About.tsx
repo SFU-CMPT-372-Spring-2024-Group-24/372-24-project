@@ -5,15 +5,11 @@ import { useState } from "react";
 import { IoSettingsOutline } from "react-icons/io5";
 // API
 import { api } from "../../../api";
-// Models
-import { Project } from "../../../models/Project";
+// Custom hooks
+import { useTasks } from "../../../hooks/TaskContext";
 
-interface Props {
-  project: Project;
-  setProject: (project: Project) => void;
-}
-
-const About = ({ project, setProject }: Props) => {
+const About = () => {
+  const { project, setProject } = useTasks();
   const [showAboutModal, setShowAboutModal] = useState<boolean>(false);
   const [projectDescription, setProjectDescription] = useState<string>(
     project.description

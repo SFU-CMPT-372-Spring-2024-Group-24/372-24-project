@@ -31,9 +31,9 @@
   }
 
   .list-main {
-    height: 71vh;
-    overflow-y: auto;
-    overflow-x: hidden;
+    height: 70vh;
+    overflow-y: auto; // enable vertical scrollbar
+    overflow-x: hidden; // hide horizontal scrollbar
     padding-right: .5rem;
 
     .task-input-field {

@@ -6,6 +6,8 @@ import { Task } from "../models/Task";
 import { List } from "../models/List";
 import { User } from "../models/User";
 import { FileModel } from "../models/FileModel";
+import { Role } from "../models/ProjectRole";
+import { Project } from "../models/Project";
 // API
 import { api } from "../api";
 
@@ -21,10 +23,13 @@ interface TaskContextProps {
     oldIndex: number,
     newIndex: number
   ) => Promise<boolean>;
+  project: Project;
+  setProject: (project: Project) => void;
   projectMembers: User[];
-  projectId: number;
+  setProjectMembers: (members: User[]) => void;
   projectFiles: FileModel[];
   setProjectFiles: (files: FileModel[]) => void;
+  userRole: Role;
 }
 export const TaskContext = createContext<TaskContextProps | undefined>(undefined);
 
@@ -40,20 +45,84 @@ export const useTasks = (): TaskContextProps => {
 
 interface TaskProviderProps {
   children: React.ReactNode;
-  projectMembers: User[];
-  projectId: number;
-  projectFiles: FileModel[];
-  setProjectFiles: (files: FileModel[]) => void;
+  project: Project;
+  setProject: (project: Project) => void;
+  userRole: Role;
 }
-export const TaskProvider = ({ children, projectMembers, projectId, projectFiles, setProjectFiles }: TaskProviderProps) => {
+export const TaskProvider = ({
+  children,
+  project,
+  setProject,
+  userRole,
+}: TaskProviderProps) => {
   const [lists, setLists] = useState<List[]>([]);
+  const [projectMembers, setProjectMembers] = useState<User[]>([]);
+  const [projectFiles, setProjectFiles] = useState<FileModel[]>([]);
+
+  // Fetch project members and their roles
+  useEffect(() => {
+    if (!project) return;
+
+    const fetchMembers = async () => {
+      try {
+        // Fetch members
+        const response = await api.get(`/projects/${project.id}/users`);
+
+        if (response.status === 200) {
+          setProjectMembers(response.data);
+
+          // Fetch roles for each member
+          const rolesResponse = await api.get(`/roles/${project.id}/all`);
+
+          if (rolesResponse.status === 200) {
+            const userRoles = rolesResponse.data;
+
+            const usersWithRoles = response.data.map((member: User) => {
+              const userRole = userRoles.find(
+                (userRole: any) => userRole.UserId === member.id
+              );
+
+              return {
+                ...member,
+                role: userRole.Role,
+              };
+            });
+
+            setProjectMembers(usersWithRoles);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching members:", error);
+      }
+    };
+
+    fetchMembers();
+  }, [project]);
+
+  // Fetch project files
+  useEffect(() => {
+    if (!project) return;
+
+    const fetchFiles = async () => {
+      try {
+        const response = await api.get(`/projects/${project.id}/files`);
+        setProjectFiles(response.data);
+      } catch (error) {
+        console.error("Error fetching files:", error);
+      }
+    };
+
+    fetchFiles();
+  }, [project]);
 
   // Fetch lists and tasks for the project
   useEffect(() => {
+    if (!project) return;
+
     const fetchListsAndTasks = async () => {
       try {
         // Fetch lists for the project
-        const response = await api.get(`/lists/${projectId}`);
+        const response = await api.get(`/lists/${project.id}`);
         const lists = response.data;
 
         // Fetch tasks for each list
@@ -70,10 +139,10 @@ export const TaskProvider = ({ children, projectMembers, projectId, projectFiles
       } catch (error) {
         console.error("Error fetching lists and tasks:", error);
       }
-    }
+    };
 
     fetchListsAndTasks();
-  }, [projectId]);
+  }, [project]);
 
   // Update a task in the state
   const setTask = (updatedTask: Task) => {
@@ -205,7 +274,21 @@ export const TaskProvider = ({ children, projectMembers, projectId, projectFiles
 
   return (
     <TaskContext.Provider
-      value={{ lists, setLists, setTask, addTask, removeTask, moveTask, projectMembers, projectId, projectFiles, setProjectFiles}}
+      value={{
+        project,
+        setProject,
+        projectMembers,
+        setProjectMembers,
+        projectFiles,
+        setProjectFiles,
+        userRole,
+        lists,
+        setLists,
+        setTask,
+        addTask,
+        removeTask,
+        moveTask,
+      }}
     >
       {children}
     </TaskContext.Provider>

@@ -7,10 +7,6 @@ import { BiLogOutCircle } from "react-icons/bi";
 // Styles
 import "./ProjectInfo.scss";
 import "react-toastify/dist/ReactToastify.css";
-// Models
-import { Project } from "../../../models/Project";
-import { User } from "../../../models/User";
-import { FileModel } from "../../../models/FileModel";
 // API
 import { api } from "../../../api";
 // Components
@@ -19,20 +15,19 @@ import About from "./About";
 import Files from "./Files";
 // Custom hooks
 import { useUser } from "../../../hooks/UserContext";
+import { useTasks } from "../../../hooks/TaskContext";
 
-interface Props {
-  project: Project;
-  setProject: (project: Project) => void;
-  members: User[];
-  setMembers: (members: User[]) => void;
-  files: FileModel[];
-  setFiles: (files: FileModel[]) => void;
-}
-const ProjectInfo = ({ project, setProject, members, setMembers, files, setFiles }: Props) => {
+const ProjectInfo = () => {
   const navigate = useNavigate();
   const { user } = useUser();
+  const { userRole, project } = useTasks();
 
   const handleDeleteProject = async () => {
+    if (userRole.name !== "Owner") {
+      toast.error("Only the owner can delete the project.");
+      return;
+    }
+
     try {
       const response = await api.delete(`/projects/${project.id}`);
       if (response.status === 200) {
@@ -46,7 +41,9 @@ const ProjectInfo = ({ project, setProject, members, setMembers, files, setFiles
 
   const handleLeaveProject = async () => {
     try {
-      const response = await api.delete(`/projects/${project.id}/users/${user!.id}`);
+      const response = await api.delete(
+        `/projects/${project.id}/users/${user!.id}`
+      );
       if (response.status === 200) {
         toast("You have left the project.");
         navigate("/projects");
@@ -58,13 +55,10 @@ const ProjectInfo = ({ project, setProject, members, setMembers, files, setFiles
 
   return (
     <aside className="project-info">
-      
       <div className="project-info">
-        <About project={project} setProject={setProject} />
-
-        <Members project={project} members={members} setMembers={setMembers} />
-
-        <Files project={project} files={files} setFiles={setFiles} />
+        <About />
+        <Members />
+        <Files />
       </div>
 
       <div className="button-group">
@@ -79,7 +73,9 @@ const ProjectInfo = ({ project, setProject, members, setMembers, files, setFiles
 
         <button
           type="button"
-          className="btn-leave-delete-project"
+          className={`btn-leave-delete-project ${
+            userRole.name !== "Owner" ? "disabled" : ""
+          }`}
           onClick={handleDeleteProject}
         >
           <IoMdTrash size={18} />

@@ -13,6 +13,8 @@ import 'react-pdf/dist/Page/AnnotationLayer.css';
 import './PreviewFileModal.scss';
 // API
 import { api } from "../../api";
+// Custom hooks
+import { useTasks } from '../../hooks/TaskContext';
 
 // Set pdf.js worker source
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -20,13 +22,11 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 interface Props {
   showPreviewFileModal: boolean;
   setShowPreviewFileModal: (show: boolean) => void;
-  projectId: number
-  files: FileModel[];
-  setFiles: (files: FileModel[]) => void;
   selectedFile: FileModel | undefined;
 }
 
-const PreviewFileModal = ({ showPreviewFileModal, setShowPreviewFileModal, projectId, files, setFiles, selectedFile }: Props) => {
+const PreviewFileModal = ({ showPreviewFileModal, setShowPreviewFileModal,selectedFile }: Props) => {
+  const { project, projectFiles, setProjectFiles } = useTasks();
   const [numPages, setNumPages] = useState<number>(0);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
@@ -36,9 +36,9 @@ const PreviewFileModal = ({ showPreviewFileModal, setShowPreviewFileModal, proje
   async function handleDeleteFile() {
     if (selectedFile) {
       try {
-        const response = await api.delete(`/projects/${projectId}/files/${selectedFile.id}`);
+        const response = await api.delete(`/projects/${project.id}/files/${selectedFile.id}`);
         if (response.status === 200) {
-          setFiles(files.filter((file) => file.id !== selectedFile.id));
+          setProjectFiles(projectFiles.filter((file) => file.id !== selectedFile.id));
           setShowPreviewFileModal(false);
           toast(response.data.message);
         }

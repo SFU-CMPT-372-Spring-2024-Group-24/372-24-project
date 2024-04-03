@@ -1,0 +1,157 @@
+@import '../../styles.scss';
+
+.manage-member-modal-backdrop {
+  opacity: 0.1 !important;
+}
+
+.manage-member-modal {
+  width: 60%;
+  max-width: none;
+
+  .modal-header {
+    border-bottom: none;
+    padding: 1rem 1rem .5rem 1rem;
+  }
+
+  .modal-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding-top: 0;
+  }
+
+  section {
+    border: 1px solid $dark-gray;
+    padding: 1rem .5rem;
+    border-radius: 10px;
+  }
+
+  section:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  button.btn-remove-user {
+    color: $dark-gray;
+
+    &:hover {
+      background: $red;
+      color: $white;
+    }
+  }
+
+  .search-member {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    .search-bar {
+      flex-grow: 1;
+      position: relative;
+
+      .search-icon {
+        position: absolute;
+        top: 50%;
+        left: .5rem;
+        transform: translateY(-50%);
+        transition: color .3s;
+      }
+
+      input {
+        width: 100%;
+        border-radius: 10px;
+        padding: .5rem .5rem .5rem 2rem;
+      }
+
+      &:focus-within {
+        .search-icon {
+          color: $purple;
+        }
+      }
+    }
+  }
+
+  .members-list {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin-top: 1rem;
+
+    li.no-member-found {
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid $light-gray;
+      border-radius: 5px;
+      padding: .25rem .5rem;
+    }
+
+    .member {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      border: 1px solid $light-gray;
+      border-radius: 10px;
+      padding: .25rem .5rem;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+
+      img {
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      .member-info {
+        flex-grow: 1;
+
+        p:nth-child(2) {
+          color: rgba($color: $black, $alpha: 0.5)
+        }
+      }
+
+      p.roleName {
+        color: $dark-gray;
+        border: 1px solid $light-gray;
+        border-radius: 5px;
+        padding: .1rem .5rem;
+
+        &:hover {
+          background: $light-gray;
+        }
+      }
+
+      div.member-role {
+        cursor: pointer;
+
+        
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+
+    li.loggedIn-user {
+      cursor: default;
+      background: $white;
+
+      p.you {
+        color: $dark-gray;
+        padding: .25rem .5rem;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .members-list.current {
+    li.member {
+      cursor: default;
+    }
+  }
+}

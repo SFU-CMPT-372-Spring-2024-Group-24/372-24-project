@@ -8,15 +8,11 @@ import { IoMdAdd } from "react-icons/io";
 import { getFileIcon } from "../../../utils/fileUtils";
 // Models
 import { FileModel } from "../../../models/FileModel";
-import { Project } from "../../../models/Project";
+// Custom hooks
+import { useTasks } from "../../../hooks/TaskContext";
 
-interface Props {
-  project: Project;
-  files: FileModel[];
-  setFiles: (files: FileModel[]) => void;
-}
-
-const Files = ({ project, files, setFiles }: Props) => {
+const Files = () => {
+  const { projectFiles } = useTasks();
   const [showAddFileModal, setShowAddFileModal] = useState<boolean>(false);
   const [showPreviewFileModal, setShowFilePreviewModal] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<FileModel>();
@@ -31,7 +27,7 @@ const Files = ({ project, files, setFiles }: Props) => {
           <IoMdAdd size={20} />
         </button>
       </h2>
-      {files.map((file) => (
+      {projectFiles.map((file) => (
         <div className="file" key={file.id}>
           {getFileIcon(file.type)}
           <p
@@ -47,17 +43,11 @@ const Files = ({ project, files, setFiles }: Props) => {
     <AddFileModal
       showAddFileModal={showAddFileModal}
       setShowAddFileModal={setShowAddFileModal}
-      projectId={project.id}
-      files={files}
-      setFiles={setFiles}
     />
 
     <PreviewFileModal
       showPreviewFileModal={showPreviewFileModal}
       setShowPreviewFileModal={setShowFilePreviewModal}
-      projectId={project.id}
-      files={files}
-      setFiles={setFiles}
       selectedFile={selectedFile}
     />
   </>);
