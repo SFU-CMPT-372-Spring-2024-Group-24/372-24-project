@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../../api';
 
 const AdminDashboard = () => {
-  const [totalProjects, setTotalProjects] = useState(0); 
+  // const [totalProjects, setTotalProjects] = useState(0); 
   const [totalUsers, setTotalUsers] = useState(0); 
 
   useEffect(() => {

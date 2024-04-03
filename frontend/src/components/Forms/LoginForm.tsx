@@ -36,10 +36,15 @@ const LoginForm = ({}: Props) => {
         identifier: identifier,
         password: password,
       });
-      
+
       if (response.data.loggedIn) {
         setUser(response.data.user);
-        navigate("/projects");
+        //if user is Admin, redirect to admin, else projects
+        if (response.data.user.isAdmin) {
+          navigate("/admin"); 
+        } else {
+          navigate("/projects"); 
+        }
       } else {
         setErrorMsg(response.data.message);
       }
