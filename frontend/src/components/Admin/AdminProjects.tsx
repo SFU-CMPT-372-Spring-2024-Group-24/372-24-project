@@ -4,67 +4,30 @@ import { api } from '../../api';
 
 const AdminProjects = () => {
 
-  const [users, setUsers] = useState<any[]>([]);
-  const [userIDArray, setUserIDArray] = useState<string[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
-  const [projectsCount, setProjectsCount] = useState(0);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchUserDataAndProjects = async () => {
       try {
-        const response = await api.get('/users');
-        const userData = response.data;
-        setUsers(userData);
-        const ids = userData.map((user: any) => user.id);
-        setUserIDArray(ids);
-      } catch (error) {
-        console.error('Error fetching users', error);
-      }
-    };
-
-    const fetchUserProjects = async (userId: string) => {
-      try {
-        const response = await api.get(`/projects?userId=${userId}`);
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching user projects", error);
-        return [];
-      }
-    };
-
-    const fetchProjectsForAllUsers = async () => {
-      try {
-        const allProjects: { [key: string]: { id: string, name: string, description: string } } = {};
-        await Promise.all(userIDArray.map(async (userId) => {
-          const projectsForUser = await fetchUserProjects(userId);
-          projectsForUser.forEach((project: any) => {
-            allProjects[project.id] = project;
-          });
+        const userResponse = await api.get('/users');
+        const userData = userResponse.data;
+        const userIDArray = userData.map((user: any) => user.id);
+        const allProjects: any[] = [];
+        await Promise.all(userIDArray.map(async (userId: string) => {
+          const projectResponse = await api.get(`/projects?userId=${userId}`);
+          const projectsForUser = projectResponse.data;
+          allProjects.push(...projectsForUser);
         }));
-        const projectsArray = Object.values(allProjects);
-        setProjects(projectsArray);
-
-        fetchProjectsCount();
+        setProjects(allProjects);
       } catch (error) {
-        console.error('Error fetching projects', error);
+        console.error('Error fetching users or projects', error);
       }
     };
 
-    const fetchProjectsCount = async () => {
-      try {
-        const response = await api.get('/admin');
-        const projectsData = response.data;
-        setProjectsCount(projectsData.length);
-      } catch (error) {
-        console.error('Error fetching projects', error);
-      }
-    };
+    fetchUserDataAndProjects();
+  }, []);
 
-    fetchUsers();
-    fetchProjectsForAllUsers();
-  }, [userIDArray]);
-
-
+  //need to fix: delete all data associated with user (ex. projects, chats)
   const deleteProject = async (projectId: string) => {
     try {
       await api.delete(`/projects/${projectId}`);
@@ -74,15 +37,38 @@ const AdminProjects = () => {
     }
   };
 
+  const toggleDescription = (projectId: string) => {
+    setProjects(prevProjects => {
+      return prevProjects.map(project => {
+        if (project.id === projectId) {
+          return { ...project, showDescription: !project.showDescription };
+        }
+        return project;
+      });
+    });
+  };
+
+  const toggleButtonText = (project: any) => {
+    return project.showDescription ? "Less" : "More";
+  };
+  const renderDescription = (project: any) => {
+    return project.showDescription ? (project.description || "No description to display") : null;
+  };
+
   return (
-    <div>
+    <div className="admin-projects-container">
       <h2>All Projects In Database</h2>
-      <p>Total number of projects: {projectsCount}</p>
-      <ul>
+      <ul className="project-list">
         {projects.map((project) => (
-          <li key={project.id}>
-            {project.name} - {project.description}
-            <button onClick={() => deleteProject(project.id)}>Delete</button>
+          <li key={project.id} className="project-item">
+            <div className="project-header">
+              <span className="project-name">{project.name}</span>
+              <div className="action-buttons">
+                <button onClick={() => toggleDescription(project.id)}>{toggleButtonText(project)}</button>
+                <button onClick={() => deleteProject(project.id)}>Delete</button>
+              </div>
+            </div>
+            <div className="project-description">{renderDescription(project)}</div>
           </li>
         ))}
       </ul>
@@ -90,4 +76,4 @@ const AdminProjects = () => {
   )
 }
 
-export default AdminProjects
+export default AdminProjects;
