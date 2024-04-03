@@ -139,7 +139,9 @@ const Chat = () => {
   const changeMembersOfChat = (chatID: string, membersOfChat: User[]) => {
     //find the object in recentChatters, replace its users
     const myObject = recentChatters.find((item) => item.chatID === chatID);
-    myObject.users = membersOfChat;
+    if (myObject != null) {
+      myObject.users = membersOfChat;
+    }
     console.log("my object: ", myObject);
   };
   const goBack = () => {
