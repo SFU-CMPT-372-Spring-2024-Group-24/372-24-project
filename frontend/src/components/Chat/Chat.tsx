@@ -8,7 +8,7 @@ import { User } from "../../models/User";
 import { api } from "../../api";
 import Select, { MultiValue } from "react-select";
 
-class Option {
+export class Option {
   value: string;
   label: string;
   additionalInfo: string;
@@ -69,6 +69,7 @@ const Chat = () => {
           var filteredAllUsers: User[] = users.filter(
             (myUser: User) => myUser.id != user!.id && myUser.isAdmin != true
           );
+          console.log("Filtered Users:", filteredAllUsers);
           //make the user list here, which will be used as the options thing later
           var options: Option[] = [];
           filteredAllUsers.forEach((myUser: User) => {
@@ -93,29 +94,6 @@ const Chat = () => {
   }, []);
 
   const addNewChat = async (chatName: any, userID: any, otherIDs: any) => {
-    // const response = await fetch(
-    //   `${import.meta.env.VITE_APP_API_URL}/chats/addChat`,
-    //   {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       chatName: chatName,
-    //       userID: userID,
-    //       otherID: otherID,
-    //     }),
-    //   }
-    // );
-    // if (response.ok) {
-    //   //want to return the chatID
-    //   console.log("response ok");
-    //   // const myChat = await response.json();
-    //   // console.log("addNewChat:", myChat);
-    //   // setChat(myChat);
-    // } else {
-    //   console.log("response not ok");
-    // }
     try {
       const response = await api.post("/chats/addChat", {
         chatName: chatName,
@@ -303,8 +281,7 @@ const Chat = () => {
                 chatName={chatName}
                 members={usersForChat}
                 setMembers={setUsersForChat}
-                //temp solution to refresh chats
-                //getRecentChats = {getRecentChats()}
+                userList={userList}
               />
             )}
             <button

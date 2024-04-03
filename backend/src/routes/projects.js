@@ -127,7 +127,7 @@ router.get("/:id/users", async (req, res) => {
     const users = await project.getUsers({
       attributes: ["id", "name", "username", "email", "profilePicture"],
       joinTableAttributes: [],
-      order: [[Sequelize.literal('"UserProject"."createdAt"'), 'ASC']],
+      order: [[Sequelize.literal('"UserProject"."createdAt"'), "ASC"]],
     });
 
     res.json(users);
@@ -147,8 +147,8 @@ router.post("/:id/users", async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    for (let userId of userIds) {
-      const user = await User.findByPk(userId);
+    for (let userID of userIDs) {
+      const user = await User.findByPk(userID);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }

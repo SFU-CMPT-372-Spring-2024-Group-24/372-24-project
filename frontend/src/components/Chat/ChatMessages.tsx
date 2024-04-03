@@ -9,6 +9,9 @@ import { api } from "../../api";
 import { IoSettingsOutline } from "react-icons/io5";
 import Modal from "react-bootstrap/Modal";
 import { User } from "../../models/User";
+import Select, { MultiValue } from "react-select";
+import { Option } from "./Chat";
+
 interface Props {
   socket: Socket;
   username: string;
@@ -17,6 +20,7 @@ interface Props {
   chatName: string;
   members: User[];
   setMembers: (members: User[]) => void;
+  userList: Option[];
 }
 
 function ChatMessages({
@@ -27,11 +31,16 @@ function ChatMessages({
   chatName,
   members,
   setMembers,
+  userList,
 }: Props) {
   const { user } = useUser();
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<any[]>([]);
   const [showEditChatModal, setShowEditChatModal] = useState<boolean>(false);
+  const [addMembersList, setAddMembersList] = useState<Option[]>([]);
+  const [currentSelectValue, setCurrentSelectValue] = useState<
+    MultiValue<Option>
+  >([]);
   //insert message into messages table, need chat_id, and user_id, and message_text
   //pull from the database the past messages
 
@@ -106,6 +115,7 @@ function ChatMessages({
         console.log("Members before: ", members);
         setMembers(members.filter((member) => member.id !== user.id));
         console.log("Members after", members);
+        socket.emit("chat_added");
       }
     } catch (error) {
       console.error("Failed to remove member: ", error);
@@ -123,9 +133,71 @@ function ChatMessages({
 
   useEffect(() => {
     getMessagesFromChatID();
-    //console.log(members);
+    console.log("userList:", userList);
+    makeOptions(userList);
+    //make a new object that parses through the values
+    // console.log("myUserList:", myUserList);
   }, []);
 
+  useEffect(() => {
+    makeOptions(userList);
+  }, [members]);
+
+  const makeOptions = (userList: Option[]) => {
+    //parse the strings so you can remove unneeded users
+    let myUserList = userList.map((option: Option) => {
+      return {
+        additionalInfo: option.additionalInfo,
+        label: option.label,
+        value: JSON.parse(option.value),
+      };
+    });
+    console.log("myUserList before:", myUserList);
+    //remove the users that are already added to the chat
+    console.log("members:", members);
+    let results: Option[] = myUserList.filter(
+      (option) => !members.some((member) => option.value.id === member.id)
+    );
+    let results2: Option[] = results.map((option: Option) => {
+      return new Option(
+        JSON.stringify(option.value),
+        option.label,
+        option.additionalInfo
+      );
+    });
+    console.log(results2);
+    setAddMembersList(results2);
+  };
+
+  const updateAddMembersList = (selectedOptions: MultiValue<Option>) => {
+    setCurrentSelectValue(selectedOptions);
+  };
+
+  const addNewMembers = async (event: any) => {
+    event.preventDefault();
+    console.log("Adding new Members!");
+    console.log(currentSelectValue);
+    // console.log(
+    //   "mapping:",
+    //   currentSelectValue.map((user) => JSON.parse(user.value).id)
+    // );
+    //console.log(currentSelectValue.map((user) => JSON.parse(user.value).id));
+    //call api to add users to the chat
+    if (currentSelectValue.length > 0) {
+      const response = await api.post(`/chats/addUsers/${chatID}`, {
+        userIDs: currentSelectValue.map((user) => JSON.parse(user.value).id),
+      });
+      //update members to include the values before and also the new users added before the response
+      if (response.status === 201) {
+        setMembers([
+          ...members,
+          ...currentSelectValue.map((user) => JSON.parse(user.value)),
+        ]);
+        setCurrentSelectValue([]);
+        socket.emit("chat_added");
+      }
+    }
+  };
   function convertTime(isoString: string) {
     var date = new Date(isoString);
     // console.log(date.getHours());
@@ -227,21 +299,25 @@ function ChatMessages({
             </section>
 
             <section>
-              <div className="button-group">
-                <button
-                  type="button"
-                  className="btn-cancel"
-                  onClick={closeEditChatModal}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn-text"
-                  //onClick={handleAddMembers}
-                >
-                  Save changes
-                </button>
+              <div>
+                <h5>Add members to your chat</h5>
+                <form className="search-member" onSubmit={addNewMembers}>
+                  <Select
+                    isMulti
+                    name="selectUsers"
+                    value={currentSelectValue}
+                    options={addMembersList}
+                    onChange={updateAddMembersList}
+                    getOptionLabel={(option: Option) =>
+                      `${option.label}, ${option.additionalInfo}`
+                    }
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                  />
+                  <button type="submit" className="btn btn-primary">
+                    Add New Members
+                  </button>
+                </form>
               </div>
             </section>
           </Modal.Body>

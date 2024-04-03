@@ -154,4 +154,32 @@ router.delete("/:chatID/removeUser/:userID", async (req, res) => {
   }
 });
 
+//add users to a Chat
+router.post("/addUsers/:chatID", async (req, res) => {
+  const chatID = req.params.chatID;
+  console.log("hi");
+  console.log("ChatID  is: ", chatID);
+  const userIDs = req.body.userIDs;
+
+  console.log(userIDs);
+
+  try {
+    const chat = await Chat.findByPk(chatID);
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+
+    for (let userID of userIDs) {
+      const user = await User.findByPk(userID);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      await chat.addUser(user);
+    }
+
+    res.status(201).json({ message: "Users added to chat" });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 module.exports = router;
