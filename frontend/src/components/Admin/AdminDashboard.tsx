@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../api';
+import './AdminDashboard.scss'
 
 const AdminDashboard = () => {
   // const [totalProjects, setTotalProjects] = useState(0); 
@@ -38,7 +39,7 @@ const AdminDashboard = () => {
   // }, []);
 
   return (
-    <div>
+    <div className="admin-dashboard">
       <h2>Dashboard</h2>
       <p>Total number of users: {totalUsers}</p>
       {/* <p>Total number of projects: {totalProjects}</p> */}

@@ -48,7 +48,7 @@ const AdminMenu: React.FC<AdminMenuProps> = ({ toggleUsers, toggleProjects, togg
       <div className='profile'>
         <img src={defaultProfilePicture} alt="Profile" className='profile-picture' />
       </div>
-      <div>
+      <div className='greeting-container'>
         <span className='greeting'>Hello Admin {/* replace with actual admin name */}</span>
       </div>
       <ul className="admin-menu">
