@@ -5,13 +5,45 @@
 
   .project {
     flex-grow: 1;
-    padding: 1rem;
+    padding: 1rem 1rem 0 1rem;
+
+    .project-title {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-bottom: .5rem;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: .2s;
+
+      h1 {
+        font-size: 25px;
+        margin-bottom: 0;
+        padding: .25rem .5rem;
+        border: 1px solid transparent;
+      }
+
+      input {
+        font-size: 25px;
+        font-weight: 700;
+        margin-bottom: 0;
+        border: 1px solid $purple;
+        background: none;
+        width: 100%;
+        padding: .25rem .5rem;
+        line-height: 1.2;
+        color: $dark-gray;
+      }
+
+      &:not(.editing):hover {
+        background: rgba($color: $light-gray, $alpha: 0.5);
+      }
+    }
 
     .project-lists {
       display: flex;
       justify-content: space-between;
-      align-items: start;
+      align-items: flex-start;
     }
   }
-
 }

@@ -15,9 +15,10 @@ module.exports = (sequelize) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        date: {
-            type: DataTypes.DATE,
-            allowNull: false
+        isEdited: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     });
 

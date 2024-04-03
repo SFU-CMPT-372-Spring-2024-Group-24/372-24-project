@@ -8,6 +8,7 @@ header {
   align-items: center;
   padding: 1rem;
   border-bottom: 2px solid $light-gray;
+  height: 10vh;
 
   h1.logo {
     cursor: pointer;
@@ -33,6 +34,13 @@ header {
       top: 50%;
       left: .5rem;
       transform: translateY(-50%);
+      transition: color .3s;
+    }
+
+    &:focus-within {
+      .search-icon {
+        color: $purple;
+      }
     }
   }
 }

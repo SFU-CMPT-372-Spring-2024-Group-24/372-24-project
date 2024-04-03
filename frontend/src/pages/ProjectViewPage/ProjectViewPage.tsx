@@ -7,7 +7,7 @@ import TaskLists from "../../components/ProjectView/TaskLists/TaskLists";
 // Models
 import { Project } from "../../models/Project";
 import { User } from "../../models/User";
-import { List } from "../../models/List";
+import { FileModel } from "../../models/FileModel";
 // Styles
 import "./ProjectViewPage.scss";
 // API
@@ -19,70 +19,136 @@ const ProjectViewPage = () => {
   const { id } = useParams();
   const [project, setProject] = useState<Project | null>(null);
   const [members, setMembers] = useState<User[]>([]);
-  const [initialLists, setInitialLists] = useState<List[]>([]);
+  const [files, setFiles] = useState<FileModel[]>([]);
   const navigate = useNavigate();
 
-  // Fetch project data from server
-  const fetchProject = async () => {
-    try {
-      const response = await api.get(`/projects/${id}`);
+  const [editingName, setEditingName] = useState<boolean>(false);
+  const [newName, setNewName] = useState<string>("");
 
-      setMembers(response.data.Users);
-      setProject(response.data);
-    } catch (error) {
-      navigate("/projects/404");
-    }
-  };
-
+  // Fetch project data
   useEffect(() => {
-    fetchProject();
-
-    const fetchListsAndTasks = async () => {
+    const fetchProject = async () => {
       try {
-        // Fetch lists for the project
-        const response = await api.get(`/lists/${id}`);
-        setInitialLists(response.data);
+        const response = await api.get(`/projects/${id}`);
 
-        // Fetch tasks for each list
-        response.data.forEach(async (list: List) => {
-          try {
-            const response = await api.get(`/tasks/${list.id}`);
-            list.tasks = response.data;
-            setInitialLists((prevLists) =>
-              prevLists.map((prevList) =>
-                prevList.id === list.id ? list : prevList
-              )
-            );
-          } catch (error) {
-            console.error("Error fetching tasks:", error);
-          }
-        });
+        if (response.status === 200) {
+          setProject(response.data);
+          setNewName(response.data.name);
+        }
       } catch (error) {
-        console.error("Error fetching lists:", error);
+        navigate("/projects/notfound");
       }
     };
 
-    fetchListsAndTasks();
+    fetchProject();
   }, []);
+
+  // Fetch project members
+  useEffect(() => {
+    if (project) {
+      const fetchMembers = async () => {
+        try {
+          const response = await api.get(`/projects/${project.id}/users`);
+          setMembers(response.data);
+        } catch (error) {
+          console.error("Error fetching members:", error);
+        }
+      };
+
+      fetchMembers();
+    }
+  }, [project]);
+
+  // Fetch project files
+  useEffect(() => {
+    if (project) {
+      const fetchFiles = async () => {
+        try {
+          const response = await api.get(`/projects/${project.id}/files`);
+          setFiles(response.data);
+        } catch (error) {
+          console.error("Error fetching files:", error);
+        }
+      };
+
+      fetchFiles();
+    }
+  }, [project]);
+
+  // Edit project name
+  const handleEditProjectName = async () => {
+    if (!project) return;
+
+    const trimmedName = newName.trim();
+
+    if (!trimmedName || trimmedName === project.name) {
+      setNewName(project.name);
+      setEditingName(false);
+      return;
+    }
+
+    try {
+      const response = await api.put(`/projects/${project.id}`, {
+        name: trimmedName,
+      });
+
+      if (response.status === 200) {
+        setProject(response.data);
+        setNewName(response.data.name);
+        setEditingName(false);
+      }
+    } catch (error) {
+      console.error("Error editing project name:", error);
+    }
+  };
 
   return (
     <>
       {project && (
         <div className="project-view-page">
+          {/* Project description, members, files on left panel*/}
           <ProjectInfo
             project={project}
             setProject={setProject}
             members={members}
             setMembers={setMembers}
+            files={files}
+            setFiles={setFiles}
           />
-
+      
+          {/* Task lists on right panel */}
           <section className="project">
-            <h1 className="gradient-text">{project.name}</h1>
+            {/* Project name */}
+            <div
+              className={`project-title ${editingName ? "editing" : ""}`}
+              onClick={() => setEditingName(true)}
+            >
+              {editingName ? (
+                <input
+                  id="project-name"
+                  name="project-name"
+                  type="text"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  onBlur={handleEditProjectName}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleEditProjectName();
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <h1 className="gradient-text">{project.name}</h1>
+              )}
+            </div>
 
-            <TaskProvider initialLists={initialLists}>
-              <div className="project-lists">
-                <TaskLists />
-              </div>
+            {/* Task Lists */}
+            <TaskProvider
+              projectId={project.id}
+              projectMembers={members}
+              projectFiles={files}
+              setProjectFiles={setFiles}
+            >
+              <TaskLists />
             </TaskProvider>
           </section>
         </div>

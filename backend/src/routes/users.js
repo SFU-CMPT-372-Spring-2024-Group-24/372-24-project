@@ -140,8 +140,7 @@ router.post("/login", async (req, res) => {
     delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
-    // res.json(userJSON);
-    return res.status(200).json({ loggedIn: true, userId: req.session.userId, user: userJSON });
+    return res.status(200).json({ loggedIn: true, user: userJSON });
   } catch (err) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -154,35 +153,11 @@ router.post("/logout", (req, res) => {
       return res.status(500).json({ message: "Internal server error: unable to log out" });
     }
     res.clearCookie("collabhub.sid");
-    return res.json({ message: "Logged out" });
+    return res.status(200).json({ loggedOut: true });
   });
 });
 
-// Check if user is authenticated
-// const isAuthenticated = (req, res, next) => {
-//   // if (req.session.user.id) {
-//   if (req.session.userId) {
-//     return next();
-//   } else {
-//     res.status(401).json({ message: "Unauthorized" });
-//   }
-// };
-
 // Restore current user session
-// router.get("/me", isAuthenticated, async (req, res) => {
-//   // const user = await User.findByPk(req.session.user.id);
-//   const user = await User.findByPk(req.session.userId);
-//   if (user) {
-//     const userJSON = user.toJSON();
-//     delete userJSON.password;
-//     delete userJSON.createdAt;
-//     delete userJSON.updatedAt;
-//     res.json(userJSON);
-//   } else {
-//     res.status(404).json({ message: "User not found" });
-//   }
-// });
-
 router.get("/me", async (req, res) => {
   if (req.session.userId) {
     const user = await User.findByPk(req.session.userId);
@@ -191,47 +166,12 @@ router.get("/me", async (req, res) => {
       delete userJSON.password;
       delete userJSON.createdAt;
       delete userJSON.updatedAt;
-      return res.json({ valid: true, user: userJSON, userId: req.session.userId });
+      return res.json({ valid: true, user: userJSON });
     } else {
       return res.status(404).json({ message: "User not found" });
     }
   } else {
     return res.json({ valid: false });
-  }
-});
-
-// Search users
-router.get("/search", async (req, res) => {
-  const { query, exclude } = req.query;
-
-  // Convert exclude to array of excluded user ids
-  const excludeIds = JSON.parse(exclude);
-
-  try {
-    // Search users by name, username, or email, excluding specified user ids
-    const users = await User.findAll({
-      where: {
-        [Sequelize.Op.and]: [
-          {
-            [Sequelize.Op.or]: [
-              { name: { [Sequelize.Op.iLike]: `%${query}%` } },
-              { username: { [Sequelize.Op.iLike]: `%${query}%` } },
-              { email: { [Sequelize.Op.iLike]: `%${query}%` } },
-            ],
-          },
-          {
-            id: {
-              [Sequelize.Op.notIn]: excludeIds,
-            },
-          },
-        ],
-      },
-      attributes: ["id", "name", "username", "email", "profilePicture"],
-    });
-
-    res.json({ users });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
   }
 });
 

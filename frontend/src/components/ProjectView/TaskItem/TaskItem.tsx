@@ -8,21 +8,22 @@ import { Draggable } from "@hello-pangea/dnd";
 import "./TaskItem.scss";
 // Icons
 import { IoMdClose, IoMdTrash } from "react-icons/io";
-import { IoSend } from "react-icons/io5";
 import { TbArrowsExchange } from "react-icons/tb";
 import { FaRegClock } from "react-icons/fa6";
 // Utils
-import { getFileIcon } from "../../../utils/fileUtils";
 // import { priorities } from "../../../utils/priorityColorUtils";
 // Models
 import { Task } from "../../../models/Task";
 import { List } from "../../../models/List";
-// Files
-import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Components
 import Priority from "./Priority";
 import Description from "./Description";
 import DueDate from "./DueDate";
+import Comments from "./Comments";
+import TaskMembers from "./TaskMembers";
+import TaskName from "./TaskName";
+import Attachments from "./Attachments";
+import MoveTaskModal from "../../Modals/MoveTaskModal";
 // API
 import { api } from "../../../api";
 // Custom hooks
@@ -37,9 +38,7 @@ interface Props {
 const TaskItem = ({ list, task, index }: Props) => {
   const [showTaskItemModal, setShowTaskItemModal] = useState<boolean>(false);
   const [showMoveTaskModal, setShowMoveTaskModal] = useState<boolean>(false);
-  const { lists, moveTask, removeTask } = useTasks();
-  const [selectedListId, setSelectedListId] = useState<number>(list.id);
-  const [selectedPosition, setSelectedPosition] = useState<number>(index);
+  const { removeTask } = useTasks();
   // const priorityColor = priorities.find(
   //   (p) => p.value === task.priority
   // )?.color;
@@ -47,22 +46,8 @@ const TaskItem = ({ list, task, index }: Props) => {
   // Toggle Task Item Modal visibility
   const toggleTaskItemModal = () => setShowTaskItemModal(!showTaskItemModal);
 
-  // Toggle Move Task Modal visibility
-  const toggleMoveTaskModal = () => setShowMoveTaskModal(!showMoveTaskModal);
-
-  // Move task
-  const handleMoveTask = async () => {
-    try {
-      const response = await moveTask(list.id, selectedListId, index, selectedPosition);
-
-      if (response) {
-        setShowTaskItemModal(false);
-        setShowMoveTaskModal(false);
-      }
-    } catch (error) {
-      console.error("Error moving task:", error);
-    }
-  };
+  // Open Move Task Modal
+  const openMoveTaskModal = () => setShowMoveTaskModal(true);
 
   // Delete Task
   const handleDeleteTask = async () => {
@@ -70,12 +55,9 @@ const TaskItem = ({ list, task, index }: Props) => {
       const response = await api.delete(`/tasks/${task.id}`);
 
       if (response.status === 200) {
-        // deleteTask(task.id);
         removeTask(list.id, task.id);
         setShowTaskItemModal(false);
-        toast.success(response.data.message, {
-          className: "toast-success",
-        });
+        toast(response.data.message);
       }
     } catch (error) {
       console.error("Error deleting task:", error);
@@ -94,9 +76,7 @@ const TaskItem = ({ list, task, index }: Props) => {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
           >
-            <h3>
-              {task.name}
-            </h3>
+            <h3>{task.name}</h3>
 
             {task.dueDate && (
               <div className="info">
@@ -116,170 +96,44 @@ const TaskItem = ({ list, task, index }: Props) => {
         dialogClassName="task-item-modal"
       >
         <Modal.Header className="header">
-          <div className="task-title">
-            <h3>{task.name}</h3>
+          <TaskName task={task} />
 
+          <div className="sub-header">
             <span className="list-name">{list.name}</span>
+            <Priority task={task} />
           </div>
 
-          <Priority task={task} />
-
-          <button className="btn-icon move-btn" onClick={toggleMoveTaskModal}>
-            <TbArrowsExchange size={20} />
-          </button>
-
-          <button className="btn-icon delete-btn" onClick={handleDeleteTask}>
-            <IoMdTrash size={20} />
-          </button>
-
-          <button className="close-btn" onClick={toggleTaskItemModal}>
-            <IoMdClose size={20} />
-          </button>
-        </Modal.Header>
-
-        <Modal.Body className="body">
-          <Description task={task} />
-
-          <DueDate task={task} />
-
-          <div className="members">
-            <h4>Members</h4>
-
-            {task.assignees &&
-              task.assignees.map((assignee) => (
-                <div className="member" key={assignee.id}>
-                  <img
-                    src={assignee.profilePicture || defaultProfilePicture}
-                    alt="User Avatar"
-                  />
-                  <p>{assignee.name}</p>
-                </div>
-              ))}
+          <div className="button-group">
+            <button
+              className="btn-icon close-btn"
+              onClick={toggleTaskItemModal}
+            >
+              <IoMdClose size={20} />
+            </button>
+            <button className="btn-icon move-btn" onClick={openMoveTaskModal}>
+              <TbArrowsExchange size={20} />
+            </button>
+            <button className="btn-icon delete-btn" onClick={handleDeleteTask}>
+              <IoMdTrash size={20} />
+            </button>
           </div>
-
-          <div className="attachments">
-            <h4>Attachments</h4>
-
-            <div className="file">
-              {getFileIcon("doc")}
-              <p>example.docx</p>
-            </div>
-          </div>
-
-          <div className="comments">
-            <h4>Comments</h4>
-
-            <p className="view-more">View more comments</p>
-
-            <div className="comment">
-              <img
-                src="https://images.unsplash.com/photo-1707343844152-6d33a0bb32c3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="User Avatar"
-              />
-              <div className="comment-details">
-                <span>John Doe</span>
-                <span className="comment-time">1 day ago</span>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Id,
-                  nemo!
-                </p>
-              </div>
-            </div>
-
-            <div className="comment">
-              <img
-                src="https://images.unsplash.com/photo-1707343844152-6d33a0bb32c3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="User Avatar"
-              />
-              <div className="comment-details">
-                <span>Mary Ann</span>
-                <span className="comment-time">Just now</span>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Id,
-                  nemo!
-                </p>
-              </div>
-            </div>
-
-            <div className="add-comment">
-              <textarea
-                name="comment"
-                id="comment"
-                placeholder="Write a comment..."
-              ></textarea>
-              <button>
-                <IoSend size={16} />
-              </button>
-            </div>
-          </div>
-        </Modal.Body>
-      </Modal>
-
-      <Modal
-        show={showMoveTaskModal}
-        onHide={toggleMoveTaskModal}
-        dialogClassName="move-task-modal"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Move Task</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          <p>Current List: {list.name}</p>
-          <p>Current Position: {index+1}</p>
-
-          <p>Select List:</p>
-          <select
-            value={selectedListId}
-            onChange={(e) => {
-              setSelectedListId(Number(e.target.value));
-              setSelectedPosition(0);
-            }}
-          >
-            {lists.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.name}
-              </option>
-            ))}
-          </select>
-
-          <p>Select Position:</p>
-          {selectedListId && (
-            <select
-              value={selectedPosition}
-              onChange={(e) => setSelectedPosition(Number(e.target.value))}
-            >
-              {lists
-                .find((l) => l.id === selectedListId)
-                ?.tasks.map((_, i) => (
-                  <option key={i} value={i}>
-                    {i + 1}
-                  </option>
-                ))}
-
-              {selectedListId !== list.id && (
-                <option
-                  key={lists.find((l) => l.id === selectedListId)?.tasks.length}
-                  value={
-                    lists.find((l) => l.id === selectedListId)?.tasks.length
-                  }
-                >
-                  {lists.find((l) => l.id === selectedListId)!.tasks.length + 1}
-                </option>
-              )}
-            </select>
-          )}
+          <Description task={task} />
+          <DueDate task={task} />
+          <div className="row">
+            <TaskMembers task={task} />
+            <Attachments task={task} />
+          </div>
         </Modal.Body>
 
         <Modal.Footer>
-          <button className="btn-cancel" onClick={toggleMoveTaskModal}>
-            Cancel
-          </button>
-          <button className="btn-text" onClick={handleMoveTask}>
-            Move Task
-          </button>
+          <Comments task={task} />
         </Modal.Footer>
       </Modal>
+
+      <MoveTaskModal list={list} index={index} showModal={showMoveTaskModal} setShowModal={setShowMoveTaskModal} setShowTaskItemModal={setShowTaskItemModal}/>
     </>
   );
 };

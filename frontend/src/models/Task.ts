@@ -8,8 +8,16 @@ export interface Task {
   description: string;
   priority: PriorityTypes;
   dueDate: Date;
-  assignees: User[];
+  // members: User[];
   isDone: boolean;
   listId: number;
   orderIndex: number;
+}
+
+export interface Comment {
+  id: number;
+  comment: string;
+  createdAt: Date;
+  User: User;
+  isEdited: boolean;
 }

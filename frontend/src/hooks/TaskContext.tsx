@@ -1,9 +1,11 @@
 // Libraries
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 // Models
 import { Task } from "../models/Task";
 import { List } from "../models/List";
+import { User } from "../models/User";
+import { FileModel } from "../models/FileModel";
 // API
 import { api } from "../api";
 
@@ -19,6 +21,10 @@ interface TaskContextProps {
     oldIndex: number,
     newIndex: number
   ) => Promise<boolean>;
+  projectMembers: User[];
+  projectId: number;
+  projectFiles: FileModel[];
+  setProjectFiles: (files: FileModel[]) => void;
 }
 export const TaskContext = createContext<TaskContextProps | undefined>(undefined);
 
@@ -34,11 +40,42 @@ export const useTasks = (): TaskContextProps => {
 
 interface TaskProviderProps {
   children: React.ReactNode;
-  initialLists: List[];
+  projectMembers: User[];
+  projectId: number;
+  projectFiles: FileModel[];
+  setProjectFiles: (files: FileModel[]) => void;
 }
-export const TaskProvider = ({ children, initialLists }: TaskProviderProps) => {
-  const [lists, setLists] = useState<List[]>(initialLists);
+export const TaskProvider = ({ children, projectMembers, projectId, projectFiles, setProjectFiles }: TaskProviderProps) => {
+  const [lists, setLists] = useState<List[]>([]);
 
+  // Fetch lists and tasks for the project
+  useEffect(() => {
+    const fetchListsAndTasks = async () => {
+      try {
+        // Fetch lists for the project
+        const response = await api.get(`/lists/${projectId}`);
+        const lists = response.data;
+
+        // Fetch tasks for each list
+        const tasksPromises = lists.map((list: List) =>
+          api.get(`/tasks/${list.id}`)
+        );
+        const tasksResponses = await Promise.all(tasksPromises);
+
+        lists.forEach((list: List, index: number) => {
+          list.tasks = tasksResponses[index].data;
+        });
+
+        setLists(lists);
+      } catch (error) {
+        console.error("Error fetching lists and tasks:", error);
+      }
+    }
+
+    fetchListsAndTasks();
+  }, [projectId]);
+
+  // Update a task in the state
   const setTask = (updatedTask: Task) => {
     const updatedLists = lists.map((list) => ({
       ...list,
@@ -50,6 +87,7 @@ export const TaskProvider = ({ children, initialLists }: TaskProviderProps) => {
     setLists(updatedLists);
   };
 
+  // Add a new task to the list
   const addTask = (listId: number, newTask: Task) => {
     const updatedLists = lists.map((list) => {
       if (list.id === listId) {
@@ -61,6 +99,7 @@ export const TaskProvider = ({ children, initialLists }: TaskProviderProps) => {
     setLists(updatedLists);
   };
 
+  // Remove a task from the list
   const removeTask = (listId: number, taskId: number) => {
     const updatedLists = lists.map((list) => {
       if (list.id === listId) {
@@ -75,6 +114,8 @@ export const TaskProvider = ({ children, initialLists }: TaskProviderProps) => {
     setLists(updatedLists);
   };
 
+  // Move a task to a different list or reorder within the same list
+  // and update the order index in the database
   const moveTask = async (
     sourceListId: number,
     destinationListId: number,
@@ -164,7 +205,7 @@ export const TaskProvider = ({ children, initialLists }: TaskProviderProps) => {
 
   return (
     <TaskContext.Provider
-      value={{ lists, setLists, setTask, addTask, removeTask, moveTask }}
+      value={{ lists, setLists, setTask, addTask, removeTask, moveTask, projectMembers, projectId, projectFiles, setProjectFiles}}
     >
       {children}
     </TaskContext.Provider>

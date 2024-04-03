@@ -44,13 +44,13 @@ function ChatMessages({ socket, username, chatID, goBack }: Props) {
     //   console.log("response not ok");
     // }
     try {
-      const response = await api.post("/chats/addMessage", {
+      await api.post("/chats/addMessage", {
         chatID: chatID,
         userID: userID,
         text: text,
         date: currentDate,
       });
-      console.log(response.data);
+      //console.log(response.data);
     } catch (error) {
       console.error("Error adding new message", error);
     }
