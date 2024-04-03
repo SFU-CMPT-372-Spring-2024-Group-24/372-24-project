@@ -1,0 +1,33 @@
+.admin-projects-container {
+  .project-list {
+    list-style: none;
+    padding: 0;
+
+    .project-item {
+      margin-bottom: 20px;
+
+      .project-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .project-name {
+          margin-right: 10px;
+        }
+
+        .action-buttons {
+          display: flex;
+          align-items: center;
+
+          button {
+            margin-right: 10px;
+          }
+        }
+      }
+
+      .project-description {
+        margin-top: 10px;
+      }
+    }
+  }
+}

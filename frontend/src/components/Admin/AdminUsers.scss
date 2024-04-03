@@ -1,0 +1,33 @@
+.admin-users-container {
+  .user-list {
+    list-style: none;
+    padding: 0;
+
+    .user-item {
+      margin-bottom: 20px;
+
+      .user-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .user-name {
+          margin-right: 10px;
+        }
+
+        .action-buttons {
+          display: flex;
+          align-items: center;
+
+          button {
+            margin-right: 10px;
+          }
+        }
+      }
+
+      .user-description {
+        margin-top: 10px;
+      }
+    }
+  }
+}
