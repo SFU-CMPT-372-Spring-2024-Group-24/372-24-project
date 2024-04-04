@@ -1,19 +1,33 @@
 // Hooks
 import { useParams } from "react-router-dom";
 import { useUser } from "../../hooks/UserContext";
+import { useState } from "react";
+// Components
+import ProfilePanel from "../../components/Profile/ProfilePanel";
+import EditProfileView from "../../components/Profile/EditProfileView";
+import ActivityView from "../../components/Profile/ActivityView";
+// Styles
+import "./ProfilePage.scss";
 
 const ProfilePage = () => {
   const { username } = useParams();
   const { user } = useUser();
-  
-  return (
-    <>
-      <h1>Profile Page for {username}</h1>
+  const [view, setView] = useState<string>("activity");
 
-      {user && user.username === username && (
-        <p>This is your profile page</p>
-      )}
-    </>
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <div className="profile-page">
+      <ProfilePanel view={view} setView={setView} />
+
+      <section className="profile-main-view">
+        {view === "activity" && <ActivityView />}
+
+        {view === "editProfile" && <EditProfileView />}
+      </section>
+    </div>
   );
 };
 
