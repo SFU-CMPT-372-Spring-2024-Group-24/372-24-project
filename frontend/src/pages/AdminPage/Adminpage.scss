@@ -4,6 +4,10 @@
     width: 100vw;
     grid-template-columns: 1fr 4fr;
     grid-template-rows: 1fr 4fr;
+    background-color: rgb(37, 42, 74);
+    background-image: linear-gradient(rgb(37, 42, 74), rgb(44, 50, 86));
+    background: rgb(37, 42, 74);
+    background: linear-gradient(rgb(37, 42, 74), rgb(44, 50, 86));
 }
 
 .admin-menu-container {

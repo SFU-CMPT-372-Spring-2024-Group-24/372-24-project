@@ -17,24 +17,30 @@ const AdminMenu: React.FC<AdminMenuProps> = ({ toggleUsers, toggleProjects, togg
   const [dashboardActive, setDashboardActive] = useState(false);
 
   const handleToggleUsers = () => {
-    toggleUsers();
-    setUsersActive(true);
-    setProjectsActive(false);
-    setDashboardActive(false); 
+    if (!usersActive) {
+      toggleUsers();
+      setUsersActive(true);
+      setProjectsActive(false);
+      setDashboardActive(false);
+    }
   };
 
   const handleToggleProjects = () => {
-    toggleProjects();
-    setProjectsActive(true);
-    setUsersActive(false);
-    setDashboardActive(false); 
+    if (!projectsActive) {
+      toggleProjects();
+      setProjectsActive(true);
+      setUsersActive(false);
+      setDashboardActive(false);
+    }
   };
 
   const handleToggleDashboard = () => {
-    toggleDashboard();
-    setDashboardActive(true);
-    setUsersActive(false);
-    setProjectsActive(false); 
+    if (!dashboardActive) {
+      toggleDashboard();
+      setDashboardActive(true);
+      setUsersActive(false);
+      setProjectsActive(false);
+    }
   };
 
   return (
@@ -42,7 +48,7 @@ const AdminMenu: React.FC<AdminMenuProps> = ({ toggleUsers, toggleProjects, togg
       <div className='profile'>
         <img src={defaultProfilePicture} alt="Profile" className='profile-picture' />
       </div>
-      <div>
+      <div className='greeting-container'>
         <span className='greeting'>Hello Admin {/* replace with actual admin name */}</span>
       </div>
       <ul className="admin-menu">

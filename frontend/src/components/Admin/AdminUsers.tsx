@@ -5,45 +5,66 @@ import { api } from '../../api';
 const AdminUsers = () => {
 
   const [users, setUsers] = useState<any[]>([]);
-  const [userIDArray, setUserIDArray] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await api.get('/users');
-        const userData = response.data;
+        const userData = response.data.map((user: any) => ({ ...user, showEmail: false, showName: false }));
         setUsers(userData);
-        const ids = userData.map((user: any) => user.id);
-        setUserIDArray(ids);
       } catch (error) {
         console.error('Error fetching users', error);
       }
     };
 
     fetchUsers();
+  }, []);
 
-  }, [userIDArray]);
+  const deleteUser = async (userId: string, isAdmin: boolean) => {
+    if (isAdmin) {
+      alert('Cannot delete admin user');
+      return;
+    }
 
-  //need to fix: delete all data associated with user (ex. projects, chats)
-  const deleteUser = async (userId: string) => {
     try {
       await api.delete(`/users/${userId}`);
-      setUsers(users.filter((user) => user.id !== userId));
-      setUserIDArray(userIDArray.filter((id) => id !== userId));
+      setUsers(users => users.filter(user => user.id !== userId));
     } catch (error) {
       console.error('Error deleting user', error);
     }
   };
 
-  return (
+  const toggleMoreInfo = (userId: string) => {
+    setUsers(users => {
+      return users.map(user => {
+        if (user.id === userId) {
+          return { ...user, showEmail: !user.showEmail, showName: !user.showName };
+        }
+        return user;
+      });
+    });
+  };
 
-    <div>
+  return (
+    <div className="admin-users-container">
       <h2>All Users In Database</h2>
-      <ul>
+      <ul className="user-list">
         {users.map((user) => (
-          <li key={user.id}>
-            {user.name} - {user.email}
-            <button onClick={() => deleteUser(user.id)}>Delete</button>
+          <li key={user.id} className="user-item">
+            <div className="user-header">
+              <span className="user-name">{user.username}</span>
+              <div className="action-buttons">
+                <button id="more-button" onClick={() => toggleMoreInfo(user.id)}>{user.showEmail ? "Less" : "More"}</button>
+                <button id="delete-button" onClick={() => deleteUser(user.id, user.isAdmin)}>Delete</button>
+              </div>
+            </div>
+            {user.showEmail && (
+              <div className="user-more-info">
+                {user.name && <p>Name: {user.name}</p>}
+                {user.email && <p>Email: {user.email}</p>}
+                {!user.name && !user.email && <p>No additional information to display</p>}
+              </div>
+            )}
           </li>
         ))}
       </ul>
@@ -51,4 +72,4 @@ const AdminUsers = () => {
   )
 }
 
-export default AdminUsers
+export default AdminUsers;
