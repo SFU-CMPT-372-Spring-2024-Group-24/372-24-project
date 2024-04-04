@@ -41,6 +41,15 @@ h3, h4 {
   font-size: 18px;
 }
 
+h5 {
+  font-size: 16px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
 a {
   color: $black;
   text-decoration: none;
@@ -114,6 +123,15 @@ button.btn-cancel {
   }
 }
 
+button.btn-save-changes:disabled {
+  background: $light-gray;
+  color: $dark-gray;
+
+  &:hover {
+    box-shadow: none;
+  }
+}
+
 // Form styles
 input, textarea, select {
   padding: .5rem;
@@ -121,6 +139,7 @@ input, textarea, select {
   outline: none;
   border: 2px solid $light-gray;
   transition: border .3s;
+  font-size: 14px;
 
   &:focus {
     border: 2px solid $purple;
@@ -145,8 +164,7 @@ textarea {
 }
 
 .Toastify__toast  {
-  background-color: $light-gray !important;
-  color: $black !important;
+  color: $dark-gray !important;
 
   .Toastify__toast-icon {
     svg {
@@ -155,15 +173,27 @@ textarea {
   }
 
   button {
-    opacity: 0.7;
+    opacity: 0.5;
     color: $black;
 
     &:hover {
       box-shadow: none;
     }
   }
+}
 
-  .Toastify__progress-bar--success {
-    background: $black;
+.Toastify__toast--error {
+  .Toastify__toast-icon {
+    svg {
+      fill: $red;
+    }
+  }
+}
+
+.Toastify__toast--success {
+  .Toastify__toast-icon {
+    svg {
+      fill: $green;
+    }
   }
 }

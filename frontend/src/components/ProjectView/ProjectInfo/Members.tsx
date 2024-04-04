@@ -2,6 +2,7 @@
 import { useState } from "react";
 // Icons
 import { IoSettingsOutline } from "react-icons/io5";
+import { BiSolidUserDetail } from "react-icons/bi";
 // Files
 import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Components
@@ -10,7 +11,7 @@ import ManageMemberModal from "../../Modals/ManageMemberModal";
 import { useTasks } from "../../../hooks/TaskContext";
 
 const Members = () => {
-  const { projectMembers } = useTasks();
+  const { projectMembers, userCanPerform } = useTasks();
   const [showManageMemberModal, setShowManageMemberModal] = useState<boolean>(false);
 
   const openManageMemberModal = () => setShowManageMemberModal(true);
@@ -20,13 +21,24 @@ const Members = () => {
       <div className="project-members">
         <h2>
           Members
-          <button
-            type="button"
-            className="btn-icon"
-            onClick={openManageMemberModal}
-          >
-            <IoSettingsOutline size={20} />
-          </button>
+
+          {userCanPerform("manageMembers") ? (
+            <button
+              type="button"
+              className="btn-icon"
+              onClick={openManageMemberModal}
+            >
+              <IoSettingsOutline size={20} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn-icon"
+              onClick={openManageMemberModal}
+            >
+              <BiSolidUserDetail size={20} />
+            </button>
+          )}
         </h2>
 
         {projectMembers.map((user) => (

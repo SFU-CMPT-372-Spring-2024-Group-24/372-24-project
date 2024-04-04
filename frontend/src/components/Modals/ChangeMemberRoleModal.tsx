@@ -1,15 +1,17 @@
 // Libraries
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
+import { toast } from "react-toastify";
 // Styles
 import "./ChangeMemberRoleModal.scss";
 // Models
 import { Role, Roles } from "../../models/ProjectRole";
 import { User } from "../../models/User";
 // API
-import { api } from "../../api";
+import { AxiosError, api } from "../../api";
 // Custom hooks
 import { useTasks } from "../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
 
 interface Props {
   showModal: boolean;
@@ -20,8 +22,9 @@ interface Props {
 const ChangeMemberRoleModal = ({ showModal, setShowModal, member }: Props) => {
   if (!member) return null;
 
-  const { userRole, project, projectMembers, setProjectMembers } = useTasks();
+  const { project, projectMembers, setProjectMembers } = useTasks();
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+  const handleApiError = useApiErrorHandler();
 
   // Close modal
   const closeModal = () => {
@@ -31,12 +34,8 @@ const ChangeMemberRoleModal = ({ showModal, setShowModal, member }: Props) => {
 
   // Update role
   const handleChangeRole = async () => {
-    if (
-      !selectedRole ||
-      userRole.name !== "Owner" ||
-      selectedRole.name === member.role?.name
-    ) {
-      closeModal();
+    if (!selectedRole) {
+      toast.error("Please select a role");
       return;
     }
 
@@ -62,7 +61,7 @@ const ChangeMemberRoleModal = ({ showModal, setShowModal, member }: Props) => {
         closeModal();
       }
     } catch (error) {
-      console.error("Failed to update role: ", error);
+      handleApiError(error as AxiosError);
     }
   };
 
@@ -101,11 +100,11 @@ const ChangeMemberRoleModal = ({ showModal, setShowModal, member }: Props) => {
           </button>
 
           <button
-            className="btn-text"
+            className="btn-text btn-save-changes"
             onClick={handleChangeRole}
             disabled={!selectedRole}
           >
-            Save
+            Save changes
           </button>
         </div>
       </Modal.Body>

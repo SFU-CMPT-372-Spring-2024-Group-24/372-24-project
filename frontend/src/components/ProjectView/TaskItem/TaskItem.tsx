@@ -25,9 +25,10 @@ import TaskName from "./TaskName";
 import Attachments from "./Attachments";
 import MoveTaskModal from "../../Modals/MoveTaskModal";
 // API
-import { api } from "../../../api";
+import { api, AxiosError } from "../../../api";
 // Custom hooks
 import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 
 interface Props {
   list: List;
@@ -36,9 +37,10 @@ interface Props {
 }
 
 const TaskItem = ({ list, task, index }: Props) => {
+  const handleApiError = useApiErrorHandler();
   const [showTaskItemModal, setShowTaskItemModal] = useState<boolean>(false);
   const [showMoveTaskModal, setShowMoveTaskModal] = useState<boolean>(false);
-  const { removeTask } = useTasks();
+  const { project, removeTask, userCanPerform } = useTasks();
   // const priorityColor = priorities.find(
   //   (p) => p.value === task.priority
   // )?.color;
@@ -52,7 +54,9 @@ const TaskItem = ({ list, task, index }: Props) => {
   // Delete Task
   const handleDeleteTask = async () => {
     try {
-      const response = await api.delete(`/tasks/${task.id}`);
+      const response = await api.delete(`/tasks/${task.id}`, {
+        data: { projectId: project.id },
+      });
 
       if (response.status === 200) {
         removeTask(list.id, task.id);
@@ -60,7 +64,7 @@ const TaskItem = ({ list, task, index }: Props) => {
         toast(response.data.message);
       }
     } catch (error) {
-      console.error("Error deleting task:", error);
+      handleApiError(error as AxiosError);
     }
   };
 
@@ -99,7 +103,15 @@ const TaskItem = ({ list, task, index }: Props) => {
           <TaskName task={task} />
 
           <div className="sub-header">
-            <span className="list-name">{list.name}</span>
+            <span
+              className={`
+                list-name 
+                ${task.priority && "hasPriority"}
+                ${userCanPerform("manageTasks") && "hasPriority"}
+              `}
+            >
+              {list.name}
+            </span>
             <Priority task={task} />
           </div>
 
@@ -110,12 +122,23 @@ const TaskItem = ({ list, task, index }: Props) => {
             >
               <IoMdClose size={20} />
             </button>
-            <button className="btn-icon move-btn" onClick={openMoveTaskModal}>
-              <TbArrowsExchange size={20} />
-            </button>
-            <button className="btn-icon delete-btn" onClick={handleDeleteTask}>
-              <IoMdTrash size={20} />
-            </button>
+            {userCanPerform("manageTasks") && (
+              <>
+                <button
+                  className="btn-icon move-btn"
+                  onClick={openMoveTaskModal}
+                >
+                  <TbArrowsExchange size={20} />
+                </button>
+
+                <button
+                  className="btn-icon delete-btn"
+                  onClick={handleDeleteTask}
+                >
+                  <IoMdTrash size={20} />
+                </button>
+              </>
+            )}
           </div>
         </Modal.Header>
 
@@ -133,7 +156,13 @@ const TaskItem = ({ list, task, index }: Props) => {
         </Modal.Footer>
       </Modal>
 
-      <MoveTaskModal list={list} index={index} showModal={showMoveTaskModal} setShowModal={setShowMoveTaskModal} setShowTaskItemModal={setShowTaskItemModal}/>
+      <MoveTaskModal
+        list={list}
+        index={index}
+        showModal={showMoveTaskModal}
+        setShowModal={setShowMoveTaskModal}
+        setShowTaskItemModal={setShowTaskItemModal}
+      />
     </>
   );
 };

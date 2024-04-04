@@ -8,6 +8,7 @@ const express = require("express");
 const Sequelize = require("sequelize");
 const multer = require("multer");
 const { Storage } = require('@google-cloud/storage');
+const checkPermission = require('../middleware/checkPermission');
 
 const router = express.Router();
 
@@ -64,22 +65,14 @@ router.get("/", async (req, res) => {
 });
 
 // Get project by id
-// Todo: check if user is part of project
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  const userId = req.session.userId;
+router.get("/:projectId", checkPermission('read'), async (req, res) => {
+  const { projectId } = req.params;
 
   try {
-    const project = await Project.findByPk(id);
+    const project = await Project.findByPk(projectId);
 
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
-    }
-
-    // Check if user is part of project
-    const isUserPartOfProject = await project.hasUser(userId);
-    if (!isUserPartOfProject) {
-      return res.status(403).json({ message: "User is not in this project" });
     }
 
     res.status(200).json(project);
@@ -89,8 +82,8 @@ router.get("/:id", async (req, res) => {
 });
 
 // Update project by id
-router.put("/:id", async (req, res) => {
-  const { id } = req.params;
+router.put("/:projectId", checkPermission('manageProject'), async (req, res) => {
+  const { projectId } = req.params;
   const { name, description } = req.body;
   const fieldsToUpdate = {};
 
@@ -102,7 +95,7 @@ router.put("/:id", async (req, res) => {
   }
 
   try {
-    const project = await Project.findByPk(id);
+    const project = await Project.findByPk(projectId);
 
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
@@ -118,32 +111,13 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete project by id
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params;
+router.delete("/:projectId", checkPermission('manageProject'), async (req, res) => {
+  const { projectId } = req.params;
 
   try {
-    const project = await Project.findByPk(id);
+    const project = await Project.findByPk(projectId);
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
-    }
-
-    // Find 'Owner' role
-    const ownerRole = await Role.findOne({ where: { name: "Owner" } });
-    if (!ownerRole) {
-      return res.status(500).json({ message: "Role not found" });
-    }
-
-    // Check if user is an Owner of project
-    const userId = req.session.userId;
-    const isOwner = await UserProject.findOne({
-      where: {
-        ProjectId: id,
-        UserId: userId,
-        roleId: ownerRole.id,
-      },
-    });
-    if (!isOwner) {
-      return res.status(403).json({ message: "User is not an owner of this project" });
     }
 
     // Delete project
@@ -156,8 +130,8 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Get users by project id
-router.get("/:id/users", async (req, res) => {
-  const projectId = req.params.id;
+router.get("/:projectId/users", async (req, res) => {
+  const { projectId } = req.params;
 
   try {
     const project = await Project.findByPk(projectId);
@@ -178,8 +152,8 @@ router.get("/:id/users", async (req, res) => {
 });
 
 // Add users to project
-router.post("/:id/users", async (req, res) => {
-  const projectId = req.params.id;
+router.post("/:projectId/users", checkPermission('manageMembers'), async (req, res) => {
+  const { projectId } = req.params;
   const { userIds } = req.body;
 
   try {
@@ -210,8 +184,8 @@ router.post("/:id/users", async (req, res) => {
 });
 
 // Remove user from project
-router.delete("/:id/users/:userId", async (req, res) => {
-  const projectId = req.params.id;
+router.delete("/:projectId/users/:userId", checkPermission('manageMembers'), async (req, res) => {
+  const { projectId } = req.params;
   const userId = req.params.userId;
 
   try {
@@ -228,6 +202,54 @@ router.delete("/:id/users/:userId", async (req, res) => {
     await project.removeUser(user);
 
     res.status(200).json({ message: "User removed from project" });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// User leaves project
+router.delete("/:projectId/users", async (req, res) => {
+  const { projectId } = req.params;
+  const userId = req.session.userId;
+
+  try {
+    const project = await Project.findByPk(projectId);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the user is an Owner
+    const userProject = await UserProject.findOne({
+      where: {
+        ProjectId: projectId,
+        UserId: userId,
+      },
+      include: Role,
+    });
+
+    if (userProject.Role.name === "Owner") {
+      // Check if there is at least one other Owner
+      const otherOwnersCount = await UserProject.count({
+        where: {
+          ProjectId: projectId,
+          roleId: 1, // Owner role
+          UserId: { [Sequelize.Op.ne]: userId },// Exclude the current user
+        },
+      });
+
+      if (otherOwnersCount === 0) {
+        return res.status(403).json({ message: "You are the only owner of this project. You cannot leave the project." });
+      }
+    }
+
+    await project.removeUser(user);
+
+    res.status(200).json({ message: "You have left the project" });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -254,8 +276,8 @@ const bucket = cloudStorage.bucket(process.env.GCLOUD_STORAGE_BUCKET);
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Add file to project
-router.post("/:id/files", upload.single('file'), async (req, res) => {
-  const projectId = req.params.id;
+router.post("/:projectId/files", checkPermission('manageFiles'), upload.single('file'), async (req, res) => {
+  const { projectId } = req.params;
   const filename = req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname);
   const blob = bucket.file(filename);
   const blobStream = blob.createWriteStream();
@@ -294,8 +316,8 @@ router.post("/:id/files", upload.single('file'), async (req, res) => {
 });
 
 // Get files by project id
-router.get("/:id/files", async (req, res) => {
-  const projectId = req.params.id;
+router.get("/:projectId/files", async (req, res) => {
+  const { projectId } = req.params;
 
   try {
     const project = await Project.findByPk(projectId);
@@ -312,8 +334,8 @@ router.get("/:id/files", async (req, res) => {
 });
 
 // Delete file by id
-router.delete("/:id/files/:fileId", async (req, res) => {
-  const projectId = req.params.id;
+router.delete("/:projectId/files/:fileId", checkPermission('manageFiles'), async (req, res) => {
+  const { projectId } = req.params;
   const fileId = req.params.fileId;
 
   try {

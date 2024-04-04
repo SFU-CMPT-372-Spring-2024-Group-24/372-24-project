@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { User } from "../../models/User";
 import { Role, Roles } from "../../models/ProjectRole";
 // API
-import { api } from "../../api";
+import { api, AxiosError } from "../../api";
 // Files
 import defaultProfilePicture from "../../assets/default-profile-picture.png";
 // Custom hooks
@@ -19,6 +19,7 @@ import "./ManageMemberModal.scss";
 import ChangeMemberRoleModal from "./ChangeMemberRoleModal";
 // Custom hooks
 import { useTasks } from "../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
 
 interface Props {
   showModal: boolean;
@@ -26,7 +27,13 @@ interface Props {
 }
 
 const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
-  const { projectMembers, setProjectMembers, userRole, project } = useTasks();
+  const {
+    projectMembers,
+    setProjectMembers,
+    userRole,
+    project,
+    userCanPerform,
+  } = useTasks();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [hasSearched, setHasSearched] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<User[]>([]);
@@ -35,6 +42,7 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
   const [showChangeRoleModal, setShowChangeRoleModal] =
     useState<boolean>(false);
   const [selectedMember, setSelectedMember] = useState<User | null>(null);
+  const handleApiError = useApiErrorHandler();
 
   const closeModal = () => {
     setShowModal(false);
@@ -66,7 +74,7 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
         setHasSearched(false);
       }
     } catch (error) {
-      console.error("Failed to add member: ", error);
+      handleApiError(error as AxiosError);
     }
   };
 
@@ -89,7 +97,7 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
         setHasSearched(true);
       }
     } catch (error) {
-      console.error("Failed to search for users: ", error);
+      handleApiError(error as AxiosError);
     }
   };
 
@@ -110,15 +118,21 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
       );
 
       if (response.status === 200) {
-        setProjectMembers(projectMembers.filter((member) => member.id !== user.id));
+        setProjectMembers(
+          projectMembers.filter((member) => member.id !== user.id)
+        );
       }
     } catch (error) {
-      console.error("Failed to remove member: ", error);
+      handleApiError(error as AxiosError);
     }
   };
 
   // Open change role modal
   const openChangeRoleModal = (member: User) => {
+    if (!userCanPerform("manageMembers")) {
+      return;
+    }
+
     setSelectedMember(member);
     setShowChangeRoleModal(true);
   };
@@ -133,10 +147,89 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>Manage project members</Modal.Title>
+          <Modal.Title>Your project members</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
+          {/* Add members */}
+          {userCanPerform("manageMembers") && (
+            <section className="search-section">
+              <div>
+                <h5>Add members to your project</h5>
+                <form className="search-member" onSubmit={handleSearch}>
+                  <div className="search-bar">
+                    <IoSearch size={18} className="search-icon" />
+                    <input
+                      autoFocus
+                      name="search"
+                      id="search"
+                      type="text"
+                      placeholder="Search by name, username or email"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                      }}
+                    />
+                  </div>
+
+                  <button className="btn-text">Search</button>
+                </form>
+
+                <ul className="members-list">
+                  {hasSearched && !searchResults.length && (
+                    <li className="no-member-found">User not found</li>
+                  )}
+
+                  {searchResults.map((user) => (
+                    <li
+                      className="member"
+                      key={user.id}
+                      onClick={() => {
+                        handleSelectUser(user);
+                      }}
+                    >
+                      <img
+                        src={user.profilePicture || defaultProfilePicture}
+                        alt="User Avatar"
+                      />
+
+                      <div className="member-info">
+                        <p>{user.name}</p>
+                        <p>{user.username}</p>
+                      </div>
+
+                      {selectedUsers.some(
+                        (selected) => selected.id === user.id
+                      ) ? (
+                        <FaCheck size={16} color="#8C54FB" className="icon" />
+                      ) : (
+                        <IoMdAdd size={20} className="icon" />
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="button-group">
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={closeModal}
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="btn-text"
+                  onClick={handleAddMembers}
+                >
+                  Add members
+                </button>
+              </div>
+            </section>
+          )}
+
+          {/* Current members */}
           <section>
             <h5>Current members</h5>
             <ul className="members-list current">
@@ -153,12 +246,14 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
                 </div>
 
                 <div
-                  className="member-role"
+                  className={`member-role ${
+                    userCanPerform("manageMembers") ? "clickable" : ""
+                  }`}
                   onClick={() =>
                     openChangeRoleModal({ ...user!, role: userRole } as User)
                   }
                 >
-                  <p className="roleName">{userRole.name}</p>
+                  {userRole.name}
                 </div>
 
                 <p className="you">You</p>
@@ -180,94 +275,27 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
                       </div>
 
                       <div
-                        className="member-role"
+                        className={`member-role ${
+                          userCanPerform("manageMembers") ? "clickable" : ""
+                        }`}
                         onClick={() => openChangeRoleModal(member)}
                       >
-                        <p className="roleName">{member.role?.name}</p>
+                        {member.role?.name}
                       </div>
 
-                      <button
-                        className="btn-icon btn-remove-user"
-                        onClick={() => handleRemoveUser(member)}
-                      >
-                        Remove
-                      </button>
+                      {userCanPerform("manageMembers") && (
+                        <button
+                          className="btn-icon btn-remove-user"
+                          onClick={() => handleRemoveUser(member)}
+                        >
+                          Remove
+                        </button>
+                      )}
                     </li>
                   );
                 }
               })}
             </ul>
-          </section>
-
-          <section>
-            <div>
-              <h5>Add members to your project</h5>
-              <form className="search-member" onSubmit={handleSearch}>
-                <div className="search-bar">
-                  <IoSearch size={18} className="search-icon" />
-                  <input
-                    autoFocus
-                    name="search"
-                    id="search"
-                    type="text"
-                    placeholder="Search by name, username or email"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                    }}
-                  />
-                </div>
-
-                <button className="btn-text">Search</button>
-              </form>
-
-              <ul className="members-list">
-                {hasSearched && !searchResults.length && (
-                  <li className="no-member-found">User not found</li>
-                )}
-
-                {searchResults.map((user) => (
-                  <li
-                    className="member"
-                    key={user.id}
-                    onClick={() => {
-                      handleSelectUser(user);
-                    }}
-                  >
-                    <img
-                      src={user.profilePicture || defaultProfilePicture}
-                      alt="User Avatar"
-                    />
-
-                    <div className="member-info">
-                      <p>{user.name}</p>
-                      <p>{user.username}</p>
-                    </div>
-
-                    {selectedUsers.some(
-                      (selected) => selected.id === user.id
-                    ) ? (
-                      <FaCheck size={16} color="#8C54FB" className="icon" />
-                    ) : (
-                      <IoMdAdd size={20} className="icon" />
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="button-group">
-              <button type="button" className="btn-cancel" onClick={closeModal}>
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="btn-text"
-                onClick={handleAddMembers}
-              >
-                Save changes
-              </button>
-            </div>
           </section>
         </Modal.Body>
       </Modal>

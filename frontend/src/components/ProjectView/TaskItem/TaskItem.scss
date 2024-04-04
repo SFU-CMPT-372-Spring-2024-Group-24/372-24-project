@@ -177,19 +177,21 @@
     .sub-header {
       margin-top: 0.5rem;
       display: flex;
-      // gap: 0.5rem;
 
       span.list-name {
         font-size: 14px;
         font-weight: 600;
         color: $dark-gray;
         border: 1px solid $light-gray;
-        border-right: none;
         border-radius: 15px;
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
         padding: 0.25rem 0.5rem;
         user-select: none;
+      }
+
+      span.list-name.hasPriority {
+        border-right: none;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
       }
 
       div.priority {
@@ -197,7 +199,7 @@
           font-size: 14px;
           font-weight: 600;
           border: 1px solid $light-gray;
-          border-radius: 10px;
+          border-radius: 15px;
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
           padding: 0.25rem 0.5rem;
@@ -205,16 +207,20 @@
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          cursor: pointer;
           width: fit-content;
           color: $white;
+          user-select: none;
+        }
+
+        .task-priority.editable {
+          cursor: pointer;
         }
 
         button.set-priority {
           color: $dark-gray;
-          font-size: 14px;
           border: 1px solid $light-gray;
           padding: 0.25rem 0.5rem;
+          border-radius: 15px;
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
           line-height: unset;
@@ -264,14 +270,17 @@
       }
 
       p {
-        cursor: pointer;
         flex-grow: 1;
         font-size: 14px;
         white-space: pre-wrap;
         padding: 0.25rem 0.5rem;
         border-radius: 5px;
-        transition: 0.3s;
         background: $light-gray;
+      }
+
+      p.editable {
+        cursor: pointer;
+        transition: 0.3s;
 
         &:hover {
           background: $dark-gray;
@@ -290,12 +299,20 @@
       input[type="checkbox"] {
         width: 20px;
         height: 20px;
+        cursor: pointer;
+      }
+
+      input[type="checkbox"]:disabled {
+        cursor: not-allowed;
       }
 
       p {
-        cursor: pointer;
         padding: 0.25rem;
         border-radius: 5px;
+      }
+
+      p.editable {
+        cursor: pointer;
 
         &:hover {
           background: $light-gray;
@@ -312,6 +329,11 @@
           background: $dark-gray;
           color: $white;
         }
+      }
+
+      p.no-due-date {
+        color: $dark-gray;
+        padding: 0;
       }
     }
 

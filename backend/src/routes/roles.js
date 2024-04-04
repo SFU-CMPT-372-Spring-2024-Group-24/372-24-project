@@ -2,6 +2,7 @@
 const { Role, UserProject } = require("../db");
 // Third-party modules
 const express = require("express");
+const checkPermission = require('../middleware/checkPermission');
 
 const router = express.Router();
 
@@ -52,24 +53,11 @@ router.get("/:projectId/all", async (req, res) => {
 
 // Update user role for a project
 // Only Owner can update roles
-router.put("/:projectId", async (req, res) => {
-  const userId = req.session.userId;
+router.put("/:projectId", checkPermission('manageMembers'), async (req, res) => {
   const { projectId } = req.params;
   const { targetUserId, roleId } = req.body;
 
   try {
-    const userProject = await UserProject.findOne({
-      where: {
-        UserId: userId,
-        ProjectId: projectId,
-      },
-      include: Role,
-    });
-
-    if (userProject.Role.name !== "Owner") {
-      return res.status(403).json({ message: "Only Owner can update roles."});
-    }
-
     await UserProject.update(
       { roleId },
       {

@@ -9,7 +9,7 @@ import { api } from "../../../api";
 import { useTasks } from "../../../hooks/TaskContext";
 
 const About = () => {
-  const { project, setProject } = useTasks();
+  const { project, setProject, userCanPerform } = useTasks();
   const [showAboutModal, setShowAboutModal] = useState<boolean>(false);
   const [projectDescription, setProjectDescription] = useState<string>(
     project.description
@@ -40,9 +40,11 @@ const About = () => {
       <div className="project-description">
         <h2>
           About
-          <button type="button" className="btn-icon" onClick={openAboutModal}>
-            <IoSettingsOutline size={20} />
-          </button>
+          {userCanPerform("manageProject") && (
+            <button type="button" className="btn-icon" onClick={openAboutModal}>
+              <IoSettingsOutline size={20} />
+            </button>
+          )}
         </h2>
         <p>{project.description}</p>
       </div>

@@ -8,7 +8,7 @@ import { BiLogOutCircle } from "react-icons/bi";
 import "./ProjectInfo.scss";
 import "react-toastify/dist/ReactToastify.css";
 // API
-import { api } from "../../../api";
+import { api, AxiosError } from "../../../api";
 // Components
 import Members from "./Members";
 import About from "./About";
@@ -16,40 +16,46 @@ import Files from "./Files";
 // Custom hooks
 import { useUser } from "../../../hooks/UserContext";
 import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 
 const ProjectInfo = () => {
   const navigate = useNavigate();
   const { user } = useUser();
-  const { userRole, project } = useTasks();
+  const { project, projectMembers, userCanPerform } = useTasks();
+  const handleApiError = useApiErrorHandler();
 
+  // Delete project
   const handleDeleteProject = async () => {
-    if (userRole.name !== "Owner") {
-      toast.error("Only the owner can delete the project.");
+    try {
+      const response = await api.delete(`/projects/${project.id}`);
+      if (response.status === 200) {
+        toast.success("Project has been deleted for you and all members.");
+        navigate("/projects");
+      }
+    } catch (error) {
+      handleApiError(error as AxiosError);
+    }
+  };
+
+  // Leave project
+  const handleLeaveProject = async () => {
+    // If the project doesn't have any Owner excluding the current user, the user can't leave the project
+    const otherOwners = projectMembers.filter(
+      (member) => member.role?.name === "Owner" && member.id !== user!.id
+    );
+    if (!otherOwners.length) {
+      toast.error("You can't leave the project because you are the only owner.");
       return;
     }
 
     try {
-      const response = await api.delete(`/projects/${project.id}`);
-      if (response.status === 200) {
-        toast("Project has been deleted for you and all members.");
-        navigate("/projects");
-      }
-    } catch (error) {
-      console.error("Failed to delete project: ", error);
-    }
-  };
-
-  const handleLeaveProject = async () => {
-    try {
-      const response = await api.delete(
-        `/projects/${project.id}/users/${user!.id}`
-      );
+      const response = await api.delete(`/projects/${project.id}/users`);
       if (response.status === 200) {
         toast("You have left the project.");
         navigate("/projects");
       }
     } catch (error) {
-      console.error("Failed to leave project: ", error);
+      handleApiError(error as AxiosError);
     }
   };
 
@@ -71,16 +77,16 @@ const ProjectInfo = () => {
           Leave this project
         </button>
 
-        <button
-          type="button"
-          className={`btn-leave-delete-project ${
-            userRole.name !== "Owner" ? "disabled" : ""
-          }`}
-          onClick={handleDeleteProject}
-        >
-          <IoMdTrash size={18} />
-          Delete this project
-        </button>
+        {userCanPerform("manageProject") && (
+          <button
+            type="button"
+            className="btn-leave-delete-project"
+            onClick={handleDeleteProject}
+          >
+            <IoMdTrash size={18} />
+            Delete this project
+          </button>
+        )}
       </div>
     </aside>
   );

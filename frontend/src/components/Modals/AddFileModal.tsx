@@ -8,9 +8,10 @@ import { toast } from "react-toastify";
 import { IoIosCloudUpload } from 'react-icons/io'
 import './AddFileModal.scss'
 // API
-import { api } from '../../api'
+import { api, AxiosError } from '../../api'
 // Custom hooks
 import { useTasks } from '../../hooks/TaskContext';
+import { useApiErrorHandler } from '../../hooks/useApiErrorHandler';
 
 interface Props {
   showAddFileModal: boolean;
@@ -19,6 +20,7 @@ interface Props {
 
 const AddFileModal = ({ showAddFileModal, setShowAddFileModal }: Props) => {
   const { project, projectFiles, setProjectFiles } = useTasks();
+  const handleApiError = useApiErrorHandler();
   const [isAddFileModalHovered, setIsAddFileModalHovered] = useState<boolean>(false);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: async (acceptedFiles) => {
@@ -37,9 +39,9 @@ const AddFileModal = ({ showAddFileModal, setShowAddFileModal }: Props) => {
       const response = await api.post(`/projects/${project.id}/files`, formData);
       setProjectFiles([...projectFiles, response.data]);
       setShowAddFileModal(false);
-      toast("File uploaded successfully");
+      toast.success("File uploaded successfully");
     } catch (error) {
-      console.error("Failed to upload file: ", error);
+      handleApiError(error as AxiosError);
     }
   }
 

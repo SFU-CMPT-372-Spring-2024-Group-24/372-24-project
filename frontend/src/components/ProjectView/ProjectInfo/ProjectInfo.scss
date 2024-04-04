@@ -65,12 +65,6 @@ aside.project-info {
       color: $white;
     }
   }
-
-  button.disabled:hover {
-    background: transparent;
-    color: $dark-gray;
-    cursor: not-allowed;
-  }
 }
 
 .project-about-modal {

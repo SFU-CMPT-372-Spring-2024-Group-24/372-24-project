@@ -12,45 +12,59 @@ import { FileModel } from "../../../models/FileModel";
 import { useTasks } from "../../../hooks/TaskContext";
 
 const Files = () => {
-  const { projectFiles } = useTasks();
+  const { projectFiles, userCanPerform } = useTasks();
   const [showAddFileModal, setShowAddFileModal] = useState<boolean>(false);
-  const [showPreviewFileModal, setShowFilePreviewModal] = useState<boolean>(false);
+  const [showPreviewFileModal, setShowFilePreviewModal] =
+    useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<FileModel>();
 
-  return (<>
-    <div className="files">
-      <h2>Files
-        <button
-          type="button"
-          className="btn-icon"
-          onClick={() => { setShowAddFileModal(!showAddFileModal) }}>
-          <IoMdAdd size={20} />
-        </button>
-      </h2>
-      {projectFiles.map((file) => (
-        <div className="file" key={file.id}>
-          {getFileIcon(file.type)}
-          <p
-            className="truncate"
-            onClick={() => { setShowFilePreviewModal(true); setSelectedFile(file) }}
-          >
-            {file.name}
-          </p>
-        </div>
-      ))}
-    </div>
+  return (
+    <>
+      <div className="files">
+        <h2>
+          Files
 
-    <AddFileModal
-      showAddFileModal={showAddFileModal}
-      setShowAddFileModal={setShowAddFileModal}
-    />
+          {userCanPerform("manageFiles") && (
+            <button
+              type="button"
+              className="btn-icon"
+              onClick={() => {
+                setShowAddFileModal(!showAddFileModal);
+              }}
+            >
+              <IoMdAdd size={20} />
+            </button>
+          )}
+        </h2>
+        
+        {projectFiles.map((file) => (
+          <div className="file" key={file.id}>
+            {getFileIcon(file.type)}
+            <p
+              className="truncate"
+              onClick={() => {
+                setShowFilePreviewModal(true);
+                setSelectedFile(file);
+              }}
+            >
+              {file.name}
+            </p>
+          </div>
+        ))}
+      </div>
 
-    <PreviewFileModal
-      showPreviewFileModal={showPreviewFileModal}
-      setShowPreviewFileModal={setShowFilePreviewModal}
-      selectedFile={selectedFile}
-    />
-  </>);
-}
+      <AddFileModal
+        showAddFileModal={showAddFileModal}
+        setShowAddFileModal={setShowAddFileModal}
+      />
+
+      <PreviewFileModal
+        showPreviewFileModal={showPreviewFileModal}
+        setShowPreviewFileModal={setShowFilePreviewModal}
+        selectedFile={selectedFile}
+      />
+    </>
+  );
+};
 
 export default Files;

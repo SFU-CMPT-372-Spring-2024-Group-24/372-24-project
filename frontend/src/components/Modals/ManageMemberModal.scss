@@ -5,17 +5,14 @@
 }
 
 .manage-member-modal {
-  width: 60%;
-  max-width: none;
-
   .modal-header {
     border-bottom: none;
     padding: 1rem 1rem .5rem 1rem;
   }
 
   .modal-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
     padding-top: 0;
   }
@@ -26,13 +23,19 @@
     border-radius: 10px;
   }
 
-  section:nth-child(2) {
+  section.search-section {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 1rem;
+
+    ul.members-list li.member {
+      &:hover {
+        background: $white;
+      }
+    }
   }
-  
+
   button.btn-remove-user {
     color: $dark-gray;
 
@@ -42,7 +45,7 @@
     }
   }
 
-  .search-member {
+  form.search-member {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -115,21 +118,19 @@
         }
       }
 
-      p.roleName {
+      div.member-role {
         color: $dark-gray;
         border: 1px solid $light-gray;
         border-radius: 5px;
         padding: .1rem .5rem;
+      }
+
+      div.member-role.clickable {
+        cursor: pointer;
 
         &:hover {
           background: $light-gray;
         }
-      }
-
-      div.member-role {
-        cursor: pointer;
-
-        
       }
 
       p {

@@ -7,13 +7,13 @@ import { Task, PriorityTypes } from "../../../models/Task";
 // Utils
 import { priorities } from "../../../utils/priorityColorUtils";
 // API
-import { api } from "../../../api";
+import { api, AxiosError } from "../../../api";
 // Custom hooks
 import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 
 interface Props {
   task: Task;
-  // setTask: (updatedTask: Task) => void;
 }
 
 const Priority = ({ task }: Props) => {
@@ -22,7 +22,8 @@ const Priority = ({ task }: Props) => {
   const [priorityValue, setPriorityValue] = useState<PriorityTypes>(
     task.priority || ""
   );
-  const { setTask } = useTasks();
+  const { setTask, project, userCanPerform } = useTasks();
+  const handleApiError = useApiErrorHandler();
 
   // For toggling the modal
   const togglePriorityModal = () => setShowPriorityModal(!showPriorityModal);
@@ -45,23 +46,28 @@ const Priority = ({ task }: Props) => {
     try {
       const response = await api.put(`/tasks/${task.id}`, {
         priority,
+        projectId: project.id,
       });
 
       setTask({ ...task, priority: response.data.priority });
       setPriorityValue(response.data.priority);
       togglePriorityModal();
     } catch (error) {
-      console.error("Error updating priority:", error);
+      handleApiError(error as AxiosError);
     }
   };
 
   return (
     <>
       <div ref={priorityRef} className="priority">
-        {task.priority && task.priority !== 'unset' ? (
+        {task.priority && task.priority !== 'unset' && (
           <span
-            className="task-priority"
-            onClick={togglePriorityModal}
+            className={`task-priority ${userCanPerform("manageTasks") ? "editable" : ""}`}
+            onClick={() => {
+              if (userCanPerform("manageTasks")) {
+                togglePriorityModal();
+              }
+            }}
             style={{
               borderColor: priorities.find((p) => p.value === task.priority)?.color,
               backgroundColor: priorities.find((p) => p.value === task.priority)?.color,
@@ -69,7 +75,9 @@ const Priority = ({ task }: Props) => {
           >
             {task.priority}
           </span>
-        ) : (
+        )}
+        
+        {!task.priority && userCanPerform("manageTasks") && (
           <button className="set-priority" onClick={togglePriorityModal}>
             Set priority
           </button>

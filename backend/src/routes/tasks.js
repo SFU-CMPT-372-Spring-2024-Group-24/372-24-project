@@ -1,5 +1,6 @@
 const { Task, User, File } = require('../db');
 const express = require('express');
+const checkPermission = require('../middleware/checkPermission');
 
 const router = express.Router();
 
@@ -20,7 +21,7 @@ router.get('/:listId', async (req, res) => {
 });
 
 // Create task
-router.post('/', async (req, res) => {
+router.post('/', checkPermission('manageTasks'), async (req, res) => {
     const { name, listId } = req.body;
 
     try {
@@ -31,14 +32,14 @@ router.post('/', async (req, res) => {
 
         await task.update({ orderIndex: -task.id });
 
-        res.json(task);
+        res.status(200).json(task);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
 });
 
 // Update task
-router.put('/:id', async (req, res) => {
+router.put('/:id', checkPermission('manageTasks'), async (req, res) => {
     const id = req.params.id;
     const { name, priority, description, dueDate, isDone } = req.body;
     const fieldsToUpdate = {};
@@ -75,7 +76,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete task
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', checkPermission('manageTasks'), async (req, res) => {
     const id = req.params.id;
 
     try {
@@ -92,7 +93,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Update task order
-router.put('/:id/order', async (req, res) => {
+router.put('/:id/order', checkPermission('manageTasks'), async (req, res) => {
     const id = req.params.id;
 
     const { orderIndex, listId } = req.body;
@@ -134,7 +135,7 @@ router.get('/:id/users', async (req, res) => {
 });
 
 // Add user to task
-router.post('/:id/users', async (req, res) => {
+router.post('/:id/users', checkPermission('manageTasks'), async (req, res) => {
     const taskId = req.params.id;
     const { userId } = req.body;
 
@@ -159,7 +160,7 @@ router.post('/:id/users', async (req, res) => {
 });
 
 // Remove user from task
-router.delete('/:id/users/:userId', async (req, res) => {
+router.delete('/:id/users/:userId', checkPermission('manageTasks'), async (req, res) => {
     const taskId = req.params.id;
     const userId = req.params.userId;
 
@@ -202,7 +203,7 @@ router.get('/:id/files', async (req, res) => {
 });
 
 // Add file to task
-router.post('/:id/files', async (req, res) => {
+router.post('/:id/files', checkPermission('manageTasks'), async (req, res) => {
     const taskId = req.params.id;
     const { fileId } = req.body;
     try {
@@ -225,7 +226,7 @@ router.post('/:id/files', async (req, res) => {
 });
 
 // Remove file from task
-router.delete('/:id/files/:fileId', async (req, res) => {
+router.delete('/:id/files/:fileId', checkPermission('manageTasks'), async (req, res) => {
     const taskId = req.params.id;
     const fileId = req.params.fileId;
 
