@@ -6,8 +6,12 @@ import { Task } from "../models/Task";
 import { List } from "../models/List";
 import { User } from "../models/User";
 import { FileModel } from "../models/FileModel";
+import { Role, RolePermissions } from "../models/ProjectRole";
+import { Project } from "../models/Project";
 // API
-import { api } from "../api";
+import { api, AxiosError } from "../api";
+// Custom hooks
+// import { useApiErrorHandler } from "./useApiErrorHandler";
 
 interface TaskContextProps {
   lists: List[];
@@ -21,12 +25,18 @@ interface TaskContextProps {
     oldIndex: number,
     newIndex: number
   ) => Promise<boolean>;
+  project: Project;
+  setProject: (project: Project) => void;
   projectMembers: User[];
-  projectId: number;
+  setProjectMembers: (members: User[]) => void;
   projectFiles: FileModel[];
   setProjectFiles: (files: FileModel[]) => void;
+  userRole: Role;
+  userCanPerform: (action: string) => boolean;
 }
-export const TaskContext = createContext<TaskContextProps | undefined>(undefined);
+export const TaskContext = createContext<TaskContextProps | undefined>(
+  undefined
+);
 
 export const useTasks = (): TaskContextProps => {
   const context = useContext(TaskContext);
@@ -40,20 +50,85 @@ export const useTasks = (): TaskContextProps => {
 
 interface TaskProviderProps {
   children: React.ReactNode;
-  projectMembers: User[];
-  projectId: number;
-  projectFiles: FileModel[];
-  setProjectFiles: (files: FileModel[]) => void;
+  project: Project;
+  setProject: (project: Project) => void;
+  userRole: Role;
 }
-export const TaskProvider = ({ children, projectMembers, projectId, projectFiles, setProjectFiles }: TaskProviderProps) => {
+export const TaskProvider = ({
+  children,
+  project,
+  setProject,
+  userRole,
+}: TaskProviderProps) => {
   const [lists, setLists] = useState<List[]>([]);
+  const [projectMembers, setProjectMembers] = useState<User[]>([]);
+  const [projectFiles, setProjectFiles] = useState<FileModel[]>([]);
+  // const handleApiError = useApiErrorHandler();
+
+  // Fetch project members and their roles
+  useEffect(() => {
+    if (!project) return;
+
+    const fetchMembers = async () => {
+      try {
+        // Fetch members
+        const response = await api.get(`/projects/${project.id}/users`);
+
+        if (response.status === 200) {
+          setProjectMembers(response.data);
+
+          // Fetch roles for each member
+          const rolesResponse = await api.get(`/roles/${project.id}/all`);
+
+          if (rolesResponse.status === 200) {
+            const userRoles = rolesResponse.data;
+
+            const usersWithRoles = response.data.map((member: User) => {
+              const userRole = userRoles.find(
+                (userRole: any) => userRole.UserId === member.id
+              );
+
+              return {
+                ...member,
+                role: userRole.Role,
+              };
+            });
+
+            setProjectMembers(usersWithRoles);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching members:", error);
+      }
+    };
+
+    fetchMembers();
+  }, [project]);
+
+  // Fetch project files
+  useEffect(() => {
+    if (!project) return;
+
+    const fetchFiles = async () => {
+      try {
+        const response = await api.get(`/projects/${project.id}/files`);
+        setProjectFiles(response.data);
+      } catch (error) {
+        console.error("Error fetching files:", error);
+      }
+    };
+
+    fetchFiles();
+  }, [project]);
 
   // Fetch lists and tasks for the project
   useEffect(() => {
+    if (!project) return;
+
     const fetchListsAndTasks = async () => {
       try {
         // Fetch lists for the project
-        const response = await api.get(`/lists/${projectId}`);
+        const response = await api.get(`/lists/${project.id}`);
         const lists = response.data;
 
         // Fetch tasks for each list
@@ -70,10 +145,10 @@ export const TaskProvider = ({ children, projectMembers, projectId, projectFiles
       } catch (error) {
         console.error("Error fetching lists and tasks:", error);
       }
-    }
+    };
 
     fetchListsAndTasks();
-  }, [projectId]);
+  }, [project]);
 
   // Update a task in the state
   const setTask = (updatedTask: Task) => {
@@ -122,6 +197,12 @@ export const TaskProvider = ({ children, projectMembers, projectId, projectFiles
     oldIndex: number,
     newIndex: number
   ) => {
+    
+    if (!userCanPerform("manageTasks")) {
+      toast.error("You do not have permission to move tasks");
+      return false;
+    }
+
     const sourceList = lists.find((list) => list.id === sourceListId);
     const destinationList = lists.find((list) => list.id === destinationListId);
 
@@ -135,31 +216,27 @@ export const TaskProvider = ({ children, projectMembers, projectId, projectFiles
     if (sourceListId === destinationListId) {
       // Reordering within the same list
       sourceTasks.splice(newIndex, 0, movedTask);
-
       // Update the order index of each task in the source list
       sourceTasks.forEach((task, index) => {
         task.orderIndex = index;
       });
-
       sourceList.tasks = sourceTasks;
     } else {
       // Moving to a different list
       destinationTasks.splice(newIndex, 0, movedTask);
-
       // Update the order index of each task in the source list
       sourceTasks.forEach((task, index) => {
         task.orderIndex = index;
       });
-
       // Update the order index of each task in the destination list
       destinationTasks.forEach((task, index) => {
         task.orderIndex = index;
       });
-
       sourceList.tasks = sourceTasks;
       destinationList.tasks = destinationTasks;
     }
 
+    // Update the lists in the state
     setLists((prevLists) =>
       prevLists.map((list) => {
         if (list.id === sourceListId) {
@@ -179,33 +256,59 @@ export const TaskProvider = ({ children, projectMembers, projectId, projectFiles
           api.put(`/tasks/${task.id}/order`, {
             orderIndex: task.orderIndex,
             listId: sourceListId,
+            projectId: project.id,
           })
         ),
         ...destinationTasks.map((task) =>
           api.put(`/tasks/${task.id}/order`, {
             orderIndex: task.orderIndex,
             listId: destinationListId,
+            projectId: project.id,
           })
         ),
       ]);
 
-      // Update the lists in the state
       if (response.every((res) => res.status === 200)) {
-        toast.success("Task moved successfully", {
-          className: "toast-success",
-        });
-        return true;
+        toast.success("Task moved successfully");
       }
     } catch (error) {
-      throw new Error("Failed to move task: " + error);
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        if (axiosError.response.status === 403) {
+          toast.error("An error occurred while moving the task, please refresh the page.");
+        } else {
+          toast.error(axiosError.response.data.message);
+        }
+      }  
+      return false;
     }
 
-    return false;
+    return true;
+  };
+
+  // Check if the user has permission to perform an action
+  const userCanPerform = (action: string) => {
+    return RolePermissions[userRole.name].includes(action);
   };
 
   return (
     <TaskContext.Provider
-      value={{ lists, setLists, setTask, addTask, removeTask, moveTask, projectMembers, projectId, projectFiles, setProjectFiles}}
+      value={{
+        project,
+        setProject,
+        projectMembers,
+        setProjectMembers,
+        projectFiles,
+        setProjectFiles,
+        userRole,
+        lists,
+        setLists,
+        setTask,
+        addTask,
+        removeTask,
+        moveTask,
+        userCanPerform,
+      }}
     >
       {children}
     </TaskContext.Provider>

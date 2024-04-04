@@ -3,12 +3,14 @@ import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import ReactDatePicker from "react-datepicker";
+import { toast } from "react-toastify";
 // Models
 import { Task } from "../../../models/Task";
 // API
-import { api } from "../../../api";
+import { api, AxiosError } from "../../../api";
 // Custom hooks
 import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 // Styles
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -21,10 +23,14 @@ const DueDate = ({ task }: Props) => {
   const dueDateRef = useRef<HTMLDivElement>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(task.dueDate);
   const [errorMsg, setErrorMsg] = useState<string>("");
-  const { setTask } = useTasks();
+  const { setTask, project, userCanPerform } = useTasks();
+  const handleApiError = useApiErrorHandler();
 
   // For opening the modal
-  const openDueDateModal = () => setShowDueDateModal(true);
+  const openDueDateModal = () => {
+    if (!userCanPerform("manageTasks")) return;
+    setShowDueDateModal(true);
+  };
 
   // For closing the modal and cancelling the changes
   const closeDueDateModal = () => {
@@ -46,19 +52,26 @@ const DueDate = ({ task }: Props) => {
   }, [showDueDateModal]);
 
   // For handling the change in the task's isDone property
-  const handleTaskDoneChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTaskDoneChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (!userCanPerform("manageTasks")) {
+      toast.error("You do not have permission to manage tasks");
+      return;
+    }
+
     const isDone = event.target.checked;
 
     try {
       const response = await api.put(`/tasks/${task.id}`, {
         isDone,
+        projectId: project.id,
       });
 
       setTask({ ...task, isDone: response.data.isDone });
       setErrorMsg("");
     } catch (error) {
-      console.error("Error updating task done:", error);
-      setErrorMsg("An error occurred while updating the task done status.");
+      handleApiError(error as AxiosError);
     }
   };
 
@@ -74,14 +87,14 @@ const DueDate = ({ task }: Props) => {
     try {
       const response = await api.put(`/tasks/${task.id}`, {
         dueDate: selectedDate,
+        projectId: project.id,
       });
 
       setTask({ ...task, dueDate: response.data.dueDate });
       setErrorMsg("");
       setShowDueDateModal(false);
     } catch (error) {
-      console.error("Error updating due date:", error);
-      setErrorMsg("An error occurred while updating the due date.");
+      handleApiError(error as AxiosError);
     }
   };
 
@@ -91,7 +104,7 @@ const DueDate = ({ task }: Props) => {
         <h4>Due date</h4>
 
         <div className="check-due-date">
-          {task.dueDate ? (
+          {task.dueDate && (
             <>
               <input
                 type="checkbox"
@@ -99,15 +112,27 @@ const DueDate = ({ task }: Props) => {
                 id="isDone"
                 checked={task.isDone}
                 onChange={handleTaskDoneChange}
+                disabled={!userCanPerform("manageTasks")}
               />
-              <p onClick={openDueDateModal}>
+              <p
+                className={`${userCanPerform("manageTasks") && "editable"}`}
+                onClick={openDueDateModal}
+              >
                 {moment(task.dueDate).format("MMM D, yyyy hh:mmA")}
               </p>
             </>
-          ) : (
+          )}
+
+          {/* If the user can manage tasks, and the dueDate is not set, show 'Set a due date' button*/}
+          {!task.dueDate && userCanPerform("manageTasks") && (
             <button className="set-due-date" onClick={openDueDateModal}>
               Set a due date
             </button>
+          )}
+
+          {/* If the user cannot manage tasks, and the dueDate is not set, show 'None' */}
+          {!task.dueDate && !userCanPerform("manageTasks") && (
+            <p className="no-due-date">None</p>
           )}
         </div>
       </div>
@@ -146,7 +171,9 @@ const DueDate = ({ task }: Props) => {
                 Cancel
               </button>
 
-              <button type="button" className="btn-cancel"
+              <button
+                type="button"
+                className="btn-cancel"
                 onClick={() => setSelectedDate(null)}
               >
                 Clear due date

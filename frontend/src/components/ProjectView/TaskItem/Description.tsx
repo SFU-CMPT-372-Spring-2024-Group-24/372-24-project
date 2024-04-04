@@ -3,13 +3,13 @@ import { useEffect, useRef, useState } from "react";
 // Models
 import { Task } from "../../../models/Task";
 // API
-import { api } from "../../../api";
+import { api, AxiosError } from "../../../api";
 // Custom hooks
 import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 
 interface Props {
   task: Task;
-  // setTask: (updatedTask: Task) => void;
 }
 
 const Description = ({ task }: Props) => {
@@ -17,8 +17,10 @@ const Description = ({ task }: Props) => {
   const [description, setDescription] = useState<string>(task.description);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
-  const { setTask } = useTasks();
+  const { setTask, project, userCanPerform } = useTasks();
+  const handleApiError = useApiErrorHandler();
 
+  // Update task description
   const handleDescriptionChange = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -33,22 +35,24 @@ const Description = ({ task }: Props) => {
     try {
       const response = await api.put(`/tasks/${task.id}`, {
         description: trimmedDescription,
+        projectId: project.id,
       });
 
       setTask({ ...task, description: response.data.description });
       setErrorMsg("");
       setShowTextArea(false);
     } catch (error) {
-      console.error("Error updating description:", error);
-      setErrorMsg("An error occurred while updating the description.");
+      handleApiError(error as AxiosError);
     }
   };
 
+  // Cancel editing description
   const handleCancel = () => {
     setDescription(task.description);
     setShowTextArea(false);
   };
 
+  // Focus textarea when editing description
   useEffect(() => {
     if (showTextArea && textareaRef.current) {
       const textarea = textareaRef.current;
@@ -74,10 +78,7 @@ const Description = ({ task }: Props) => {
             />
 
             <div className="button-group">
-              <button
-                type="submit"
-                className="btn-text"
-              >
+              <button type="submit" className="btn-text">
                 Save
               </button>
               <button
@@ -90,7 +91,16 @@ const Description = ({ task }: Props) => {
             </div>
           </form>
         ) : (
-          <p onClick={() => setShowTextArea(true)}>{task.description || "None"}</p>
+          <p
+            onClick={() => {
+              if (userCanPerform("manageTasks")) {
+                setShowTextArea(true);
+              }
+            }}
+            className={userCanPerform("manageTasks") ? "editable" : ""}
+          >
+            {task.description || "None"}
+          </p>
         )}
       </div>
     </div>

@@ -4,19 +4,21 @@ import { Task } from "../../../models/Task";
 import { useState } from "react";
 // Custom hooks
 import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 // Icons
 import { FiEdit2 } from "react-icons/fi";
 // API
-import { api } from "../../../api";
+import { api, AxiosError } from "../../../api";
 
 interface Props {
   task: Task;
 }
 
 const TaskName = ({ task }: Props) => {
-  const { setTask } = useTasks();
+  const { project, setTask, userCanPerform } = useTasks();
   const [taskName, setTaskName] = useState<string>(task.name);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const handleApiError = useApiErrorHandler();
 
   const handleTaskNameChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,12 +32,13 @@ const TaskName = ({ task }: Props) => {
     try {
       const response = await api.put(`/tasks/${task.id}`, {
         name: taskName.trim(),
+        projectId: project.id,
       });
 
       setTask({ ...task, name: response.data.name });
       setIsEditing(false);
     } catch (error) {
-      console.error("Error updating task name:", error);
+      handleApiError(error as AxiosError);
     }
   };
 
@@ -71,9 +74,12 @@ const TaskName = ({ task }: Props) => {
       ) : (
         <h3>
           {task.name}
-          <button className="btn-icon" onClick={() => setIsEditing(true)}>
-            <FiEdit2 size={14} />
-          </button>
+          
+          {userCanPerform("manageTasks") && (
+            <button className="btn-icon" onClick={() => setIsEditing(true)}>
+              <FiEdit2 size={14} />
+            </button>
+          )}
         </h3>
       )}
     </div>

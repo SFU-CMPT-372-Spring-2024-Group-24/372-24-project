@@ -8,7 +8,7 @@ import TaskList from "../TaskList/TaskList";
 const TaskLists = () => {
   const { lists, moveTask } = useTasks();
 
-  const handleOnDragEnd = async (result: DropResult) => {
+  const handleOnDragEnd = (result: DropResult) => {
     const { source, destination } = result;
 
     if (
@@ -18,16 +18,12 @@ const TaskLists = () => {
     )
       return;
 
-    try {
-      await moveTask(
-        parseInt(source.droppableId),
-        parseInt(destination.droppableId),
-        source.index,
-        destination.index
-      );
-    } catch (error) {
-      console.error("Error moving task:", error);
-    }
+    moveTask(
+      parseInt(source.droppableId),
+      parseInt(destination.droppableId),
+      source.index,
+      destination.index
+    );
   };
 
   return (

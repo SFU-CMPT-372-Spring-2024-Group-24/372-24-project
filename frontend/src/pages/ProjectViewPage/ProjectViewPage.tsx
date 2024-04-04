@@ -6,20 +6,20 @@ import ProjectInfo from "../../components/ProjectView/ProjectInfo/ProjectInfo";
 import TaskLists from "../../components/ProjectView/TaskLists/TaskLists";
 // Models
 import { Project } from "../../models/Project";
-import { User } from "../../models/User";
-import { FileModel } from "../../models/FileModel";
+import { Role } from "../../models/ProjectRole";
 // Styles
 import "./ProjectViewPage.scss";
 // API
 import { api } from "../../api";
 // Custom hooks
 import { TaskProvider } from "../../hooks/TaskContext";
+import { useUser } from "../../hooks/UserContext";
 
 const ProjectViewPage = () => {
   const { id } = useParams();
+  const { user } = useUser();
   const [project, setProject] = useState<Project | null>(null);
-  const [members, setMembers] = useState<User[]>([]);
-  const [files, setFiles] = useState<FileModel[]>([]);
+  const [userRole, setUserRole] = useState<Role | null>(null);
   const navigate = useNavigate();
 
   const [editingName, setEditingName] = useState<boolean>(false);
@@ -43,36 +43,20 @@ const ProjectViewPage = () => {
     fetchProject();
   }, []);
 
-  // Fetch project members
+  // Fetch user role in project
   useEffect(() => {
-    if (project) {
-      const fetchMembers = async () => {
-        try {
-          const response = await api.get(`/projects/${project.id}/users`);
-          setMembers(response.data);
-        } catch (error) {
-          console.error("Error fetching members:", error);
-        }
-      };
+    if (!project || !user) return;
 
-      fetchMembers();
-    }
-  }, [project]);
+    const fetchUserRole = async () => {
+      try {
+        const response = await api.get(`/roles/${project.id}`);
+        setUserRole(response.data);
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+      }
+    };
 
-  // Fetch project files
-  useEffect(() => {
-    if (project) {
-      const fetchFiles = async () => {
-        try {
-          const response = await api.get(`/projects/${project.id}/files`);
-          setFiles(response.data);
-        } catch (error) {
-          console.error("Error fetching files:", error);
-        }
-      };
-
-      fetchFiles();
-    }
+    fetchUserRole();
   }, [project]);
 
   // Edit project name
@@ -104,53 +88,46 @@ const ProjectViewPage = () => {
 
   return (
     <>
-      {project && (
+      {project && userRole && (
         <div className="project-view-page">
-          {/* Project description, members, files on left panel*/}
-          <ProjectInfo
+          <TaskProvider
             project={project}
             setProject={setProject}
-            members={members}
-            setMembers={setMembers}
-            files={files}
-            setFiles={setFiles}
-          />
-      
-          {/* Task lists on right panel */}
-          <section className="project">
-            {/* Project name */}
-            <div
-              className={`project-title ${editingName ? "editing" : ""}`}
-              onClick={() => setEditingName(true)}
-            >
-              {editingName ? (
-                <input
-                  id="project-name"
-                  name="project-name"
-                  type="text"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  onBlur={handleEditProjectName}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleEditProjectName();
-                  }}
-                  autoFocus
-                />
-              ) : (
-                <h1 className="gradient-text">{project.name}</h1>
-              )}
-            </div>
+            userRole={userRole}
+          >
+            {/* Project description, members, files on left panel*/}
+            <ProjectInfo />
 
-            {/* Task Lists */}
-            <TaskProvider
-              projectId={project.id}
-              projectMembers={members}
-              projectFiles={files}
-              setProjectFiles={setFiles}
-            >
+            {/* Task lists on right panel */}
+            <section className="project">
+              {/* Project name */}
+              <div
+                className={`project-title ${editingName ? "editing" : ""}`}
+                onClick={() => setEditingName(true)}
+              >
+                {editingName ? (
+                  <input
+                    id="project-name"
+                    name="project-name"
+                    type="text"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    onBlur={handleEditProjectName}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleEditProjectName();
+                    }}
+                    autoFocus
+                  />
+                ) : (
+                  <h1 className="gradient-text">{project.name}</h1>
+                )}
+              </div>
+
+              {/* Task Lists */}
+
               <TaskLists />
-            </TaskProvider>
-          </section>
+            </section>
+          </TaskProvider>
         </div>
       )}
     </>

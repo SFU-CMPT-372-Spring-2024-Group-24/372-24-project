@@ -1,11 +1,12 @@
 const { List } = require('../db');
 const express = require('express');
+const checkPermission = require('../middleware/checkPermission');
 
 const router = express.Router();
 
 // Get lists by project id
-router.get('/:projectId', async (req, res) => {
-    const projectId = req.params.projectId;
+router.get('/:projectId', checkPermission('read'), async (req, res) => {
+    const { projectId } = req.params;
     
     try {
         const lists = await List.findAll({
