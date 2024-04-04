@@ -30,9 +30,7 @@ import { UserProvider, useUser } from "./hooks/UserContext";
 
 // Declaration for google
 declare global {
-  interface Window {
-    google: any;
-  }
+  interface Window { google: any; }
 }
 
 function Layout() {
@@ -63,6 +61,7 @@ function LayoutWithHeader() {
 interface AuthRouteProps {
   children: React.ReactNode;
 }
+
 const AuthRoute = ({ children }: AuthRouteProps) => {
   const { user } = useUser();
 
@@ -70,7 +69,17 @@ const AuthRoute = ({ children }: AuthRouteProps) => {
     return <Navigate to="/login" />;
   }
 
-  return children;
+  return <>{children}</>;
+};
+
+const AdminAuthRoute = ({ children }: AuthRouteProps) => {
+  const { user } = useUser();
+
+  if (!user || !user.isAdmin) {
+    return <Navigate to="/login" />;
+  }
+
+  return <>{children}</>;
 };
 
 const App = () => {
@@ -80,9 +89,8 @@ const App = () => {
         position="bottom-center"
         autoClose={3000}
         hideProgressBar={true}
-        draggable
-        pauseOnHover
-        stacked={true}
+        draggable={true}
+        pauseOnHover={true}
       />
       <BrowserRouter>
         <Routes>
@@ -112,7 +120,14 @@ const App = () => {
             />
           </Route>
           <Route path="/login" element={<LoginSignup />} />
-          <Route path="/admin" element={<Adminpage />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminAuthRoute>
+                <Adminpage />
+              </AdminAuthRoute>
+            }
+          />
           <Route path="/" element={<LandingPage />} />
           <Route path="*" element={<Navigate to={"/"} />} />
         </Routes>
