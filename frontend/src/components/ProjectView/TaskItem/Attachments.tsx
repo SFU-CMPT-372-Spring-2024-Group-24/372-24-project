@@ -1,6 +1,7 @@
 // Hooks
 import { useEffect, useState, useRef } from "react";
 import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 // Models
 import { FileModel } from "../../../models/FileModel";
 import { Task } from "../../../models/Task";
@@ -11,20 +12,21 @@ import PreviewFileModal from "../../Modals/PreviewFileModal";
 import { IoMdAdd, IoMdCloseCircleOutline } from "react-icons/io";
 import { getFileIcon } from "../../../utils/fileUtils";
 // API
-import { api } from "../../../api";
+import { api, AxiosError } from "../../../api";
 
 interface Props {
   task: Task;
 }
 
 const Attachments = ({ task }: Props) => {
-  const { projectId, projectFiles, setProjectFiles } = useTasks();
+  const { project, projectFiles, setProjectFiles, userCanPerform } = useTasks();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [isShowingFilesDropdown, setIsShowingFilesDropdown] = useState<boolean>(false);
   const [taskFiles, setTaskFiles] = useState<FileModel[]>([]);
   const [isShowingAddFileModal, setIsShowingAddFileModal] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<FileModel>();
   const [isShowingPreviewFileModal, setIsShowingPreviewFileModal] = useState<boolean>(false);
+  const handleApiError = useApiErrorHandler();
 
   // Files dropdown
   useEffect(() => {
@@ -49,7 +51,7 @@ const Attachments = ({ task }: Props) => {
           setTaskFiles(response.data);
         }
       } catch (error) {
-        console.error("Failed to fetch task files: ", error);
+        handleApiError(error as AxiosError);
       }
     };
     fetchTaskFiles();
@@ -59,14 +61,17 @@ const Attachments = ({ task }: Props) => {
   async function handleAddFileToTask(fileId: number) {
     try {
       // Add file to task
-      await api.post(`/tasks/${task.id}/files`, { fileId });
+      await api.post(`/tasks/${task.id}/files`, { 
+        fileId,
+        projectId: project.id
+      });
       // Update task files if it isn't already in the list
       if (!taskFiles.find((file) => file.id === fileId)) {
         setTaskFiles([...taskFiles, projectFiles.find((file) => file.id === fileId)!]);
       }
       setIsShowingFilesDropdown(false);
     } catch (error) {
-      console.error("Failed to add file to task: ", error);
+      handleApiError(error as AxiosError);
     }
   }
   
@@ -74,11 +79,13 @@ const Attachments = ({ task }: Props) => {
   async function handleRemoveFileFromTask(fileId: number) {
     try {
       // Remove file from task
-      await api.delete(`/tasks/${task.id}/files/${fileId}`);
+      await api.delete(`/tasks/${task.id}/files/${fileId}`, {
+        data: { projectId: project.id }
+      });
       // Update task files
       setTaskFiles(taskFiles.filter((file) => file.id !== fileId));
     } catch (error) {
-      console.error("Failed to remove file from task: ", error);
+      handleApiError(error as AxiosError);
     }
   }
 
@@ -98,16 +105,18 @@ const Attachments = ({ task }: Props) => {
       {/* Header */}
       <div className="attachments-header">
         <h4>Attachments</h4>
-        <button
-          type="button"
-          className="btn-icon"
-          onClick={(event) => {
-            event.stopPropagation();
-            setIsShowingFilesDropdown(!isShowingFilesDropdown);
-          }}
-        >
-          <IoMdAdd size={16} />
-        </button>
+        {userCanPerform("manageTasks") && (
+          <button
+            type="button"
+            className="btn-icon"
+            onClick={(event) => {
+              event.stopPropagation();
+              setIsShowingFilesDropdown(!isShowingFilesDropdown);
+            }}
+          >
+            <IoMdAdd size={16} />
+          </button>
+        )}
       </div>
 
       {/* Dropdown */}
@@ -140,18 +149,18 @@ const Attachments = ({ task }: Props) => {
             <p>{file.name}</p>
           </div>
         </button>
-        <button className="remove-from-task" title="Remove from task" onClick={() => handleRemoveFileFromTask(file.id)}>
-          <IoMdCloseCircleOutline size={20} />
-        </button>
+        
+        {userCanPerform("manageTasks") && (
+          <button className="remove-from-task" title="Remove from task" onClick={() => handleRemoveFileFromTask(file.id)}>
+            <IoMdCloseCircleOutline size={20} />
+          </button>
+        )}
       </div>))}
     </div>
 
     {/* Add file modal */}
     {isShowingAddFileModal && (
       <AddFileModal
-        projectId={projectId}
-        files={projectFiles}
-        setFiles={setProjectFiles}
         showAddFileModal={isShowingAddFileModal}
         setShowAddFileModal={setIsShowingAddFileModal}
       />
@@ -162,10 +171,7 @@ const Attachments = ({ task }: Props) => {
       <PreviewFileModal
         showPreviewFileModal={isShowingPreviewFileModal}
         setShowPreviewFileModal={setIsShowingPreviewFileModal}
-        projectId={projectId}
         selectedFile={selectedFile}
-        files={projectFiles}
-        setFiles={setProjectFiles}
       />
     )}
   </>);

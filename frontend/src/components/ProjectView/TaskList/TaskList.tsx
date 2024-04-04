@@ -2,26 +2,29 @@
 import { IoMdAdd } from "react-icons/io";
 // Libraries
 import { useState } from "react";
+import { toast } from "react-toastify";
 // Styles
 import "./TaskList.scss";
 // Components
 import TaskItem from "../TaskItem/TaskItem";
 // API
-import { api } from "../../../api";
+import { api, AxiosError } from "../../../api";
 import { Droppable } from "@hello-pangea/dnd";
 // Custom hooks
 import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 
 interface Props {
   listId: number;
 }
 
 const TaskList = ({ listId }: Props) => {
-  const { lists, addTask } = useTasks();
+  const { project, lists, addTask, userCanPerform } = useTasks();
   const list = lists.find((list) => list.id === listId);
   const tasks = list?.tasks || [];
   const [showTaskInput, setShowTaskInput] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
+  const handleApiError = useApiErrorHandler();
 
   // Toggle visibility of add task input field
   const handleToggleTaskInputField = () => {
@@ -34,14 +37,17 @@ const TaskList = ({ listId }: Props) => {
     if (taskName.trim() === "") return;
 
     try {
-      const response = await api.post("/tasks", { name: taskName, listId });
-      const newTask = response.data;
+      const response = await api.post(`/tasks`, {
+        name: taskName,
+        listId,
+        projectId: project.id,
+      });
 
-      addTask(listId, newTask);
-
+      addTask(listId, response.data);
       setTaskName("");
+      toast.success("New task added");
     } catch (error) {
-      console.error("Failed to add task: ", error);
+      handleApiError(error as AxiosError);
     }
   };
 
@@ -52,17 +58,21 @@ const TaskList = ({ listId }: Props) => {
           <div className="list-header">
             <h2>{list.name}</h2>
 
-            <button
-              type="button"
-              className="btn-iconTxt add-task"
-              onClick={handleToggleTaskInputField}
-            >
-              <IoMdAdd size={16} />
-              Add Task
-            </button>
+            {/* Show add task button if user has 'create' permission */}
+            {userCanPerform("manageTasks") && (
+              <button
+                type="button"
+                className="btn-iconTxt add-task"
+                onClick={handleToggleTaskInputField}
+              >
+                <IoMdAdd size={16} />
+                Add Task
+              </button>
+            )}
           </div>
 
           <div className="list-main">
+            {/* Show task input field if user clicks on 'Add Task' button */}
             <div className="task-input-field">
               {showTaskInput && (
                 <>

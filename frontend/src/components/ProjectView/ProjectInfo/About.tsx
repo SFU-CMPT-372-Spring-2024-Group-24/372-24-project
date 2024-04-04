@@ -5,15 +5,11 @@ import { useState } from "react";
 import { IoSettingsOutline } from "react-icons/io5";
 // API
 import { api } from "../../../api";
-// Models
-import { Project } from "../../../models/Project";
+// Custom hooks
+import { useTasks } from "../../../hooks/TaskContext";
 
-interface Props {
-  project: Project;
-  setProject: (project: Project) => void;
-}
-
-const About = ({ project, setProject }: Props) => {
+const About = () => {
+  const { project, setProject, userCanPerform } = useTasks();
   const [showAboutModal, setShowAboutModal] = useState<boolean>(false);
   const [projectDescription, setProjectDescription] = useState<string>(
     project.description
@@ -44,9 +40,11 @@ const About = ({ project, setProject }: Props) => {
       <div className="project-description">
         <h2>
           About
-          <button type="button" className="btn-icon" onClick={openAboutModal}>
-            <IoSettingsOutline size={20} />
-          </button>
+          {userCanPerform("manageProject") && (
+            <button type="button" className="btn-icon" onClick={openAboutModal}>
+              <IoSettingsOutline size={20} />
+            </button>
+          )}
         </h2>
         <p>{project.description}</p>
       </div>

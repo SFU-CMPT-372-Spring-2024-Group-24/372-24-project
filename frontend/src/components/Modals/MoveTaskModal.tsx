@@ -32,20 +32,16 @@ const MoveTaskModal = ({
 
   // Move task
   const handleMoveTask = async () => {
-    try {
-      const response = await moveTask(
-        list.id,
-        selectedListId,
-        index,
-        selectedPosition
-      );
+    const response = await moveTask(
+      list.id,
+      selectedListId,
+      index,
+      selectedPosition
+    );
 
-      if (response) {
-        setShowTaskItemModal(false);
-        setShowModal(false);
-      }
-    } catch (error) {
-      console.error("Error moving task:", error);
+    if (response) {
+      setShowTaskItemModal(false);
+      setShowModal(false);
     }
   };
 

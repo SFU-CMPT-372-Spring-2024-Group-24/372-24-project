@@ -8,12 +8,13 @@ import { User } from "../../../models/User";
 import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Custom hooks
 import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 // Icons
 import { IoMdAdd } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
 import { FaCheck } from "react-icons/fa6";
 // API
-import { api } from "../../../api";
+import { api, AxiosError } from "../../../api";
 
 interface Props {
   task: Task;
@@ -21,10 +22,11 @@ interface Props {
 
 const TaskMembers = ({ task }: Props) => {
   const [assignees, setAssignees] = useState<User[]>([]);
-  const { projectMembers } = useTasks();
+  const { projectMembers, project, userCanPerform } = useTasks();
   const [showAssigneeModal, setShowAssigneeModal] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<User[]>(projectMembers);
+  const handleApiError = useApiErrorHandler();
 
   // Fetch task assignees
   useEffect(() => {
@@ -68,25 +70,31 @@ const TaskMembers = ({ task }: Props) => {
   const handleSelectUser = async (user: User) => {
     if (assignees.some((assignee) => assignee.id === user.id)) {
       try {
-        const response = await api.delete(`/tasks/${task.id}/users/${user.id}`);
+        const response = await api.delete(
+          `/tasks/${task.id}/users/${user.id}`,
+          {
+            data: { projectId: project.id },
+          }
+        );
 
         if (response.status === 200) {
           setAssignees(assignees.filter((assignee) => assignee.id !== user.id));
         }
       } catch (error) {
-        console.error("Failed to remove assignee: ", error);
+        handleApiError(error as AxiosError);
       }
     } else {
       try {
         const response = await api.post(`/tasks/${task.id}/users`, {
           userId: user.id,
+          projectId: project.id,
         });
 
         if (response.status === 201) {
           setAssignees([...assignees, user]);
         }
       } catch (error) {
-        console.error("Failed to add assignee: ", error);
+        handleApiError(error as AxiosError);
       }
     }
   };
@@ -96,13 +104,15 @@ const TaskMembers = ({ task }: Props) => {
       <div className="task-members col">
         <div className="members-header">
           <h4>Assignees</h4>
-          <button
-            type="button"
-            className="btn-icon"
-            onClick={openAssigneeModal}
-          >
-            <IoMdAdd size={16} />
-          </button>
+          {userCanPerform("manageTasks") && (
+            <button
+              type="button"
+              className="btn-icon"
+              onClick={openAssigneeModal}
+            >
+              <IoMdAdd size={16} />
+            </button>
+          )}
         </div>
 
         <ul className="member-list">
