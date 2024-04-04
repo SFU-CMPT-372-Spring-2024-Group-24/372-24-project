@@ -53,11 +53,32 @@ router.get("/:projectId/all", async (req, res) => {
 
 // Update user role for a project
 // Only Owner can update roles
+// If user is the only owner, they cannot be updated
 router.put("/:projectId", checkPermission('manageMembers'), async (req, res) => {
+  const userId = req.session.userId;
   const { projectId } = req.params;
   const { targetUserId, roleId } = req.body;
 
   try {
+    // If user is trying to update their own role and they are the only owner, return error
+    if (userId === targetUserId) {
+      const ownersCount = await UserProject.count({
+        where: {
+          ProjectId: projectId,
+        },
+        include: {
+          model: Role,
+          where: {
+            name: "Owner",
+          },
+        },
+      });
+
+      if (ownersCount === 1) {
+        return res.status(400).json({ message: "The only owner cannot update role"});
+      }
+    }
+
     await UserProject.update(
       { roleId },
       {

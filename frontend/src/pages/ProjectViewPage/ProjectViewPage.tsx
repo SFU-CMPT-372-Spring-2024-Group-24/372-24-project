@@ -94,6 +94,7 @@ const ProjectViewPage = () => {
             project={project}
             setProject={setProject}
             userRole={userRole}
+            setUserRole={setUserRole}
           >
             {/* Project description, members, files on left panel*/}
             <ProjectInfo />

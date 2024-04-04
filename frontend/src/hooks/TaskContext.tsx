@@ -32,6 +32,7 @@ interface TaskContextProps {
   projectFiles: FileModel[];
   setProjectFiles: (files: FileModel[]) => void;
   userRole: Role;
+  setUserRole: (role: Role) => void;
   userCanPerform: (action: string) => boolean;
 }
 export const TaskContext = createContext<TaskContextProps | undefined>(
@@ -53,12 +54,14 @@ interface TaskProviderProps {
   project: Project;
   setProject: (project: Project) => void;
   userRole: Role;
+  setUserRole: (role: Role) => void;
 }
 export const TaskProvider = ({
   children,
   project,
   setProject,
   userRole,
+  setUserRole,
 }: TaskProviderProps) => {
   const [lists, setLists] = useState<List[]>([]);
   const [projectMembers, setProjectMembers] = useState<User[]>([]);
@@ -301,6 +304,7 @@ export const TaskProvider = ({
         projectFiles,
         setProjectFiles,
         userRole,
+        setUserRole,
         lists,
         setLists,
         setTask,
