@@ -12,6 +12,7 @@ import { AxiosError, api } from "../../api";
 // Custom hooks
 import { useTasks } from "../../hooks/TaskContext";
 import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
+import { useUser } from "../../hooks/UserContext";
 
 interface Props {
   showModal: boolean;
@@ -22,9 +23,10 @@ interface Props {
 const ChangeMemberRoleModal = ({ showModal, setShowModal, member }: Props) => {
   if (!member) return null;
 
-  const { project, projectMembers, setProjectMembers } = useTasks();
+  const { project, projectMembers, setProjectMembers, setUserRole } = useTasks();
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const handleApiError = useApiErrorHandler();
+  const { user } = useUser();
 
   // Close modal
   const closeModal = () => {
@@ -56,6 +58,10 @@ const ChangeMemberRoleModal = ({ showModal, setShowModal, member }: Props) => {
 
           return m;
         });
+
+        if (user!.id === member.id) {
+          setUserRole(selectedRole);
+        }
 
         setProjectMembers(updatedMembers);
         closeModal();
