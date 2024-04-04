@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // Components
 import ProjectInfo from "../../components/ProjectView/ProjectInfo/ProjectInfo";
-import TaskLists from "../../components/ProjectView/TaskLists/TaskLists";
+import ProjectBoard from "../../components/ProjectView/ProjectBoard/ProjectBoard";
 // Models
 import { Project } from "../../models/Project";
 import { Role } from "../../models/ProjectRole";
@@ -22,9 +22,6 @@ const ProjectViewPage = () => {
   const [userRole, setUserRole] = useState<Role | null>(null);
   const navigate = useNavigate();
 
-  const [editingName, setEditingName] = useState<boolean>(false);
-  const [newName, setNewName] = useState<string>("");
-
   // Fetch project data
   useEffect(() => {
     const fetchProject = async () => {
@@ -33,7 +30,6 @@ const ProjectViewPage = () => {
 
         if (response.status === 200) {
           setProject(response.data);
-          setNewName(response.data.name);
         }
       } catch (error) {
         navigate("/projects/notfound");
@@ -59,33 +55,6 @@ const ProjectViewPage = () => {
     fetchUserRole();
   }, [project]);
 
-  // Edit project name
-  const handleEditProjectName = async () => {
-    if (!project) return;
-
-    const trimmedName = newName.trim();
-
-    if (!trimmedName || trimmedName === project.name) {
-      setNewName(project.name);
-      setEditingName(false);
-      return;
-    }
-
-    try {
-      const response = await api.put(`/projects/${project.id}`, {
-        name: trimmedName,
-      });
-
-      if (response.status === 200) {
-        setProject(response.data);
-        setNewName(response.data.name);
-        setEditingName(false);
-      }
-    } catch (error) {
-      console.error("Error editing project name:", error);
-    }
-  };
-
   return (
     <>
       {project && userRole && (
@@ -99,35 +68,8 @@ const ProjectViewPage = () => {
             {/* Project description, members, files on left panel*/}
             <ProjectInfo />
 
-            {/* Task lists on right panel */}
-            <section className="project">
-              {/* Project name */}
-              <div
-                className={`project-title ${editingName ? "editing" : ""}`}
-                onClick={() => setEditingName(true)}
-              >
-                {editingName ? (
-                  <input
-                    id="project-name"
-                    name="project-name"
-                    type="text"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    onBlur={handleEditProjectName}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleEditProjectName();
-                    }}
-                    autoFocus
-                  />
-                ) : (
-                  <h1 className="gradient-text">{project.name}</h1>
-                )}
-              </div>
-
-              {/* Task Lists */}
-
-              <TaskLists />
-            </section>
+            {/* Project board on right panel */}
+            <ProjectBoard />
           </TaskProvider>
         </div>
       )}
