@@ -20,16 +20,20 @@ form {
   transition: .3s;
 
   &:focus-within {
-      border: 2px solid $purple;
+    border: 2px solid $purple;
   }
 
   input {
-      width: 100%;
-      padding: .5rem;
-      background: transparent;
+    width: 100%;
+    padding: .5rem;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 18px;
+
+    &:focus {
       border: none;
-      outline: none;
-      font-size: 18px;
+    }
   }
 }
 

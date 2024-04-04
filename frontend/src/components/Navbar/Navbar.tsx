@@ -21,8 +21,8 @@ const Navbar = () => {
         </ul>
 
         <div className={styles.navbar_btns}>
-          <Link to="/login" className={styles["login-btn"]}>Login</Link> 
-          <Link to="/login" className={styles["register-btn"]}>Register</Link>
+          <Link to="/login?action=1" className={styles["login-btn"]}>Login</Link> 
+          <Link to="/login?action=2" className={styles["register-btn"]}>Sign Up</Link>
         </div>
 
         <div className={styles.navbar_menu} onClick={() => setShowNav(!showNav)}>
