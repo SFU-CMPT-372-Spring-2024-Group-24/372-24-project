@@ -19,14 +19,14 @@ interface Props {
 }
 
 const Attachments = ({ task }: Props) => {
-  const { project, projectFiles, setProjectFiles, userCanPerform } = useTasks();
+  const { project, projectFiles, userCanPerform } = useTasks();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [isShowingFilesDropdown, setIsShowingFilesDropdown] = useState<boolean>(false);
   const [taskFiles, setTaskFiles] = useState<FileModel[]>([]);
   const [isShowingAddFileModal, setIsShowingAddFileModal] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<FileModel>();
   const [isShowingPreviewFileModal, setIsShowingPreviewFileModal] = useState<boolean>(false);
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
 
   // Files dropdown
   useEffect(() => {

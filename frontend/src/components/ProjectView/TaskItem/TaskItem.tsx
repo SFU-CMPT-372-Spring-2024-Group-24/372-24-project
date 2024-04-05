@@ -37,7 +37,7 @@ interface Props {
 }
 
 const TaskItem = ({ list, task, index }: Props) => {
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
   const [showTaskItemModal, setShowTaskItemModal] = useState<boolean>(false);
   const [showMoveTaskModal, setShowMoveTaskModal] = useState<boolean>(false);
   const { project, removeTask, userCanPerform } = useTasks();

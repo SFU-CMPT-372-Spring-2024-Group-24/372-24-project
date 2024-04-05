@@ -22,7 +22,7 @@ const ProjectInfo = () => {
   const navigate = useNavigate();
   const { user } = useUser();
   const { project, projectMembers, userCanPerform } = useTasks();
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
 
   // Delete project
   const handleDeleteProject = async () => {

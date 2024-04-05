@@ -24,7 +24,7 @@ const TaskList = ({ listId }: Props) => {
   const tasks = list?.tasks || [];
   const [showTaskInput, setShowTaskInput] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
 
   // Toggle visibility of add task input field
   const handleToggleTaskInputField = () => {

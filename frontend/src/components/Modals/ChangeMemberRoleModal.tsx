@@ -25,7 +25,7 @@ const ChangeMemberRoleModal = ({ showModal, setShowModal, member }: Props) => {
 
   const { project, projectMembers, setProjectMembers, setUserRole } = useTasks();
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
   const { user } = useUser();
 
   // Close modal

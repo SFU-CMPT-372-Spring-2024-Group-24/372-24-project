@@ -23,7 +23,7 @@ const Priority = ({ task }: Props) => {
     task.priority || ""
   );
   const { setTask, project, userCanPerform } = useTasks();
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
 
   // For toggling the modal
   const togglePriorityModal = () => setShowPriorityModal(!showPriorityModal);
