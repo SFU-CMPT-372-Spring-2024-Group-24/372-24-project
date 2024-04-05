@@ -12,27 +12,34 @@ const AdminPage = () => {
   const [showDashboard, setShowDashboard] = useState(true);
 
   const toggleUsers = () => {
-    setShowUsers(!showUsers);
+    setShowUsers(true);
     setShowProjects(false);
     setShowDashboard(false);
   };
 
   const toggleProjects = () => {
-    setShowProjects(!showProjects);
     setShowUsers(false);
+    setShowProjects(true);
     setShowDashboard(false);
   };
 
   const toggleDashboard = () => {
-    setShowDashboard(!showDashboard);
     setShowUsers(false);
     setShowProjects(false);
+    setShowDashboard(true);
   };
 
   return (
     <div className="admin-page-container">
       <div className="admin-menu-container">
-        <AdminMenu toggleUsers={toggleUsers} toggleProjects={toggleProjects} toggleDashboard={toggleDashboard} />
+        <AdminMenu
+          toggleUsers={toggleUsers}
+          toggleProjects={toggleProjects}
+          toggleDashboard={toggleDashboard}
+          usersActive={showUsers}
+          projectsActive={showProjects}
+          dashboardActive={showDashboard}
+        />
       </div>
       <div className="admin-content-container">
         <div className="admin-logout-container">
@@ -41,7 +48,10 @@ const AdminPage = () => {
         <div className="admin-content">
           {showUsers && <AdminUsers />}
           {showProjects && <AdminProjects />}
-          {showDashboard && <AdminDashboard />}
+          {showDashboard && <AdminDashboard
+            toggleUsers={toggleUsers}
+            toggleProjects={toggleProjects}
+          />}
         </div>
       </div>
     </div>

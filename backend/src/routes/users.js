@@ -178,6 +178,25 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// changes isAdmin status
+router.patch("/:id/toggleAdmin", async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.isAdmin = !user.isAdmin;
+    await user.save();
+    res.json({ message: "Admin status toggled successfully", user });
+  } catch (error) {
+    console.error("Error toggling admin status:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // Update user: name, username, email, password
 router.put("/me", async (req, res) => {
   let { name, username, email, oldPassword, newPassword, newPasswordConfirmation } = req.body;

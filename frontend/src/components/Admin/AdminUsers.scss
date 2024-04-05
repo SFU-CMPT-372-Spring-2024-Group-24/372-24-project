@@ -1,5 +1,5 @@
 .admin-users-container {
-  
+
   h2 {
     font-family: "Lato", sans-serif;
     color: white;
@@ -12,16 +12,24 @@
     list-style: none;
     padding: 0;
     margin: 5% 20%;
-    background: radial-gradient(circle at center, rgb(160, 185, 252) 0%, rgb(161, 184, 245) 50%);
+    background: rgb(45, 50, 90);
     border: none;
     border-radius: 5px;
-    box-shadow: rgba(186, 203, 250, 0.25) 0px 6px 12px -2px, rgba(186, 203, 250, 0.3) 0px 3px 7px -3px;
+    box-shadow: rgba(45, 50, 90, 0.25) 0px 6px 12px -2px, rgba(186, 203, 250, 0.3) 0px 3px 7px -3px;
     padding-top: 25px;
     padding-bottom: 25px;
 
+    .title {
+      color: white;
+      font-family: "Lato", "sans serif";
+      margin-left: 5%;
+      margin-bottom: 10px;
+      font-weight: 300;
+    }
+
     .user-item {
       margin-bottom: 20px;
-      margin: 5px 15%;
+      margin: 5px 10%;
       border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 
       .user-more-info {
@@ -29,6 +37,53 @@
         font-size: 1vw;
         margin-left: 20px;
         font-weight: 250;
+        color: white;
+
+
+        .toggle-admin {
+          appearance: none;
+          background-color: rgba(26, 27, 32, 0.218);
+          border: 1px solid #1A1A1A;
+          border-radius: 15px;
+          box-sizing: border-box;
+          color: #ffffff;
+          cursor: pointer;
+          display: inline-block;
+          font-family: "Nunito", "sans serif";
+          font-size: 1vw;
+          font-weight: 350;
+          line-height: normal;
+          margin: 0;
+          min-height: 20px;
+          min-width: 0;
+          outline: none;
+          padding: 10px 20px;
+          text-align: center;
+          text-decoration: none;
+          transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+          user-select: none;
+          -webkit-user-select: none;
+          touch-action: manipulation;
+          width: 30%;
+          will-change: transform;
+          margin-bottom: 10px;
+        }
+
+        .toggle-admin:disabled {
+          pointer-events: none;
+        }
+
+        .toggle-admin:hover {
+          color: #fff;
+          background-color: #1A1A1A;
+          box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+          transform: translateY(-2px);
+        }
+
+        .toggle-admin:active {
+          box-shadow: none;
+          transform: translateY(0);
+        }
       }
 
       .user-header {
@@ -45,7 +100,7 @@
           }
 
           #delete-button {
-            color: rgb(150, 28, 28);
+            color: rgb(244, 76, 76);
           }
 
           #delete-button:hover {
@@ -53,7 +108,7 @@
           }
 
           #more-button {
-            color: rgb(31, 42, 165);
+            color: rgb(126, 136, 248);
           }
 
           #more-button:hover {
@@ -65,17 +120,23 @@
         .action-buttons button {
           font-family: "Nunito", sans-serif;
           font-size: 1vw;
+          color: white;
+          margin-bottom: 10px;
         }
 
         .user-name {
           margin-right: 10px;
           font-size: 1.25vw;
           font-weight: 300;
+
+          .adminStatus {
+            color: rgb(163, 62, 62);
+          }
         }
       }
 
       .user-description {
-        margin-top: 10px;
+        margin-bottom: 10px;
       }
     }
   }

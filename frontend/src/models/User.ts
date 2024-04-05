@@ -7,5 +7,6 @@ export interface User {
   email: string;
   profilePicture: string;
   role: Role | null;
+  isAdmin: boolean;
   createdAt: string;
 }
