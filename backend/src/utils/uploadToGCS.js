@@ -8,6 +8,20 @@ const cloudStorage = new Storage({
 });
 const bucket = cloudStorage.bucket(process.env.GCLOUD_STORAGE_BUCKET);
 
+// Create file record in the database and attach it to the request object
+async function createFileRecord(req, hash, publicUrl) {
+  const file = await File.create({
+    name: req.file.originalname,
+    url: publicUrl,
+    type: path.extname(req.file.originalname).slice(1),
+    hash: hash
+  });
+
+  req.file.fileId = file.id;
+  req.file.publicUrl = file.url;
+};
+
+// Upload file to Google Cloud Storage
 function uploadToGCS(callback) {
   return async function (req, res, next) {
     // Compute the hash of the file's content
@@ -20,6 +34,12 @@ function uploadToGCS(callback) {
     let publicUrl;
     if (existingFile) {
       publicUrl = existingFile.url;
+
+      // Create a new file record with the existing publicUrl and hash
+      await createFileRecord(req, hash, publicUrl);
+
+      // Call the next middleware
+      return callback(req, res, next);
     } else {
       // If a file with the same hash does not exist, upload the file to GCS
       const filename = req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname);
@@ -31,27 +51,18 @@ function uploadToGCS(callback) {
         res.status(500).json({ message: 'Error uploading file to Google Cloud Storage' });
       });
 
-      blobStream.on('finish', () => {
+      blobStream.on('finish', async () => {
         publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+
+        // Create a new file record with the new publicUrl and hash
+        await createFileRecord(req, hash, publicUrl);
+
+        // Call the next middleware
+        return callback(req, res, next);
       });
 
       blobStream.end(req.file.buffer);
     }
-
-    // Create a new file record with the publicUrl and hash
-    const file = await File.create({ 
-      name: req.file.originalname,
-      url: publicUrl,
-      type: path.extname(req.file.originalname).slice(1),
-      hash: hash 
-    });
-
-    // Attach the file record to the request object
-    req.file.fileId = file.id;
-    req.file.publicUrl = file.url;
-
-    // Call the next middleware
-    return callback(req, res, next);
   };
 }
 

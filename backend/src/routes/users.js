@@ -1,12 +1,13 @@
 const { User } = require("../db");
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcrypt");
 const validator = require("validator");
 const Sequelize = require("sequelize");
 // Utility functions
 const { validateName, validateUsername, validateEmail, validatePassword, hashPassword, comparePassword } = require("../utils/userUtils");
 const { uploadToGCS } = require("../utils/uploadToGCS");
+const validateImage = require("../middleware/validateImage");
+// Third-party middleware
 const multer = require("multer");
 
 // Get all users to test database connection
@@ -235,7 +236,7 @@ router.put("/me", async (req, res) => {
 // Upload profile picture
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post("/me/profile-picture", upload.single("profilePicture"), uploadToGCS(async (req, res) => {
+router.post("/me/profile-picture", upload.single("profilePicture"), validateImage, uploadToGCS(async (req, res) => {
   try {
     const user = await User.findByPk(req.session.userId);
     if (!user) {

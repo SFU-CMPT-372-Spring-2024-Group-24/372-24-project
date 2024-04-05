@@ -45,8 +45,6 @@ const AddProfilePictureModal = ({ showAddProfilePictureModal, setShowAddProfileP
       toast.success("Profile picture updated successfully");
     } catch (error) {
       handleApiError(error as AxiosError);
-      console.log(error);
-      
     }
   }
 
@@ -62,6 +60,7 @@ const AddProfilePictureModal = ({ showAddProfilePictureModal, setShowAddProfileP
       </Modal.Header>
       
       <Modal.Body>
+        <p>Accepted file types: .png, .jpg, .jpeg, .webp, .gif, .svg, .avif, .tiff</p>
         <div
           {...getRootProps()}
           style={{ opacity: isDragActive || isAddFileModalHovered ? 0.5 : 1 }}
