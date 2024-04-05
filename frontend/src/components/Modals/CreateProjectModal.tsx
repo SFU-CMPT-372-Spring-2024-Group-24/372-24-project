@@ -3,7 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // Styles
-import './CreateProjectModal.scss';
+import "./CreateProjectModal.scss";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
 // Models
@@ -29,7 +29,7 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
     setProjectName("");
     setProjectDescription("");
     setShowModal(false);
-  }
+  };
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +47,7 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
         description: projectDescription,
         userId: user.id,
       });
-
+      //call api to make a chat
       const project: Project = response.data;
       navigate(`/projects/${project.id}`);
       closeModal();
@@ -81,12 +81,23 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
       <form onSubmit={handleCreateProject}>
         <div className="input-field">
           <label htmlFor="project-name">Project Name</label>
-          <input type="text" id="project-name" name="project-name" value={projectName} onChange={(e) => setProjectName(e.target.value)} />
+          <input
+            type="text"
+            id="project-name"
+            name="project-name"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+          />
         </div>
 
         <div className="input-field">
           <label htmlFor="project-description">Project Description</label>
-          <textarea id="project-description" name="project-description" value={projectDescription} onChange={(e) => setProjectDescription(e.target.value)} />
+          <textarea
+            id="project-description"
+            name="project-description"
+            value={projectDescription}
+            onChange={(e) => setProjectDescription(e.target.value)}
+          />
         </div>
       </form>
 
