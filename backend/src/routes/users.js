@@ -195,25 +195,18 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// changes isAdmin status
 router.patch("/:id/toggleAdmin", async (req, res) => {
   const userId = req.params.id;
 
   try {
-    // Find the user by ID
     const user = await User.findByPk(userId);
-
-    // Check if the user exists
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Toggle the isAdmin status
     user.isAdmin = !user.isAdmin;
-
-    // Save the updated user to the database
     await user.save();
-
-    // Respond with the updated user object
     res.json({ message: "Admin status toggled successfully", user });
   } catch (error) {
     console.error("Error toggling admin status:", error);
