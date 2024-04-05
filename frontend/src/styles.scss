@@ -21,12 +21,12 @@ body {
   color: $text;
 }
 
-main {
+// main {
   // margin: 1rem;
   // padding: 1rem;
   // border: 1px solid;
-  min-height: 100vh;
-}
+  // min-height: 100vh;
+// }
 
 h1 {
   font-weight: 700;
@@ -37,6 +37,16 @@ h2 {
 }
 
 h3, h4 {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+h5 {
+  font-size: 16px;
+}
+
+.modal-title {
+  font-size: 18px;
   font-weight: 600;
 }
 
@@ -113,17 +123,31 @@ button.btn-cancel {
   }
 }
 
+button.btn-save-changes:disabled {
+  background: $light-gray;
+  color: $dark-gray;
+
+  &:hover {
+    box-shadow: none;
+  }
+}
+
 // Form styles
-input, textarea {
+input, textarea, select {
   padding: .5rem;
   border-radius: 10px;
   outline: none;
   border: 2px solid $light-gray;
   transition: border .3s;
+  font-size: 14px;
 
   &:focus {
     border: 2px solid $purple;
   }
+}
+
+select {
+  padding: .25rem 1rem;
 }
 
 textarea {
@@ -140,8 +164,7 @@ textarea {
 }
 
 .Toastify__toast  {
-  background-color: $light-gray !important;
-  color: $black !important;
+  color: $dark-gray !important;
 
   .Toastify__toast-icon {
     svg {
@@ -150,15 +173,27 @@ textarea {
   }
 
   button {
-    opacity: 0.7;
+    opacity: 0.5;
     color: $black;
 
     &:hover {
       box-shadow: none;
     }
   }
+}
 
-  .Toastify__progress-bar--success {
-    background: $black;
+.Toastify__toast--error {
+  .Toastify__toast-icon {
+    svg {
+      fill: $red;
+    }
+  }
+}
+
+.Toastify__toast--success {
+  .Toastify__toast-icon {
+    svg {
+      fill: $green;
+    }
   }
 }

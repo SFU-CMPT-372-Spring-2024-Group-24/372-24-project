@@ -25,30 +25,11 @@ const UserModal = ({}: Props) => {
   const closeModal = () => setProfileIsOpen(false);
 
   const handleLogout = async () => {
-    // try {
-    //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/logout`, {
-    //     method: "POST",
-    //     credentials: "include",
-    //   });
-
-    //   if (response.ok) {
-    //     setUser(null);
-    //     navigate("/login");
-    //   } else {
-    //     const errorData = await response.json();
-    //     console.error("Logout failed: ", errorData);
-    //   }
-    // } catch (error) {
-    //   console.error("Failed to logout: ", error);
-    // }
-
     try {
       const response = await api.post("/users/logout");
-      if (response.data.message === 'Logged out') {
+      if (response.data.loggedOut) {
         setUser(null);
-        navigate("/login");
-      } else {
-        console.error("Logout failed: ", response.data);
+        navigate("/");
       }
     } catch (error) {
       console.error("Failed to logout: ", error);

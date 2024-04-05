@@ -33,3 +33,6 @@ docker-compose.yml
 config.json
 
 app.yaml
+
+/backend/uploads/
+/backend/ignore/

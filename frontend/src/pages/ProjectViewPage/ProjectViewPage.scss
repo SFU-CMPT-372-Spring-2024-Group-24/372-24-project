@@ -1,17 +1,5 @@
-@import '../../variables.scss';
+@import '../../styles.scss';
 
 .project-view-page {
   display: flex;
-
-  .project {
-    flex-grow: 1;
-    padding: 1rem;
-
-    .project-lists {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-    }
-  }
-
 }

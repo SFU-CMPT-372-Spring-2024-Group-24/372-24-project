@@ -28,6 +28,8 @@ const Project = require('./models/Project')(sequelize);
 const List = require('./models/List')(sequelize);
 const Task = require('./models/Task')(sequelize);
 const File = require('./models/File')(sequelize);
+const Role = require('./models/Role')(sequelize);
+const UserProject = require('./models/UserProject')(sequelize);
 
 // Define relationships
 // Chat
@@ -44,8 +46,15 @@ Chat.belongsToMany(Project, { through: 'ProjectChat' });
 
 // Project
 // UserProject junction
-User.belongsToMany(Project, { through: 'UserProject' });
-Project.belongsToMany(User, { through: 'UserProject' });
+// User.belongsToMany(Project, { through: 'UserProject' });
+// Project.belongsToMany(User, { through: 'UserProject' });
+
+// UserProject junction, with Role
+User.belongsToMany(Project, { through: UserProject });
+Project.belongsToMany(User, { through: UserProject });
+UserProject.belongsTo(Role, { foreignKey: 'roleId' });
+Role.hasMany(UserProject, { foreignKey: 'roleId' });
+
 Project.hasMany(List, { foreignKey: 'projectId' });
 List.belongsTo(Project, { foreignKey: 'projectId' });
 // Task
@@ -68,6 +77,17 @@ File.belongsToMany(Task, { through: 'TaskFile' });
 Project.belongsToMany(File, { through: 'ProjectFile' });
 File.belongsToMany(Project, { through: 'ProjectFile' });
 
+// Populate Role table if empty when starting application, there are only 3 roles
+const roles = ['Owner', 'Editor', 'Viewer'];
+Role.findAndCountAll().then(result => {
+    if (result.count === 0) {
+        roles.forEach(role => {
+            Role.create({ name: role })
+                .catch(error => console.error(`Error creating role ${role}:`, error));
+        });
+    }
+});
+
 sequelize.sync({
     alter: true,
     logging: false
@@ -82,5 +102,7 @@ module.exports = {
     Project,
     List,
     Task,
-    File
+    File,
+    Role,
+    UserProject,
 };

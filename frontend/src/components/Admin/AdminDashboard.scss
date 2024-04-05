@@ -1,0 +1,128 @@
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h2 {
+    font-family: "Lato", sans-serif;
+    color: white;
+    font-weight: 300;
+    font-size: 3vw;
+    margin-left: 5%;
+    align-self: flex-start;
+    margin-bottom: 30px;
+  }
+
+  p {
+    color: white;
+    font-size: 2vw;
+    font-family: "Lato", sans-serif;
+    font-weight: 300;
+    background: rgb(45, 50, 90);
+    padding: 20px 50px;
+    margin-top: 25px;
+
+    span {
+      text-align: center;
+      align-items: center;
+    }
+
+    .total-users {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    svg {
+      margin-right: 5px;
+    }
+  }
+
+  .dash-box {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .admin-dash {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+  }
+
+  .user,
+  .project {
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    display: inline-block;
+    border-color: #3fe8ab;
+    background: transparent;
+    color: var(--cultured) !important;
+    font-size: 1rem;
+    flex: 1;
+    margin-right: 1rem;
+    text-align: center;
+
+    .list-button {
+      color: #3fe8ab;
+      letter-spacing: 0.1em;
+    }
+  }
+
+  .user:hover,
+  .project:hover {
+    background: var(--gradient);
+    color: var(--cultured) !important;
+    border: 1px solid transparent;
+    font-size: 1.1rem;
+    transition: all 0.6s ease;
+    display: inline-block;
+
+    .list-button {
+      color: rgb(37, 42, 74);
+    }
+  }
+
+  .project {
+    border-color: #6055fe;
+
+    .list-button {
+      color: #6055fe;
+    }
+  }
+
+  .project:hover {
+    background: var(--gradient2);
+
+    .list-button {
+      color: rgb(37, 42, 74);
+    }
+  }
+
+    .go-to-homepage-button {
+      background-color: transparent;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1em;
+      letter-spacing: 0.1em;
+      font-weight: 400;
+      padding: 10px 30px;
+      transition: 0.5s;
+      font-family: "Nunito", sans-serif;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+    }
+  
+    .go-to-homepage-button:hover {
+      color: rgb(37, 42, 74);
+      background-color: #ececec;
+    }
+
+}

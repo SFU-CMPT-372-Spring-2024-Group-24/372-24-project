@@ -1,5 +1,6 @@
-const { Task, User } = require('../db');
+const { Task, User, File } = require('../db');
 const express = require('express');
+const checkPermission = require('../middleware/checkPermission');
 
 const router = express.Router();
 
@@ -20,7 +21,7 @@ router.get('/:listId', async (req, res) => {
 });
 
 // Create task
-router.post('/', async (req, res) => {
+router.post('/', checkPermission('manageTasks'), async (req, res) => {
     const { name, listId } = req.body;
 
     try {
@@ -31,14 +32,14 @@ router.post('/', async (req, res) => {
 
         await task.update({ orderIndex: -task.id });
 
-        res.json(task);
+        res.status(200).json(task);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
 });
 
 // Update task
-router.put('/:id', async (req, res) => {
+router.put('/:id', checkPermission('manageTasks'), async (req, res) => {
     const id = req.params.id;
     const { name, priority, description, dueDate, isDone } = req.body;
     const fieldsToUpdate = {};
@@ -52,7 +53,7 @@ router.put('/:id', async (req, res) => {
     if (description !== undefined) {
         fieldsToUpdate.description = description;
     }
-    if (dueDate) {
+    if (dueDate !== undefined) {
         fieldsToUpdate.dueDate = dueDate;
     }
     if (isDone !== undefined) {
@@ -75,7 +76,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete task
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', checkPermission('manageTasks'), async (req, res) => {
     const id = req.params.id;
 
     try {
@@ -92,7 +93,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Update task order
-router.put('/:id/order', async (req, res) => {
+router.put('/:id/order', checkPermission('manageTasks'), async (req, res) => {
     const id = req.params.id;
 
     const { orderIndex, listId } = req.body;
@@ -134,7 +135,7 @@ router.get('/:id/users', async (req, res) => {
 });
 
 // Add user to task
-router.post('/:id/users', async (req, res) => {
+router.post('/:id/users', checkPermission('manageTasks'), async (req, res) => {
     const taskId = req.params.id;
     const { userId } = req.body;
 
@@ -159,7 +160,7 @@ router.post('/:id/users', async (req, res) => {
 });
 
 // Remove user from task
-router.delete('/:id/users/:userId', async (req, res) => {
+router.delete('/:id/users/:userId', checkPermission('manageTasks'), async (req, res) => {
     const taskId = req.params.id;
     const userId = req.params.userId;
 
@@ -178,6 +179,71 @@ router.delete('/:id/users/:userId', async (req, res) => {
 
         // res.json({ message: 'User removed from task' });
         res.status(200).json({ message: 'User removed from task' });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Get files
+router.get('/:id/files', async (req, res) => {
+    const taskId = req.params.id;
+
+    try {
+        const task = await Task.findByPk(taskId);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        const files = await task.getFiles();
+
+        res.json(files);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Add file to task
+router.post('/:id/files', checkPermission('manageTasks'), async (req, res) => {
+    const taskId = req.params.id;
+    const { fileId } = req.body;
+    try {
+        const task = await Task.findByPk(taskId);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+        
+        const file = await File.findByPk(fileId);
+        if (!file) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        await task.addFile(file);
+
+        res.status(201).json({ message: 'File added to task' });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Remove file from task
+router.delete('/:id/files/:fileId', checkPermission('manageTasks'), async (req, res) => {
+    const taskId = req.params.id;
+    const fileId = req.params.fileId;
+
+    try {
+        const task = await Task.findByPk(taskId);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        const file = await File.findByPk(fileId);
+        if (!file) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        await task.removeFile(file);
+
+        res.status(200).json({ message: 'File removed from task' });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }

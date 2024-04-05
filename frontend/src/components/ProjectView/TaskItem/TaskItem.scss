@@ -1,24 +1,23 @@
-@import '../../../variables.scss';
+@import "../../../variables.scss";
 
 // The task item displayed in the list
 .task-item {
   background: #FFF;
-  margin: 1rem 0;
+  margin: .5rem 0;
   padding: .5rem 1rem;
   border-radius: 10px;
   cursor: pointer;
   border: 2px solid transparent;
 
   &:hover {
-    transform: scale(1.02);
     border-color: $purple;
-    transition: .5s ease-in-out;
+    transition: 0.5s ease-in-out;
   }
 
   h3 {
     font-size: 15px;
     font-weight: 500;
-    margin-bottom: .25rem;
+    margin-bottom: 0.25rem;
   }
 
   .info {
@@ -45,10 +44,10 @@
 // The modal for setting the priority of the task
 .priority-modal {
   position: absolute;
-  margin: .5rem 0;
+  margin: 0.5rem 0;
 
   .modal-content {
-    box-shadow: 0 0 10px 3px $light-gray;
+    box-shadow: 0 0 5px 0 $dark-gray;
   }
 
   .modal-header {
@@ -60,19 +59,23 @@
   }
 
   .modal-body {
-    padding: .5rem 1rem;
-    display: flex;
-    flex-direction: column;
+    padding-top: 0;
 
     .btn-group {
       gap: 1rem;
+
+      label {
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: capitalize;
+      }
     }
 
     .btn {
       background: $light-gray;
       border: none;
       color: $black;
-      transition: .3s;
+      transition: 0.3s;
 
       &:hover {
         background: $dark-gray;
@@ -94,10 +97,10 @@
 // The modal for setting the due date of the task
 .dueDate-modal {
   position: absolute;
-  margin: .5rem 0;
+  margin: 0.5rem 0;
 
   .modal-content {
-    box-shadow: 0 0 10px 3px $light-gray;
+    box-shadow: 0 0 5px 0 $dark-gray;
   }
 
   .modal-header {
@@ -109,7 +112,7 @@
   }
 
   .modal-body {
-    padding: 1rem;
+    padding-top: 0;
 
     form {
       margin-top: 0;
@@ -137,46 +140,6 @@
     height: 30px;
     border-radius: 50%;
     object-fit: cover;
-  }
-
-  .list-name {
-    font-size: 14px;
-    color: $dark-gray;
-    border: 1px solid;
-    border-radius: 15px;
-    padding: .1rem .5rem;
-    user-select: none;
-    width: fit-content;
-    height: fit-content;
-  }
-
-  .priority {
-    .task-priority {
-      font-size: 14px;
-      font-weight: 700;
-      border: 1px solid;
-      border-radius: 10px;
-      padding: .25rem .5rem;
-      text-transform: capitalize;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      cursor: pointer;
-      line-height: 1;
-      width: fit-content;
-    }
-
-    button.set-priority {
-      font-size: 14px;
-      font-weight: 600;
-      border: 1px solid $dark-gray;
-      padding: .25rem .5rem;
-
-      &:hover {
-        background: $dark-gray;
-        color: $white;
-      }
-    }
   }
 
   .header {
@@ -207,19 +170,73 @@
         display: flex;
         justify-content: center;
         gap: 1rem;
-        margin-top: .5rem;
+        margin-top: 0.5rem;
       }
     }
 
     .sub-header {
-      margin-top: .5rem;
+      margin-top: 0.5rem;
       display: flex;
-      gap: .5rem;
+
+      span.list-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: $dark-gray;
+        border: 1px solid $light-gray;
+        border-radius: 15px;
+        padding: 0.25rem 0.5rem;
+        user-select: none;
+      }
+
+      span.list-name.hasPriority {
+        border-right: none;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      div.priority {
+        .task-priority {
+          font-size: 14px;
+          font-weight: 600;
+          border: 1px solid $light-gray;
+          border-radius: 15px;
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+          padding: 0.25rem 0.5rem;
+          text-transform: capitalize;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          width: fit-content;
+          color: $white;
+          user-select: none;
+        }
+
+        .task-priority.editable {
+          cursor: pointer;
+        }
+
+        button.set-priority {
+          color: $dark-gray;
+          border: 1px solid $light-gray;
+          padding: 0.25rem 0.5rem;
+          border-radius: 15px;
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+          line-height: unset;
+
+          &:hover {
+            background: $dark-gray;
+            color: $white;
+          }
+        }
+      }
     }
 
+    // The closeModal, moveTask, deleteTask buttons
     .button-group {
       flex-direction: column;
-      gap: .5rem;
+      gap: 0.5rem;
       position: absolute;
       right: -50px;
       top: 0;
@@ -253,14 +270,17 @@
       }
 
       p {
-        cursor: pointer;
         flex-grow: 1;
         font-size: 14px;
         white-space: pre-wrap;
-        padding: .25rem .5rem;
+        padding: 0.25rem 0.5rem;
         border-radius: 5px;
-        transition: .3s;
         background: $light-gray;
+      }
+
+      p.editable {
+        cursor: pointer;
+        transition: 0.3s;
 
         &:hover {
           background: $dark-gray;
@@ -272,19 +292,27 @@
     .check-due-date {
       display: flex;
       align-items: center;
-      gap: .5rem;
+      gap: 0.5rem;
       margin-bottom: 1rem;
       font-size: 15px;
 
       input[type="checkbox"] {
         width: 20px;
         height: 20px;
+        cursor: pointer;
+      }
+
+      input[type="checkbox"]:disabled {
+        cursor: not-allowed;
       }
 
       p {
-        cursor: pointer;
-        padding: .25rem;
+        padding: 0.25rem;
         border-radius: 5px;
+      }
+
+      p.editable {
+        cursor: pointer;
 
         &:hover {
           background: $light-gray;
@@ -295,28 +323,42 @@
         font-size: 14px;
         font-weight: 600;
         border: 1px solid $dark-gray;
-        padding: .25rem .5rem;
+        padding: 0.25rem 0.5rem;
 
         &:hover {
           background: $dark-gray;
           color: $white;
         }
       }
+
+      p.no-due-date {
+        color: $dark-gray;
+        padding: 0;
+      }
     }
 
     .member,
-    .file {
+    .file,
+    .upload-file {
       display: flex;
       align-items: center;
-      gap: .5rem;
+      gap: 0.5rem;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 14px;
+      font-weight: 500;
     }
 
-    .task-members {
-      .members-header {
+    .task-members,
+    .attachments {
+
+      .members-header,
+      .attachments-header {
         display: flex;
         align-items: center;
         gap: 1rem;
-        margin-bottom: .5rem;
+        margin-bottom: 0.5rem;
 
         h4 {
           margin: 0;
@@ -335,7 +377,7 @@
       .member-list {
         display: flex;
         flex-direction: column;
-        gap: .25rem;
+        gap: 0.25rem;
 
         li {
           font-size: 14px;
@@ -348,13 +390,63 @@
     .attachments {
       margin-bottom: 0;
     }
+
+    .attachments {
+      .dropdown {
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 16px;
+        padding: 10px;
+        z-index: 1;
+        width: fit-content;
+        box-shadow: 0 0 5px 0 $dark-gray;
+
+        button {
+          font-size: var(--bs-body-font-size);
+          font-weight: var(--bs-body-font-weight);
+          width: 100%;
+
+          div {
+            width: 100%;
+          }
+
+          &:hover {
+            background: $light-gray;
+          }
+        }
+      }
+
+      &>div.task-file {
+        display: flex;
+        flex-direction: row;
+
+        // align-items: end;
+        &>button {
+          font-size: var(--bs-body-font-size);
+          font-weight: var(--bs-body-font-weight);
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        .remove-from-task {
+          color: $red;
+
+          &:hover {
+            opacity: 0.75;
+          }
+        }
+      }
+    }
   }
 
   .modal-footer {
     background: $white;
 
     button.btn-view-more-comments {
-      margin: .5rem 0;
+      margin: 0.5rem 0;
       color: $dark-gray;
       font-weight: 500;
 
@@ -369,17 +461,17 @@
       .comment {
         display: flex;
         align-items: center;
-        gap: .5rem;
-        margin-bottom: .25rem;
+        gap: 0.5rem;
+        margin-bottom: 0.25rem;
         font-size: 14px;
 
         .comment-details {
           flex-grow: 1;
           border: 1px solid $light-gray;
-          padding: .5rem;
+          padding: 0.5rem;
           border-radius: 10px;
           margin: 0;
-          background: #FFF;
+          background: #fff;
 
           .comment-header {
             display: flex;
@@ -394,17 +486,17 @@
               font-size: 12px;
               color: $dark-gray;
               font-style: italic;
-              margin-left: .5rem;
+              margin-left: 0.5rem;
             }
 
             .comment-isEdited {
               font-size: 12px;
               color: $dark-gray;
-              margin-left: .5rem;
+              margin-left: 0.5rem;
             }
 
             .button-group {
-              gap: .1rem;
+              gap: 0.1rem;
             }
           }
 
@@ -418,7 +510,7 @@
       .add-comment {
         display: flex;
         align-items: center;
-        gap: .5rem;
+        gap: 0.5rem;
         margin-top: 1rem;
 
         textarea {
@@ -427,9 +519,12 @@
         }
 
         button {
-          background-color: $purple;
+          background: $purple;
           color: $white;
-          border-radius: 5px;
+
+          &:hover {
+            background: $light-purple;
+          }
         }
       }
     }
@@ -454,15 +549,21 @@
     .search-icon {
       position: absolute;
       top: 50%;
-      left: .5rem;
+      left: 0.5rem;
       transform: translateY(-50%);
-      color: $purple;
+      transition: color 0.3s;
     }
 
     input {
       width: 100%;
       border-radius: 10px;
-      padding: .5rem .5rem .5rem 2rem;
+      padding: 0.5rem 0.5rem 0.5rem 2rem;
+    }
+
+    &:focus-within {
+      .search-icon {
+        color: $purple;
+      }
     }
   }
 
@@ -470,14 +571,14 @@
     margin-top: 1rem;
     display: flex;
     flex-direction: column;
-    gap: .5rem;
+    gap: 0.5rem;
 
     li.no-member-found {
       font-size: 14px;
       font-weight: 500;
       border: 1px solid $light-gray;
       border-radius: 10px;
-      padding: .25rem .5rem;
+      padding: 0.25rem 0.5rem;
     }
 
     .member {
@@ -486,7 +587,7 @@
       align-items: center;
       border: 1px solid $light-gray;
       border-radius: 10px;
-      padding: .25rem .5rem;
+      padding: 0.25rem 0.5rem;
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
@@ -502,7 +603,7 @@
         flex-grow: 1;
 
         p:nth-child(2) {
-          color: rgba($color: $black, $alpha: 0.5)
+          color: rgba($color: $black, $alpha: 0.5);
         }
       }
 
@@ -511,4 +612,64 @@
       }
     }
   }
+}
+
+// React-datepicker styles
+.react-datepicker {
+  padding: .5rem;
+  background: $white !important;
+
+  .react-datepicker__header {
+    background: $white;
+  }
+
+  .react-datepicker__day,
+  .react-datepicker__time-list-item {
+    &:hover {
+      background: $light-gray !important;
+    }
+  }
+
+  .react-datepicker__day--today {
+    color: $purple;
+
+    &.react-datepicker__day--selected {
+      color: $white;
+    }
+  }
+
+  .react-datepicker__day--selected {
+    background: $purple;
+
+    &:hover {
+      background: $purple;
+    }
+  }
+
+  .react-datepicker__day--keyboard-selected {
+    color: $white;
+    background: $light-purple;
+
+    &:hover {
+      background: $light-purple;
+    }
+  }
+
+  .react-datepicker__day--outside-month {
+    color: $light-gray;
+  }
+
+  .react-datepicker__time-list {
+    background: $white;
+  }
+
+  .react-datepicker__time-list-item--selected {
+    background: $purple !important;
+  }
+
+  li.react-datepicker__time-list-item {
+    height: unset !important;
+  }
+
+
 }

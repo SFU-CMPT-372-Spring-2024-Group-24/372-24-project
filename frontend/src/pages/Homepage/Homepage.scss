@@ -3,9 +3,11 @@
 .homepage {
   margin: 2rem;
   padding: 2rem;
+  min-height: 75vh;
 
   h1 {
     margin-bottom: 3rem;
+    display: inline-block;
   }
 
   .project-list {
@@ -45,4 +47,26 @@
       padding: 1rem;
     }
   }
+
+    .go-to-admin-button {
+      background-color: transparent;
+      color: #000000;
+      text-decoration: none;
+      font-size: 1em;
+      letter-spacing: 0.1em;
+      font-weight: 400;
+      padding: 10px 30px;
+      transition: 0.5s;
+      font-family: "Nunito", sans-serif;
+      border: 1.5px solid #727272;
+      border-radius: 5px;
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+    }
+  
+    .go-to-admin-button:hover {
+      color: rgb(37, 42, 74);
+      background-color: #d0d0d0;
+    }
 }

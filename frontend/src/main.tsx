@@ -30,9 +30,7 @@ import { UserProvider, useUser } from "./hooks/UserContext";
 
 // Declaration for google
 declare global {
-  interface Window {
-    google: any;
-  }
+  interface Window { google: any; }
 }
 
 function Layout() {
@@ -48,34 +46,55 @@ function Layout() {
   );
 }
 
+function LayoutWithHeader() {
+  return (
+    <>
+      <Header />
+      <main>
+        <Outlet />
+      </main>
+      <Chat />
+    </>
+  );
+}
+
 interface AuthRouteProps {
   children: React.ReactNode;
-  // path: string;
 }
+
 const AuthRoute = ({ children }: AuthRouteProps) => {
   const { user } = useUser();
-  
+
   if (!user) {
     return <Navigate to="/login" />;
   }
 
-  return children;
+  return <>{children}</>;
+};
+
+const AdminAuthRoute = ({ children }: AuthRouteProps) => {
+  const { user } = useUser();
+
+  if (!user || !user.isAdmin) {
+    return <Navigate to="/login" />;
+  }
+
+  return <>{children}</>;
 };
 
 const App = () => {
   return (
     <UserProvider>
-      <ToastContainer 
-        position = "bottom-center"
-        autoClose = {3000}
-        hideProgressBar = {true}
-        draggable
-        pauseOnHover
-        stacked = {true}
+      <ToastContainer
+        position="bottom-center"
+        autoClose={3000}
+        hideProgressBar={true}
+        draggable={true}
+        pauseOnHover={true}
       />
       <BrowserRouter>
         <Routes>
-          <Route element={<Layout />} path="/projects">
+          <Route element={<Layout />}>
             <Route
               path="/projects"
               element={
@@ -84,6 +103,13 @@ const App = () => {
                 </AuthRoute>
               }
             />
+            <Route path="/projects/notfound" element={<NotFoundPage />} />
+            <Route
+              path="/projects/*"
+              element={<Navigate to={"/projects/notfound"} />}
+            />
+          </Route>
+          <Route element={<LayoutWithHeader />}>
             <Route
               path="/projects/:id"
               element={
@@ -92,13 +118,18 @@ const App = () => {
                 </AuthRoute>
               }
             />
-            <Route path="/projects/404" element={<NotFoundPage />} />
-            <Route path="/projects/*" element={<Navigate to={"/projects/404"} />} />
           </Route>
           <Route path="/login" element={<LoginSignup />} />
-          <Route path="/admin" element={<Adminpage />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminAuthRoute>
+                <Adminpage />
+              </AdminAuthRoute>
+            }
+          />
           <Route path="/" element={<LandingPage />} />
-          <Route path="*" element={<Navigate to={"/"}/>} />
+          <Route path="*" element={<Navigate to={"/"} />} />
         </Routes>
       </BrowserRouter>
     </UserProvider>

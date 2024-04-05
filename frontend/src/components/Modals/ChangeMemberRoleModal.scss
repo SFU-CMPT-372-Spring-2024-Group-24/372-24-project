@@ -1,0 +1,62 @@
+@import '../../styles.scss';
+
+.change-member-role-modal-backdrop {
+  opacity: 0 !important;
+}
+
+.change-member-role-modal {
+  // position: absolute;
+  // margin: .5rem 0;
+
+  .modal-content {
+    box-shadow: 0 0 5px 0 $dark-gray;
+  }
+
+  .modal-header {
+    background: $white;
+    padding: .5rem 1rem;
+
+    .btn-close {
+      font-size: 12px;
+    }
+    
+    .modal-title {
+      font-size: 18px;
+    }
+  }
+
+  .modal-body {
+    padding: 0rem 2rem 1rem 2rem;
+
+    .role-options {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1rem 0;
+
+      button {
+        padding: .5rem 1rem;
+        border: 1px solid $light-gray;
+        border-radius: 5px;
+        background: $white;
+        color: $dark-gray;
+        font-weight: 500;
+
+        &:hover {
+          background: $dark-gray;
+          color: $white;
+        }
+      }
+
+      .selected {
+        background: $dark-gray;
+        color: $white;
+      }
+
+      button:disabled {
+        background: $light-gray;
+        color: $dark-gray;
+      }
+    }
+  }
+}

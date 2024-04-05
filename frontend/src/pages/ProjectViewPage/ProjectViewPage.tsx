@@ -3,21 +3,23 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // Components
 import ProjectInfo from "../../components/ProjectView/ProjectInfo/ProjectInfo";
-import TaskLists from "../../components/ProjectView/TaskLists/TaskLists";
+import ProjectBoard from "../../components/ProjectView/ProjectBoard/ProjectBoard";
 // Models
 import { Project } from "../../models/Project";
-import { User } from "../../models/User";
+import { Role } from "../../models/ProjectRole";
 // Styles
 import "./ProjectViewPage.scss";
 // API
 import { api } from "../../api";
 // Custom hooks
 import { TaskProvider } from "../../hooks/TaskContext";
+import { useUser } from "../../hooks/UserContext";
 
 const ProjectViewPage = () => {
   const { id } = useParams();
+  const { user } = useUser();
   const [project, setProject] = useState<Project | null>(null);
-  const [members, setMembers] = useState<User[]>([]);
+  const [userRole, setUserRole] = useState<Role | null>(null);
   const navigate = useNavigate();
 
   // Fetch project data
@@ -25,51 +27,50 @@ const ProjectViewPage = () => {
     const fetchProject = async () => {
       try {
         const response = await api.get(`/projects/${id}`);
-        setProject(response.data);
+
+        if (response.status === 200) {
+          setProject(response.data);
+        }
       } catch (error) {
-        navigate("/projects/404");
+        navigate("/projects/notfound");
       }
     };
 
     fetchProject();
   }, []);
 
-  // Fetch project members
+  // Fetch user role in project
   useEffect(() => {
-    if (project) {
-      const fetchMembers = async () => {
-        try {
-          const response = await api.get(`/projects/${project.id}/users`);
-          setMembers(response.data);
-        } catch (error) {
-          console.error("Error fetching members:", error);
-        }
-      };
+    if (!project || !user) return;
 
-      fetchMembers();
-    }
+    const fetchUserRole = async () => {
+      try {
+        const response = await api.get(`/roles/${project.id}`);
+        setUserRole(response.data);
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+      }
+    };
+
+    fetchUserRole();
   }, [project]);
 
   return (
     <>
-      {project && (
+      {project && userRole && (
         <div className="project-view-page">
-          <ProjectInfo
+          <TaskProvider
             project={project}
             setProject={setProject}
-            members={members}
-            setMembers={setMembers}
-          />
+            userRole={userRole}
+            setUserRole={setUserRole}
+          >
+            {/* Project description, members, files on left panel*/}
+            <ProjectInfo />
 
-          <section className="project">
-            <h1 className="gradient-text">{project.name}</h1>
-
-            <TaskProvider projectId={project.id} projectMembers={members}>
-              <div className="project-lists">
-                <TaskLists />
-              </div>
-            </TaskProvider>
-          </section>
+            {/* Project board on right panel */}
+            <ProjectBoard />
+          </TaskProvider>
         </div>
       )}
     </>

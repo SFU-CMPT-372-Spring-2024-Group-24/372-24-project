@@ -28,66 +28,23 @@ const LoginForm = ({}: Props) => {
     }
   }, [user]);
 
-  // const handleLogin = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/login`, {
-  //   // const response = await fetch(`api/users/login`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       identifier: identifier,
-  //       password: password,
-  //     }),
-  //   });
-
-  //   if (response.ok) {
-  //     // const user = await response.json();
-  //     // setUser(user);
-  //     const data = await response.json();
-  //     setUser(data.user);
-  //     console.log(data)
-  //     navigate("/projects", { replace: true });
-  //   } else {
-  //     const errorData = await response.json();
-  //     setErrorMsg(errorData.message);
-  //   }
-  // };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // axios
-    //   .post(`${import.meta.env.VITE_APP_API_URL}/users/login`, {
-    //     identifier: identifier,
-    //     password: password,
-    //   })
-    //   .then((response) => {
-    //     setUser(response.data.user);
-    //     console.log(response.data);
-        
-    //     if (response.data.loggedIn) {
-    //       navigate("/projects");
-    //     } else {
-    //       setErrorMsg(response.data.message);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error("An error occurred while logging in", error);
-    //   });
 
     try {
       const response = await api.post("/users/login", {
         identifier: identifier,
         password: password,
       });
-      setUser(response.data.user);
-      console.log(response.data);
-      
+
       if (response.data.loggedIn) {
-        navigate("/projects");
+        setUser(response.data.user);
+        //if user is Admin, redirect to admin, else projects
+        if (response.data.user.isAdmin) {
+          navigate("/admin"); 
+        } else {
+          navigate("/projects"); 
+        }
       } else {
         setErrorMsg(response.data.message);
       }

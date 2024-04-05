@@ -4,7 +4,7 @@
   width: 33%;
   border: 2px solid $light-gray;
   border-radius: 10px;
-  padding: 1rem;
+  padding: 1rem 1rem .75rem 1rem;
   user-select: none;
 
   .list-header {
@@ -13,8 +13,10 @@
     align-items: center;
     margin-bottom: 1rem;
 
+    // list name heading
     h2 {
       margin: 0;
+      font-size: 20px;
     }
 
     button.add-task {
@@ -28,17 +30,29 @@
     }
   }
 
-  .task-count {
-    text-align: right;
-  }
+  .list-main {
+    height: 70vh;
+    overflow-y: auto; // enable vertical scrollbar
+    overflow-x: hidden; // hide horizontal scrollbar
+    padding-right: .5rem;
 
-  .task-input-field {
-    input {
-      width: 100%;
+    .task-input-field {
+      input {
+        width: 100%;
+      }
+
+      .button-group {
+        margin-top: .5rem;
+      }
     }
 
-    .button-group {
-      margin-top: .5rem;
+    .task-count {
+      text-align: right;
+      font-size: 14px;
+    }
+
+    .task-list {
+      height: 90%;
     }
   }
 }
