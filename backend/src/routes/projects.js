@@ -1,14 +1,11 @@
 // Models
 const { Project, User, Role, UserProject, File } = require("../db");
-// Node modules
-// const path = require("path");
-// const fs = require("fs");
 // Third-party modules
 const express = require("express");
 const Sequelize = require("sequelize");
 const multer = require("multer");
-// const { Storage } = require('@google-cloud/storage');
 const checkPermission = require('../middleware/checkPermission');
+// Utility functions
 const { uploadToGCS } = require("../utils/uploadToGCS");
 
 const router = express.Router();
@@ -271,7 +268,7 @@ router.delete("/:projectId/users", async (req, res) => {
 
 // Google Cloud Storage
 const upload = multer({ storage: multer.memoryStorage() });
-// Add file to project using the uploadToGCS middleware, then link the file to the project
+// Add file to GCS if it does not exist, then add file to project
 router.post("/:projectId/files", checkPermission('manageFiles'), upload.single("file"), uploadToGCS(async (req, res) => {
   const { projectId } = req.params;
   const { fileId } = req.file;
