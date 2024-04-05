@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 // Icons
 import { FaUser } from "react-icons/fa6";
 import { RiLockPasswordFill } from "react-icons/ri";
+import { BsFillExclamationCircleFill } from "react-icons/bs";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
 import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
@@ -53,8 +54,13 @@ const LoginForm = ({}: Props) => {
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <div className="error-msg">{errorMsg}</div>
+    <form onSubmit={handleLogin} className="login-signup">
+      {errorMsg && (
+        <div className="error-msg">
+          <BsFillExclamationCircleFill size={18} />
+          {errorMsg}
+        </div>
+      )}
 
       <div className="input">
         <FaUser size={17} />

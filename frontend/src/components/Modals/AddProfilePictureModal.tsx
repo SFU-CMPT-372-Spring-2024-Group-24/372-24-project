@@ -39,7 +39,7 @@ const AddProfilePictureModal = ({ showAddProfilePictureModal, setShowAddProfileP
     const formData = new FormData();
     formData.append("profilePicture", profilePicture);
     try {
-      const response = await api.post(`/users/profile-picture`, formData);
+      const response = await api.post(`/users/me/profile-picture`, formData);
       setUser(response.data.user);
       setShowAddProfilePictureModal(false);
       toast.success("Profile picture updated successfully");

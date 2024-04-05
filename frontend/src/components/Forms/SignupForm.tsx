@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import { RiContactsBook2Fill, RiLockPasswordFill } from "react-icons/ri";
+import { BsFillExclamationCircleFill } from "react-icons/bs";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
 import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
@@ -60,8 +61,13 @@ const SignupForm = ({}: Props) => {
   };
 
   return (
-    <form onSubmit={handleCreateAccount}>
-      <div className="error-msg">{errorMsg}</div>
+    <form onSubmit={handleCreateAccount} className="login-signup">
+      {errorMsg && (
+        <div className="error-msg">
+          <BsFillExclamationCircleFill size={18} />
+          {errorMsg}
+        </div>
+      )}
 
       <div className="input">
         <RiContactsBook2Fill size={20} />

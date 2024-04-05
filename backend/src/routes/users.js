@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 const Sequelize = require("sequelize");
 // Utility functions
-const { usernameExists, emailExists, validateUsername, validateEmail, validatePassword, hashPassword } = require("../utils/userUtils");
+const { validateName, validateUsername, validateEmail, validatePassword, hashPassword, comparePassword } = require("../utils/userUtils");
 const { uploadToGCS } = require("../utils/uploadToGCS");
 const multer = require("multer");
 
@@ -57,14 +57,12 @@ router.post("/signup", async (req, res) => {
   email = email.toLowerCase();
 
   try {
-    // Check if username is already used
-    await usernameExists(username);
-    // Validate username
-    validateUsername(username);
-    // Check if email is already used
-    await emailExists(email);
-    // Validate email
-    validateEmail(email);
+    // Validate name
+    validateName(name);
+    // Validate and check if username exists
+    await validateUsername(username);
+    // Validate and check if email exists
+    await validateEmail(email);
     // Validate password
     validatePassword(password, passwordConfirmation);
     // Hash password
@@ -79,7 +77,7 @@ router.post("/signup", async (req, res) => {
     delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
-    return res.json({ userId: req.session.userId, user: userJSON });
+    return res.json({ user: userJSON });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -94,7 +92,7 @@ router.post("/login", async (req, res) => {
 
   // Validate identifier
   if (!validator.isEmail(identifier) && !validator.isAlphanumeric(identifier)) {
-    return res.status(400).json({ message: "Invalid email or username" });
+    return res.status(400).json({ message: "Invalid email/username or password" });
   }
 
   try {
@@ -105,17 +103,12 @@ router.post("/login", async (req, res) => {
       },
     });
     if (!user) {
-      return res
-        .status(400)
-        .json({ message: "Invalid email/username or password" });
+      return res.status(400).json({ message: "Invalid email/username or password" });
     }
 
     // Compare password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res
-        .status(400)
-        .json({ message: "Invalid email/username or password" });
+    if (!(await comparePassword(password, user.password))) {
+      return res.status(400).json({ message: "Invalid email/username or password" });
     }
 
     req.session.userId = user.id;
@@ -125,7 +118,7 @@ router.post("/login", async (req, res) => {
     delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
-    return res.status(200).json({ loggedIn: true, user: userJSON });
+    return res.status(200).json({ user: userJSON });
   } catch (err) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -181,8 +174,8 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Update user: name, username, email, password, profilePicture
-router.put("/", async (req, res) => {
-  const { name, username, email, password, profilePicture } = req.body;
+router.put("/me", async (req, res) => {
+  let { name, username, email, oldPassword, newPassword, newPasswordConfirmation } = req.body;
 
   try {
     const user = await User.findByPk(req.session.userId);
@@ -190,31 +183,40 @@ router.put("/", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (name) user.name = name;
+    if (name !== undefined) {
+      // Validate name
+      validateName(name);
 
-    if (username) {
-      // Convert to lowercase
-      user.username = username.toLowerCase();
-      // Check if username is already used
-      await usernameExists(user.username);
-      // Validate username
-      validateUsername(user.username);
+      user.name = name;
     }
 
-    if (email) {
+    if (username !== undefined) {
       // Convert to lowercase
-      user.email = email.toLowerCase();
-      // Check if email is already used
-      await emailExists(user.email);
-      // Validate email
-      validateEmail(user.email);
+      username = username.toLowerCase();
+      // Validate and check if username exists
+      await validateUsername(username);
+
+      user.username = username;
     }
 
-    if (password) {
-      // Validate password
-      validatePassword(password);
-      // Hash password
-      user.password = await hashPassword(password);
+    if (email !== undefined) {
+      // Convert to lowercase
+      email = email.toLowerCase();
+      // Validate and check if email exists
+      await validateEmail(email);
+
+      user.email = email;
+    }
+
+    if (oldPassword && newPassword && newPasswordConfirmation) {
+      // Compare old password
+      if (!(await comparePassword(oldPassword, user.password))) {
+        return res.status(400).json({ message: "Incorrect password. Please try again." });
+      }
+      // Validate new password
+      validatePassword(newPassword, newPasswordConfirmation);
+      // Hash new password
+      user.password = await hashPassword(newPassword);
     }
 
     await user.save();
@@ -233,7 +235,7 @@ router.put("/", async (req, res) => {
 // Upload profile picture
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post("/profile-picture", upload.single("profilePicture"), uploadToGCS(async (req, res) => {
+router.post("/me/profile-picture", upload.single("profilePicture"), uploadToGCS(async (req, res) => {
   try {
     const user = await User.findByPk(req.session.userId);
     if (!user) {
