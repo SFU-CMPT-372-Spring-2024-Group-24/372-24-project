@@ -1,14 +1,15 @@
 // Models
-const { Project, User, Role, UserProject } = require("../db");
+const { Project, User, Role, UserProject, File } = require("../db");
 // Node modules
-const path = require("path");
-const fs = require("fs");
+// const path = require("path");
+// const fs = require("fs");
 // Third-party modules
 const express = require("express");
 const Sequelize = require("sequelize");
 const multer = require("multer");
-const { Storage } = require('@google-cloud/storage');
+// const { Storage } = require('@google-cloud/storage');
 const checkPermission = require('../middleware/checkPermission');
+const { uploadToGCS } = require("../utils/uploadToGCS");
 
 const router = express.Router();
 
@@ -268,52 +269,31 @@ router.delete("/:projectId/users", async (req, res) => {
 // });
 // const upload = multer({ storage: localStorage });
 
-// Cloud storage
-const cloudStorage = new Storage({
-  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-});
-const bucket = cloudStorage.bucket(process.env.GCLOUD_STORAGE_BUCKET);
+// Google Cloud Storage
 const upload = multer({ storage: multer.memoryStorage() });
-
-// Add file to project
-router.post("/:projectId/files", checkPermission('manageFiles'), upload.single('file'), async (req, res) => {
+// Add file to project using the uploadToGCS middleware, then link the file to the project
+router.post("/:projectId/files", checkPermission('manageFiles'), upload.single("file"), uploadToGCS(async (req, res) => {
   const { projectId } = req.params;
-  const filename = req.file.fieldname + '-' + Date.now() + path.extname(req.file.originalname);
-  const blob = bucket.file(filename);
-  const blobStream = blob.createWriteStream();
+  const { fileId } = req.file;
 
-  blobStream.on('error', err => {
-    console.error('Error uploading file to Google Cloud Storage:', err);
-    res.status(500).json({ message: 'Error uploading file to Google Cloud Storage' });
-  });
-
-  blobStream.on('finish', async () => {
-    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-
-    try {
-      const project = await Project.findByPk(projectId);
-      if (!project) {
-        return res.status(404).json({ message: "Project not found" });
-      }
-
-      const name = req.file.originalname;
-      const url = publicUrl;
-      const type = path.extname(name).slice(1);
-
-      const file = await project.createFile({
-        name,
-        url,
-        type
-      });
-
-      res.status(201).json(file);
-    } catch (err) {
-      res.status(400).json({ message: err.message });
+  try {
+    const project = await Project.findByPk(projectId);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
     }
-  });
 
-  blobStream.end(req.file.buffer);
-});
+    const file = await File.findByPk(fileId);
+    if (!file) {
+      return res.status(404).json({ message: "File not found" });
+    }
+
+    await project.addFile(file);
+
+    res.status(201).json(file);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+}));
 
 // Get files by project id
 router.get("/:projectId/files", async (req, res) => {

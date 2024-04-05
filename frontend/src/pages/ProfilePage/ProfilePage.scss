@@ -63,3 +63,13 @@
     // border: 1px solid;
   }
 }
+
+.account-modal-backdrop {
+  opacity: 0 !important;
+}
+
+.account-modal {
+  .modal-content {
+    box-shadow: 0 0 5px 2px $light-gray;
+  }
+}

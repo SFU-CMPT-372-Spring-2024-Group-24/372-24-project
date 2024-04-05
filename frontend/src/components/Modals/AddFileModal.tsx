@@ -20,7 +20,7 @@ interface Props {
 
 const AddFileModal = ({ showAddFileModal, setShowAddFileModal }: Props) => {
   const { project, projectFiles, setProjectFiles } = useTasks();
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
   const [isAddFileModalHovered, setIsAddFileModalHovered] = useState<boolean>(false);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: async (acceptedFiles) => {

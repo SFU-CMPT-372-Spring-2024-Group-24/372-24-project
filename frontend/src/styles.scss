@@ -104,6 +104,18 @@ button.btn-text {
   }
 }
 
+button.btn-text-secondary {
+  padding: .5rem 1rem;
+  background: $light-gray;
+  color: $dark-gray;
+
+  &:hover {
+    background: $purple;
+    color: $white;
+    box-shadow: 0 0 5px 2px $light-gray;
+  }
+}
+
 button.btn-iconTxt {
   background: $purple;
   color: $white;

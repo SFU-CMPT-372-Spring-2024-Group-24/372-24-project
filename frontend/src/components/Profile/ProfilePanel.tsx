@@ -48,7 +48,7 @@ const ProfilePanel = ({ view, setView }: Props) => {
             className={view === "editProfile" ? "active" : ""}
             onClick={() => setView("editProfile")}
           >
-            Edit Profile
+            Account
           </button>
         </div>
       </section>

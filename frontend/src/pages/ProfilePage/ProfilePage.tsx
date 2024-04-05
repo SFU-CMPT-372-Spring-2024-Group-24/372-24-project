@@ -4,7 +4,7 @@ import { useUser } from "../../hooks/UserContext";
 import { useState } from "react";
 // Components
 import ProfilePanel from "../../components/Profile/ProfilePanel";
-import EditProfileView from "../../components/Profile/EditProfileView";
+import AccountView from "../../components/Profile/AccountView";
 import ActivityView from "../../components/Profile/ActivityView";
 // Styles
 import "./ProfilePage.scss";
@@ -25,7 +25,7 @@ const ProfilePage = () => {
       <section className="profile-main-view">
         {view === "activity" && <ActivityView />}
 
-        {view === "editProfile" && <EditProfileView />}
+        {view === "editProfile" && <AccountView />}
       </section>
     </div>
   );

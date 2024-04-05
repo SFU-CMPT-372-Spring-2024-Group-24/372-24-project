@@ -1,4 +1,4 @@
-const { Chat, User } = require("../db");
+const { User } = require("../db");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
@@ -6,6 +6,8 @@ const validator = require("validator");
 const Sequelize = require("sequelize");
 // Utility functions
 const { usernameExists, emailExists, validateUsername, validateEmail, validatePassword, hashPassword } = require("../utils/userUtils");
+const { uploadToGCS } = require("../utils/uploadToGCS");
+const multer = require("multer");
 
 // Get all users to test database connection
 router.get("/", async (req, res) => {
@@ -179,50 +181,72 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Update user: name, username, email, password, profilePicture
-router.put("/:id", async (req, res) => {
-  const userId = req.params.id;
-  const { name, username, email, password, passwordConfirmation, profilePicture } = req.body;
+router.put("/", async (req, res) => {
+  const { name, username, email, password, profilePicture } = req.body;
 
   try {
-    const user = await User.findByPk(userId);
-
+    const user = await User.findByPk(req.session.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (name) {
-      user.name = name;
-    }
+    if (name) user.name = name;
 
     if (username) {
-      user.username = username;
+      // Convert to lowercase
+      user.username = username.toLowerCase();
+      // Check if username is already used
+      await usernameExists(user.username);
+      // Validate username
+      validateUsername(user.username);
     }
 
     if (email) {
-      user.email = email;
+      // Convert to lowercase
+      user.email = email.toLowerCase();
+      // Check if email is already used
+      await emailExists(user.email);
+      // Validate email
+      validateEmail(user.email);
     }
 
     if (password) {
-      const saltRounds = 10;
-      user.password = await bcrypt.hash(password, saltRounds);
-    }
-
-    if (profilePicture) {
-      user.profilePicture = profilePicture;
+      // Validate password
+      validatePassword(password);
+      // Hash password
+      user.password = await hashPassword(password);
     }
 
     await user.save();
 
+    // Return user without password, createdAt, updatedAt
     const userJSON = user.toJSON();
     delete userJSON.password;
     delete userJSON.createdAt;
     delete userJSON.updatedAt;
-
-    res.json(userJSON);
+    return res.json({ user: userJSON });
   } catch (error) {
-    console.error("Error updating user:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: error.message });
   }
 });
+
+// Upload profile picture
+const upload = multer({ storage: multer.memoryStorage() });
+
+router.post("/profile-picture", upload.single("profilePicture"), uploadToGCS(async (req, res) => {
+  try {
+    const user = await User.findByPk(req.session.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.profilePicture = req.file.publicUrl;
+    await user.save();
+
+    res.json({ profilePicture: user.profilePicture });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}));
 
 module.exports = router;
