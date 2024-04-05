@@ -46,7 +46,7 @@ const AdminDashboard: React.FC<AdminDashProps> = ({ toggleUsers, toggleProjects 
 
   return (
     <div className="admin-dashboard">
-      <h2>Dashboard</h2>
+      <h2>Admin Dashboard</h2>
       <p>Total Users: <br /><span className="total-users"><FaRegUser />{totalUsers}</span></p>
       <div className="dash-box">
         <ul className="admin-dash">

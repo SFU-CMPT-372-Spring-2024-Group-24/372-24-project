@@ -55,7 +55,11 @@ const Homepage = () => {
           </li>
         ))}
       </ul>
-
+      {user?.isAdmin && (
+        <Link to="/admin" className="go-to-admin-button">
+          Go To Admin Dashboard
+        </Link>
+      )}
       <CreateProjectModal showModal={showModal} setShowModal={setShowModal} />
     </section>
   );
