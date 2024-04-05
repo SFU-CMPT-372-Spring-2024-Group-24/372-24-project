@@ -63,6 +63,7 @@ const AdminProjects = () => {
     <div className="admin-projects-container">
       <h2>All Projects In Database</h2>
       <ul className="project-list">
+        <li className="title">Projects:</li>
         {projects.map((project) => (
           <li key={project.id} className="project-item">
             <div className="project-header">
