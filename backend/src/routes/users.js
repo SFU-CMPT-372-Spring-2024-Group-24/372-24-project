@@ -173,7 +173,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Update user: name, username, email, password, profilePicture
+// Update user: name, username, email, password
 router.put("/me", async (req, res) => {
   let { name, username, email, oldPassword, newPassword, newPasswordConfirmation } = req.body;
 
@@ -255,5 +255,21 @@ router.post("/me/profile-picture", upload.single("profilePicture"), uploadToGCS(
     res.status(500).json({ message: error.message });
   }
 }));
+
+// Remove profile picture
+router.delete("/me/profile-picture", async (req, res) => {
+  try {
+    const user = await User.findByPk(req.session.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await user.update({ profilePicture: null });
+
+    res.json({ message: "Profile picture removed" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;

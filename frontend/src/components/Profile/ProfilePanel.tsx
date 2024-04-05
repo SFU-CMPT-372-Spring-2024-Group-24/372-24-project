@@ -3,8 +3,6 @@ import { useUser } from "../../hooks/UserContext";
 import { useState } from "react";
 // Files
 import defaultProfilePicture from "../../assets/default-profile-picture.png";
-// Components
-import AddProfilePictureModal from "../Modals/AddProfilePictureModal";
 
 interface Props {
   view: string;
@@ -12,7 +10,6 @@ interface Props {
 }
 const ProfilePanel = ({ view, setView }: Props) => {
   const { user } = useUser();
-  const [showAddProfilePictureModal, setShowAddProfilePictureModal] = useState<boolean>(false);
 
   if (!user) {
     return null;
@@ -24,15 +21,8 @@ const ProfilePanel = ({ view, setView }: Props) => {
         <div className="profile-info">
           <img
             src={user.profilePicture || defaultProfilePicture}
-            alt="Profile"
+            alt="User Avatar"
           />
-
-          <button
-            className="btn-text-secondary"
-            onClick={() => setShowAddProfilePictureModal(true)}
-          >
-            Change profile picture
-          </button>
 
           <h2 className="gradient-text">{user.name}</h2>
           
@@ -64,10 +54,7 @@ const ProfilePanel = ({ view, setView }: Props) => {
         </div>
       </section>
 
-      <AddProfilePictureModal
-        showAddProfilePictureModal={showAddProfilePictureModal}
-        setShowAddProfilePictureModal={setShowAddProfilePictureModal}
-      />
+      
     </>
   );
 };

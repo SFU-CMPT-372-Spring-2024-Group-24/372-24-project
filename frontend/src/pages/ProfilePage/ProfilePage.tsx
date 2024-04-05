@@ -4,7 +4,7 @@ import { useUser } from "../../hooks/UserContext";
 import { useState } from "react";
 // Components
 import ProfilePanel from "../../components/Profile/ProfilePanel";
-import AccountView from "../../components/Profile/AccountView";
+import AccountView from "../../components/Profile/AccountView/AccountView";
 import ActivityView from "../../components/Profile/ActivityView";
 // Styles
 import "./ProfilePage.scss";

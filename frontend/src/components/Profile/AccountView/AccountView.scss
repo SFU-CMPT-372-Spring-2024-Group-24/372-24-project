@@ -1,0 +1,42 @@
+@import '../../../styles.scss';
+
+section.account-view {
+  h2 {
+    border-bottom: 1px solid $light-gray;
+    padding-bottom: .5rem;
+  }
+
+  div.account-field {
+    padding: 1rem;
+    border-bottom: 1px solid $light-gray;
+
+    button.btn-float-right {
+      float: right;
+    }
+
+    p {
+      background: $extra-white;
+      width: fit-content;
+      padding: .25rem 1rem;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      margin: 0;
+    }
+  }
+
+  div.profilePicture {
+    img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: inline;
+      margin-right: 1rem;
+    }
+
+    button {
+      display: inline;
+      margin-right: 1rem;
+    }
+  }
+}
