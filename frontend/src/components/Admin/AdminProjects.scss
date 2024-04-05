@@ -11,12 +11,20 @@
     list-style: none;
     padding: 0;
     margin: 5% 20%;
-    background: radial-gradient(circle at center, rgb(179, 198, 249) 0%, rgb(161, 184, 245) 50%);
+    background: rgb(45, 50, 90);
     border: none;
     border-radius: 5px;
-    box-shadow: rgba(186, 203, 250, 0.25) 0px 6px 12px -2px, rgba(186, 203, 250, 0.3) 0px 3px 7px -3px;
+    box-shadow: rgba(45, 50, 90, 0.25) 0px 6px 12px -2px, rgba(186, 203, 250, 0.3) 0px 3px 7px -3px;
     padding-top: 25px;
     padding-bottom: 25px;
+
+    .title {
+        color: white;
+        font-family: "Lato", "sans serif";
+        margin-left: 5%;
+        margin-bottom: 10px;
+        font-weight: 300;
+      }
 
     .project-item {
       margin-bottom: 20px;
@@ -28,6 +36,7 @@
         font-size: 1vw;
         margin-left: 20px;
         font-weight: 250;
+        color: white;
       }
 
       .project-header {
@@ -44,7 +53,7 @@
           }
 
           #delete-button {
-            color: rgb(150, 28, 28);
+            color: rgb(244, 76, 76);
           }
 
           #delete-button:hover {
@@ -52,7 +61,8 @@
           }
 
           #more-button {
-            color: rgb(31, 42, 165);
+            color: rgb(126, 136, 248);
+            ;
           }
 
           #more-button:hover {
@@ -64,6 +74,7 @@
         .action-buttons button {
           font-family: "Nunito", sans-serif;
           font-size: 1vw;
+          color: white;
         }
 
         .project-name {
