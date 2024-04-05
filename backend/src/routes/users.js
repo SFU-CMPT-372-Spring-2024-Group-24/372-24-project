@@ -243,7 +243,12 @@ router.post("/profile-picture", upload.single("profilePicture"), uploadToGCS(asy
     user.profilePicture = req.file.publicUrl;
     await user.save();
 
-    res.json({ profilePicture: user.profilePicture });
+    // Return user without password, createdAt, updatedAt
+    const userJSON = user.toJSON();
+    delete userJSON.password;
+    delete userJSON.createdAt;
+    delete userJSON.updatedAt;
+    return res.json({ user: userJSON });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

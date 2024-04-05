@@ -6,7 +6,6 @@ import Modal from 'react-bootstrap/Modal'
 import { toast } from "react-toastify";
 // Icons & styles
 import { IoIosCloudUpload } from 'react-icons/io'
-import './AddFileModal.scss'
 // API
 import { api, AxiosError } from '../../api'
 // Custom hooks
