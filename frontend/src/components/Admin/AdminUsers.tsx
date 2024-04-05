@@ -57,7 +57,6 @@ const AdminUsers = () => {
       //Update isAdmin status
       const response = await api.patch(`/users/${userId}/toggleAdmin`);
       const updatedUser = response.data.user;
-
       setUsers(users => users.map(user => user.id === updatedUser.id ? { ...user, isAdmin: updatedUser.isAdmin } : user));
     } catch (error) {
       console.error('Error toggling admin status', error);
@@ -73,7 +72,7 @@ const AdminUsers = () => {
           <li key={user.id} className="user-item">
             <div className="user-header">
               <span className="user-name">
-                {user.username} {user.isAdmin && <span>(Admin)</span>}
+                {user.username} {user.isAdmin && <span className="adminStatus">(Admin)</span>}
               </span>
               <div className="action-buttons">
                 <button

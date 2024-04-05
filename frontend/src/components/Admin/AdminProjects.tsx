@@ -27,7 +27,6 @@ const AdminProjects = () => {
     fetchUserDataAndProjects();
   }, []);
 
-  //need to fix: delete all data associated with user (ex. projects, chats)
   const deleteProject = async (projectId: string) => {
     try {
       await api.delete(`/projects/${projectId}`);
@@ -69,11 +68,21 @@ const AdminProjects = () => {
             <div className="project-header">
               <span className="project-name">{project.name}</span>
               <div className="action-buttons">
-                <button id="more-button" onClick={() => toggleDescription(project.id)}>{toggleButtonText(project)}</button>
-                <button id="delete-button" onClick={() => deleteProject(project.id)}>Delete</button>
+                <button id="more-button"
+                  onClick={() => toggleDescription(project.id)}>
+                  {toggleButtonText(project)}
+                </button>
+                <button
+                  id="delete-button"
+                  onClick={() => deleteProject(project.id)}>
+                  Delete
+                </button>
               </div>
             </div>
-            <div className="project-description">{renderDescription(project)}</div>
+            <div
+              className="project-description">
+              {renderDescription(project)}
+            </div>
           </li>
         ))}
       </ul>
