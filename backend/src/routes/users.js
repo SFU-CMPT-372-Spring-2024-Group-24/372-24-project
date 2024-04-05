@@ -1,9 +1,14 @@
-const { Chat, User } = require("../db");
+const { User } = require("../db");
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcrypt");
 const validator = require("validator");
 const Sequelize = require("sequelize");
+// Utility functions
+const { validateName, validateUsername, validateEmail, validatePassword, hashPassword, comparePassword } = require("../utils/userUtils");
+const { uploadToGCS } = require("../utils/uploadToGCS");
+const validateImage = require("../middleware/validateImage");
+// Third-party middleware
+const multer = require("multer");
 
 // Get all users to test database connection
 router.get("/", async (req, res) => {
@@ -48,41 +53,23 @@ router.post("/google-login", async (req, res) => {
 router.post("/signup", async (req, res) => {
   let { name, username, email, password, passwordConfirmation } = req.body;
 
+  const transaction = await User.sequelize.transaction();
+
   // Convert to lowercase
   username = username.toLowerCase();
   email = email.toLowerCase();
 
-  // Validate username
-  if (!validator.isAlphanumeric(username)) {
-    return res.status(400).json({ message: "Invalid username" });
-  }
-
-  // Validate email
-  if (!validator.isEmail(email)) {
-    return res.status(400).json({ message: "Invalid email" });
-  }
-
-  // Validate password
-  if (password !== passwordConfirmation) {
-    return res.status(400).json({ message: "Passwords do not match" });
-  }
-
   try {
-    // Check if username is already used
-    const existingUsername = await User.findOne({ where: { username } });
-    if (existingUsername) {
-      return res.status(400).json({ message: "Username already used" });
-    }
-
-    // Check if email is already used
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already used" });
-    }
-
+    // Validate name
+    validateName(name);
+    // Validate and check if username exists
+    await validateUsername(username);
+    // Validate and check if email exists
+    await validateEmail(email);
+    // Validate password
+    validatePassword(password, passwordConfirmation);
     // Hash password
-    const saltRounds = 10;
-    const hash = await bcrypt.hash(password, saltRounds);
+    const hash = await hashPassword(password);
 
     // Create user
     const user = await User.create({ name, username, email, password: hash });
@@ -93,9 +80,10 @@ router.post("/signup", async (req, res) => {
     delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
-    // res.json(userJSON);
-    return res.json({ loggedIn: true, userId: req.session.userId, user: userJSON });
+    await transaction.commit();
+    return res.json({ user: userJSON });
   } catch (err) {
+    await transaction.rollback();
     return res.status(500).json({ message: err.message });
   }
 });
@@ -109,7 +97,7 @@ router.post("/login", async (req, res) => {
 
   // Validate identifier
   if (!validator.isEmail(identifier) && !validator.isAlphanumeric(identifier)) {
-    return res.status(400).json({ message: "Invalid email or username" });
+    return res.status(400).json({ message: "Invalid email/username or password" });
   }
 
   try {
@@ -120,17 +108,12 @@ router.post("/login", async (req, res) => {
       },
     });
     if (!user) {
-      return res
-        .status(400)
-        .json({ message: "Invalid email/username or password" });
+      return res.status(400).json({ message: "Invalid email/username or password" });
     }
 
     // Compare password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res
-        .status(400)
-        .json({ message: "Invalid email/username or password" });
+    if (!(await comparePassword(password, user.password))) {
+      return res.status(400).json({ message: "Invalid email/username or password" });
     }
 
     req.session.userId = user.id;
@@ -140,7 +123,7 @@ router.post("/login", async (req, res) => {
     delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
-    return res.status(200).json({ loggedIn: true, user: userJSON });
+    return res.status(200).json({ user: userJSON });
   } catch (err) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -213,5 +196,130 @@ router.patch("/:id/toggleAdmin", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+// Update user: name, username, email, password
+router.put("/me", async (req, res) => {
+  let { name, username, email, oldPassword, newPassword, newPasswordConfirmation } = req.body;
+
+  const transaction = await User.sequelize.transaction();
+
+  try {
+    const user = await User.findByPk(req.session.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (name !== undefined) {
+      // Validate name
+      validateName(name);
+
+      user.name = name;
+    }
+
+    if (username !== undefined) {
+      // Convert to lowercase
+      username = username.toLowerCase();
+      // Validate and check if username exists
+      await validateUsername(username);
+
+      user.username = username;
+    }
+
+    if (email !== undefined) {
+      // Convert to lowercase
+      email = email.toLowerCase();
+      // Validate and check if email exists
+      await validateEmail(email);
+
+      user.email = email;
+    }
+
+    if (oldPassword && newPassword && newPasswordConfirmation) {
+      // Compare old password
+      if (!(await comparePassword(oldPassword, user.password))) {
+        return res.status(400).json({ message: "Incorrect password. Please try again." });
+      }
+      // Validate new password
+      validatePassword(newPassword, newPasswordConfirmation);
+      // Hash new password
+      user.password = await hashPassword(newPassword);
+    }
+
+    await user.save();
+
+    // Return user without password, createdAt, updatedAt
+    const userJSON = user.toJSON();
+    delete userJSON.password;
+    delete userJSON.createdAt;
+    delete userJSON.updatedAt;
+
+    await transaction.commit();
+    return res.json({ user: userJSON });
+  } catch (error) {
+    await transaction.rollback();
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// Upload profile picture
+const upload = multer({ storage: multer.memoryStorage() });
+
+router.post("/me/profile-picture", upload.single("profilePicture"), validateImage, uploadToGCS(async (req, res) => {
+  try {
+    const user = await User.findByPk(req.session.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.profilePicture = req.file.publicUrl;
+    await user.save();
+
+    // Return user without password, createdAt, updatedAt
+    const userJSON = user.toJSON();
+    delete userJSON.password;
+    delete userJSON.createdAt;
+    delete userJSON.updatedAt;
+    return res.json({ user: userJSON });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}));
+
+// Remove profile picture
+router.delete("/me/profile-picture", async (req, res) => {
+  try {
+    const user = await User.findByPk(req.session.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await user.update({ profilePicture: null });
+
+    res.json({ message: "Profile picture removed" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get user by username
+router.get("/:username", async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    const user = await User.findOne({ where: { username } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userJSON = user.toJSON();
+    delete userJSON.password;
+    delete userJSON.updatedAt;
+
+    res.json({ user: userJSON });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 module.exports = router;

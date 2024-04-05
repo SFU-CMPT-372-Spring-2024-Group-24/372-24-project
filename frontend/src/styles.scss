@@ -104,6 +104,18 @@ button.btn-text {
   }
 }
 
+button.btn-text-secondary {
+  padding: .5rem 1rem;
+  background: $light-gray;
+  color: $dark-gray;
+
+  &:hover {
+    background: $purple;
+    color: $white;
+    box-shadow: 0 0 5px 2px $light-gray;
+  }
+}
+
 button.btn-iconTxt {
   background: $purple;
   color: $white;
@@ -154,15 +166,27 @@ textarea {
   height: 200px;
 }
 
-.error-msg {
-  color: $red;
-  font-size: 16px;
-  border-radius: 10px;
-  width: 80%;
-  margin: 0 auto;
+// Error msg styles
+div.error-msg {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  color: $white;
+  font-size: 15px;
+  border-radius: 5px;
+  background: $red;
+  margin: .5rem 0 1rem 0;
   font-weight: 700;
+  width: fit-content;
+  padding: .25rem .5rem;
 }
 
+// User avatar styles
+img[alt="User Avatar"] {
+  box-shadow: 0 0 5px 1px $light-gray;
+}
+
+// Toastify styles
 .Toastify__toast  {
   color: $dark-gray !important;
 
@@ -195,5 +219,34 @@ textarea {
     svg {
       fill: $green;
     }
+  }
+}
+
+// File upload modal styles
+.file-upload-modal {
+  .modal-body {
+    div {
+      border: 2px dashed $light-gray;
+      padding: 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+    }
+  }
+}
+
+// Profile link
+a.profile-link {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+
+  &:hover {
+    text-decoration: underline;
   }
 }

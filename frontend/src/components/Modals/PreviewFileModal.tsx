@@ -33,7 +33,7 @@ const PreviewFileModal = ({
 }: Props) => {
   const { project, projectFiles, setProjectFiles, userCanPerform } = useTasks();
   const [numPages, setNumPages] = useState<number>(0);
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);

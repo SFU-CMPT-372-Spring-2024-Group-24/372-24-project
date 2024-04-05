@@ -1,7 +1,7 @@
 import { FaHandshakeSimple } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-
+import { useLocation } from "react-router-dom";
 import LoginForm from "../../components/Forms/LoginForm";
 import SignupForm from "../../components/Forms/SignupForm";
 import GoogleSignIn from "../../components/Forms/GoogleSignIn";
@@ -11,7 +11,9 @@ import "./LoginSignup.scss";
 
 const LoginSignup = () => {
   //regular login
-  const [action, setAction] = useState("Sign In");
+  const location = useLocation();
+  const defaultAction = new URLSearchParams(location.search).get("action") === "1" ? "Login" : "Sign Up";
+  const [action, setAction] = useState(defaultAction);
 
   const handleActionChange = (newAction: string) => setAction(newAction);
 
@@ -27,12 +29,12 @@ const LoginSignup = () => {
       </div>
 
       <div className="content">
-        <div className="header">
+        {/* <div className="header">
           <h2 className="form-name">{action}</h2>
           <div className="underline"></div>
-        </div>
+        </div> */}
 
-        {action === "Sign In" ? <LoginForm /> : <SignupForm />}
+        {action === "Login" ? <LoginForm /> : <SignupForm />}
 
         <div className="or">— Or —</div>
 
@@ -44,7 +46,7 @@ const LoginSignup = () => {
               <span>Already have an account? </span>
               <button
                 className="login-btn"
-                onClick={() => handleActionChange("Sign In")}
+                onClick={() => handleActionChange("Login")}
               >
                 Log In
               </button>
@@ -56,7 +58,7 @@ const LoginSignup = () => {
                 className="create-btn"
                 onClick={() => handleActionChange("Sign Up")}
               >
-                Create Account
+                Create an account
               </button>
             </>
           )}

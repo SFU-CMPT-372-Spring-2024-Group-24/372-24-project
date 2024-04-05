@@ -27,6 +27,7 @@ import Adminpage from "./pages/AdminPage/Adminpage";
 
 // Contexts
 import { UserProvider, useUser } from "./hooks/UserContext";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 
 // Declaration for google
 declare global {
@@ -107,6 +108,14 @@ const App = () => {
             <Route
               path="/projects/*"
               element={<Navigate to={"/projects/notfound"} />}
+            />
+            <Route
+              path="/profile/:username"
+              element={
+                <AuthRoute>
+                  <ProfilePage />
+                </AuthRoute>
+              }
             />
           </Route>
           <Route element={<LayoutWithHeader />}>

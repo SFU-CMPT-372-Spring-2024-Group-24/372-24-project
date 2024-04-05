@@ -6,7 +6,6 @@ import Modal from 'react-bootstrap/Modal'
 import { toast } from "react-toastify";
 // Icons & styles
 import { IoIosCloudUpload } from 'react-icons/io'
-import './AddFileModal.scss'
 // API
 import { api, AxiosError } from '../../api'
 // Custom hooks
@@ -20,7 +19,7 @@ interface Props {
 
 const AddFileModal = ({ showAddFileModal, setShowAddFileModal }: Props) => {
   const { project, projectFiles, setProjectFiles } = useTasks();
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
   const [isAddFileModalHovered, setIsAddFileModalHovered] = useState<boolean>(false);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: async (acceptedFiles) => {

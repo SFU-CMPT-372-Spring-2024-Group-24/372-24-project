@@ -10,11 +10,12 @@ import {
 import { User } from "../models/User";
 // API
 import { api } from "../api";
+
+// User context
 interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
 }
-
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const useUser = (): UserContextType => {
@@ -25,6 +26,7 @@ export const useUser = (): UserContextType => {
   return context;
 };
 
+// User provider
 interface Props {
   children: ReactNode;
 }
@@ -32,7 +34,7 @@ export const UserProvider = ({ children }: Props) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is logged in
+  // Get user on mount
   useEffect(() => {
     api.get("/users/me").then((res) => {
       if (res.data.valid) {

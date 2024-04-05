@@ -8,4 +8,5 @@ export interface User {
   profilePicture: string;
   role: Role | null;
   isAdmin: boolean;
+  createdAt: string;
 }

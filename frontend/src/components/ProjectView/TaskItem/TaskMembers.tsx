@@ -1,6 +1,7 @@
 // Libraries
 import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
+import { Link } from "react-router-dom";
 // Models
 import { Task } from "../../../models/Task";
 import { User } from "../../../models/User";
@@ -26,7 +27,7 @@ const TaskMembers = ({ task }: Props) => {
   const [showAssigneeModal, setShowAssigneeModal] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<User[]>(projectMembers);
-  const handleApiError = useApiErrorHandler();
+  const { handleApiError } = useApiErrorHandler();
 
   // Fetch task assignees
   useEffect(() => {
@@ -119,11 +120,16 @@ const TaskMembers = ({ task }: Props) => {
           {assignees &&
             assignees.map((assignee) => (
               <li className="member" key={assignee.id}>
-                <img
-                  src={assignee.profilePicture || defaultProfilePicture}
-                  alt="User Avatar"
-                />
-                <p>{assignee.name}</p>
+                <Link
+                  to={`/profile/${assignee.username}`}
+                  className="profile-link"
+                >
+                  <img
+                    src={assignee.profilePicture || defaultProfilePicture}
+                    alt="User Avatar"
+                  />
+                  <p>{assignee.name}</p>
+                </Link>
               </li>
             ))}
         </ul>
