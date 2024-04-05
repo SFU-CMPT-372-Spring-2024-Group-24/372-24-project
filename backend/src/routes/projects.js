@@ -259,12 +259,10 @@ router.delete("/:projectId/users", async (req, res) => {
       });
 
       if (otherOwnersCount === 0) {
-        return res
-          .status(403)
-          .json({
-            message:
-              "You are the only owner of this project. You cannot leave the project.",
-          });
+        return res.status(403).json({
+          message:
+            "You are the only owner of this project. You cannot leave the project.",
+        });
       }
     }
 

@@ -1,4 +1,4 @@
-const { Chat, User, Message } = require("../db");
+const { Project, Chat, User, Message } = require("../db");
 const express = require("express");
 const router = express.Router();
 const validator = require("validator");
@@ -18,13 +18,12 @@ router.post("/addChat", async (req, res) => {
     const chat = await Chat.create({
       name: chatName,
     });
-    console.log("hi1");
+
     // get user by id
     const user = await User.findByPk(userID);
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
-    console.log("hi2");
 
     //get all other user by id
     const otherUsers = [];
@@ -39,14 +38,46 @@ router.post("/addChat", async (req, res) => {
       otherUsers.push(other);
     });
 
-    console.log("hi3");
-
     //add sending user to the chat
     await chat?.addUser(user);
-    console.log("hi4");
-    console.log("Other users:", otherUsers);
     //return information
     res.json({ chat, user, otherUsers });
+  } catch (err) {
+    console.error("Error adding chat:", err);
+    res.status(400).json({ message: "Error adding chat", error: err.message });
+  }
+});
+
+//create a chat when creating a project
+router.post("/addProjectChat", async (req, res) => {
+  const { chatName, userID, projectID } = req.body;
+  try {
+    const chat = await Chat.create({
+      name: chatName,
+    });
+
+    // get user by id
+    const user = await User.findByPk(userID);
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    //add sending user to the chat
+    await chat.addUser(user);
+
+    //get project by id
+    const project = await Project.findByPk(projectID);
+
+    if (!project) {
+      return res.status(400).json({ message: "Project not found" });
+    }
+
+    //add project to the chat
+
+    await project.addChat(chat);
+
+    //return information
+    res.json({ chat, user, project });
   } catch (err) {
     console.error("Error adding chat:", err);
     res.status(400).json({ message: "Error adding chat", error: err.message });

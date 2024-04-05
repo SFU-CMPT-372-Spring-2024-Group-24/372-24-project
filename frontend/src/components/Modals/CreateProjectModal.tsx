@@ -47,8 +47,14 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
         description: projectDescription,
         userId: user.id,
       });
-      //call api to make a chat
       const project: Project = response.data;
+      //call api to make a chat
+      const chatResponse = await api.post("/chats/addProjectChat", {
+        chatName: projectName,
+        userID: user.id,
+        projectID: project.id,
+      });
+      console.log(chatResponse);
       navigate(`/projects/${project.id}`);
       closeModal();
     } catch (error) {
