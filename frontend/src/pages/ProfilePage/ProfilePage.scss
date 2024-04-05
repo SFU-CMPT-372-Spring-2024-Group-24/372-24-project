@@ -23,15 +23,17 @@
       }
 
       h2 {
-        font-size: 1.5rem;
         width: fit-content;
-        margin: .5rem auto;
+        margin: 1rem auto .5rem auto;
       }
 
       p {
-        font-size: 1rem;
         margin: .5rem 0 0 0;
         padding: 0 1rem;
+        color: $dark-gray;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
       }
     }
 

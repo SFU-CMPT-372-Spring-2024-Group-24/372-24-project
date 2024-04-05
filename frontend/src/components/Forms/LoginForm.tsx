@@ -12,7 +12,6 @@ import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
 import "./LoginSignupForm.scss";
 // API
 import { api, AxiosError } from "../../api";
-import { toast } from "react-toastify";
 
 interface Props {}
 

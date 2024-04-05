@@ -53,6 +53,8 @@ router.post("/google-login", async (req, res) => {
 router.post("/signup", async (req, res) => {
   let { name, username, email, password, passwordConfirmation } = req.body;
 
+  const transaction = await User.sequelize.transaction();
+
   // Convert to lowercase
   username = username.toLowerCase();
   email = email.toLowerCase();
@@ -78,8 +80,10 @@ router.post("/signup", async (req, res) => {
     delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
+    await transaction.commit();
     return res.json({ user: userJSON });
   } catch (err) {
+    await transaction.rollback();
     return res.status(500).json({ message: err.message });
   }
 });
@@ -178,6 +182,8 @@ router.delete("/:id", async (req, res) => {
 router.put("/me", async (req, res) => {
   let { name, username, email, oldPassword, newPassword, newPasswordConfirmation } = req.body;
 
+  const transaction = await User.sequelize.transaction();
+
   try {
     const user = await User.findByPk(req.session.userId);
     if (!user) {
@@ -227,8 +233,11 @@ router.put("/me", async (req, res) => {
     delete userJSON.password;
     delete userJSON.createdAt;
     delete userJSON.updatedAt;
+
+    await transaction.commit();
     return res.json({ user: userJSON });
   } catch (error) {
+    await transaction.rollback();
     return res.status(500).json({ message: error.message });
   }
 });
@@ -272,5 +281,26 @@ router.delete("/me/profile-picture", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+// Get user by username
+router.get("/:username", async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    const user = await User.findOne({ where: { username } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userJSON = user.toJSON();
+    delete userJSON.password;
+    delete userJSON.updatedAt;
+
+    res.json({ user: userJSON });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 module.exports = router;

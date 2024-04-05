@@ -6,7 +6,11 @@ interface Props {
 const ActivityView = ({  }: Props) => {
   return (
     <>
-      <h1>Activity</h1>
+      <section className="activity-view">
+        <h2>Activity</h2>
+
+        To be implemented...
+      </section>
     </>
   );
 };

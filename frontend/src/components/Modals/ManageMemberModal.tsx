@@ -20,6 +20,7 @@ import ChangeMemberRoleModal from "./ChangeMemberRoleModal";
 // Custom hooks
 import { useTasks } from "../../hooks/TaskContext";
 import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
+import { Link } from "react-router-dom";
 
 interface Props {
   showModal: boolean;
@@ -42,7 +43,7 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
   const [showChangeRoleModal, setShowChangeRoleModal] =
     useState<boolean>(false);
   const [selectedMember, setSelectedMember] = useState<User | null>(null);
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
 
   const closeModal = () => {
     setShowModal(false);
@@ -241,8 +242,13 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
                 />
 
                 <div className="member-info">
-                  <p>{user!.name}</p>
-                  <p>{user!.username}</p>
+                  <Link
+                    to={`/profile/${user!.username}`}
+                    // className="profile-link"
+                  >
+                    <p>{user!.name}</p>
+                    <p>{user!.username}</p>
+                  </Link>
                 </div>
 
                 <div
@@ -270,8 +276,13 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
                       />
 
                       <div className="member-info">
-                        <p>{member.name}</p>
-                        <p>{member.username}</p>
+                        <Link
+                          to={`/profile/${member.username}`}
+                          // className="profile-link"
+                        >
+                          <p>{member.name}</p>
+                          <p>{member.username}</p>
+                        </Link>
                       </div>
 
                       <div

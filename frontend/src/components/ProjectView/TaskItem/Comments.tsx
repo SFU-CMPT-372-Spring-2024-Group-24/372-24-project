@@ -6,6 +6,7 @@ import { Task, Comment } from "../../../models/Task";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 // API
 import { api } from "../../../api";
 // Hooks
@@ -106,15 +107,19 @@ const Comments = ({ task }: Props) => {
 
       {comments.slice(-displayCount).map((comment) => (
         <div className="comment" key={comment.id}>
-          <img
-            src={comment.User.profilePicture || defaultProfilePicture}
-            alt="User Avatar"
-          />
+          <Link to={`/profile/${comment.User.username}`}>
+            <img
+              src={comment.User.profilePicture || defaultProfilePicture}
+              alt="User Avatar"
+            />
+          </Link>
 
           <div className="comment-details">
             <div className="comment-header">
               <div className="">
-                <span className="comment-name">{comment.User.name}</span>
+                <Link to={`/profile/${comment.User.username}`}>
+                  <span className="comment-name">{comment.User.name}</span>
+                </Link>
 
                 <span className="comment-time">
                   {moment(comment.createdAt).fromNow()}

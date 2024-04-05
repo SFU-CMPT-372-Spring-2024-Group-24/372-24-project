@@ -1,5 +1,6 @@
 // Libraries
 import { useState } from "react";
+import { Link } from "react-router-dom";
 // Icons
 import { IoSettingsOutline } from "react-icons/io5";
 import { BiSolidUserDetail } from "react-icons/bi";
@@ -12,7 +13,8 @@ import { useTasks } from "../../../hooks/TaskContext";
 
 const Members = () => {
   const { projectMembers, userCanPerform } = useTasks();
-  const [showManageMemberModal, setShowManageMemberModal] = useState<boolean>(false);
+  const [showManageMemberModal, setShowManageMemberModal] =
+    useState<boolean>(false);
 
   const openManageMemberModal = () => setShowManageMemberModal(true);
 
@@ -21,7 +23,6 @@ const Members = () => {
       <div className="project-members">
         <h2>
           Members
-
           {userCanPerform("manageMembers") ? (
             <button
               type="button"
@@ -43,16 +44,21 @@ const Members = () => {
 
         {projectMembers.map((user) => (
           <div className="member" key={user.id}>
-            <img
-              src={user.profilePicture || defaultProfilePicture}
-              alt="User Avatar"
-            />
-            <p>{user.name}</p>
+            <Link to={`/profile/${user.username}`} className="profile-link">
+              <img
+                src={user.profilePicture || defaultProfilePicture}
+                alt="User Avatar"
+              />
+              <p>{user.name}</p>
+            </Link>
           </div>
         ))}
       </div>
 
-      <ManageMemberModal showModal={showManageMemberModal} setShowModal={setShowManageMemberModal} />
+      <ManageMemberModal
+        showModal={showManageMemberModal}
+        setShowModal={setShowManageMemberModal}
+      />
     </>
   );
 };
