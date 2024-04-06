@@ -1,6 +1,11 @@
 // Libraries
 import Modal from "react-bootstrap/Modal";
-import React, { useState } from "react";
+import { Link } from "react-router-dom";
+// Hooks
+import { useState } from "react";
+import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
+import useUserManagement from "../../../hooks/useSearchUsers";
 // Models
 import { User } from "../../../models/User";
 import { Role, Roles } from "../../../models/ProjectRole";
@@ -17,10 +22,6 @@ import { IoMdAdd } from "react-icons/io";
 import "./ManageMemberModal.scss";
 // Components
 import ChangeMemberRoleModal from "../ChangeMemberRole/ChangeMemberRoleModal";
-// Custom hooks
-import { useTasks } from "../../../hooks/TaskContext";
-import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
-import { Link } from "react-router-dom";
 
 interface Props {
   showModal: boolean;
@@ -35,22 +36,41 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
     project,
     userCanPerform,
   } = useTasks();
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [hasSearched, setHasSearched] = useState<boolean>(false);
-  const [searchResults, setSearchResults] = useState<User[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  // const [searchQuery, setSearchQuery] = useState<string>("");
+  // const [hasSearched, setHasSearched] = useState<boolean>(false);
+  // const [searchResults, setSearchResults] = useState<User[]>([]);
+  // const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const { user } = useUser();
   const [showChangeRoleModal, setShowChangeRoleModal] =
     useState<boolean>(false);
   const [selectedMember, setSelectedMember] = useState<User | null>(null);
-  const {handleApiError} = useApiErrorHandler();
+  const { handleApiError } = useApiErrorHandler();
+  const {
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    setSearchResults,
+    selectedUsers,
+    setSelectedUsers,
+    hasSearched,
+    setHasSearched,
+    handleSearchUsers,
+    handleSelectUser,
+  } = useUserManagement();
+  const excludeIds = projectMembers.map((user) => user.id);
 
-  const closeModal = () => {
-    setShowModal(false);
+  // Reset search
+  const resetSearch = () => {
     setSearchQuery("");
     setSearchResults([]);
     setSelectedUsers([]);
     setHasSearched(false);
+  };
+
+  // Close modal
+  const closeModal = () => {
+    resetSearch();
+    setShowModal(false);
   };
 
   // Add members to project, new members will be as role "Viewer"
@@ -69,60 +89,21 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
         });
 
         setProjectMembers([...projectMembers, ...newMembers]);
-        setSearchQuery("");
-        setSearchResults([]);
-        setSelectedUsers([]);
-        setHasSearched(false);
+        resetSearch();
       }
     } catch (error) {
       handleApiError(error as AxiosError);
-    }
-  };
-
-  // Search for users
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!searchQuery) {
-      return;
-    }
-
-    try {
-      const userIds = projectMembers.map((user) => user.id);
-      const response = await api.get(
-        `/search/users?query=${searchQuery}&exclude=${JSON.stringify(userIds)}`
-      );
-
-      if (response.status === 200) {
-        setSearchResults(response.data.users);
-        setHasSearched(true);
-      }
-    } catch (error) {
-      handleApiError(error as AxiosError);
-    }
-  };
-
-  // Select user to add to project
-  const handleSelectUser = (user: User) => {
-    if (selectedUsers.some((selected) => selected.id === user.id)) {
-      setSelectedUsers(selectedUsers.filter((u) => u !== user));
-    } else {
-      setSelectedUsers([...selectedUsers, user]);
     }
   };
 
   // Remove user from project
   const handleRemoveUser = async (user: User) => {
     try {
-      const response = await api.delete(
-        `/projects/${project.id}/users/${user.id}`
-      );
+      await api.delete(`/projects/${project.id}/users/${user.id}`);
 
-      if (response.status === 200) {
-        setProjectMembers(
-          projectMembers.filter((member) => member.id !== user.id)
-        );
-      }
+      setProjectMembers(
+        projectMembers.filter((member) => member.id !== user.id)
+      );
     } catch (error) {
       handleApiError(error as AxiosError);
     }
@@ -157,7 +138,10 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
             <section className="search-section">
               <div>
                 <h5>Add members to your project</h5>
-                <form className="search-member" onSubmit={handleSearch}>
+                <form
+                  className="search-member"
+                  onSubmit={(e) => handleSearchUsers(e, excludeIds)}
+                >
                   <div className="search-bar">
                     <IoSearch size={18} className="search-icon" />
                     <input

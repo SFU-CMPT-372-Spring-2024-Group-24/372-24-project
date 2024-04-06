@@ -146,3 +146,11 @@
 .chat-edit-button {
   color: white;
 }
+
+.chat-window {
+  img[alt="User Avatar"] {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+}

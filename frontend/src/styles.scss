@@ -22,10 +22,10 @@ body {
 }
 
 // main {
-  // margin: 1rem;
-  // padding: 1rem;
-  // border: 1px solid;
-  // min-height: 100vh;
+// margin: 1rem;
+// padding: 1rem;
+// border: 1px solid;
+// min-height: 100vh;
 // }
 
 h1 {
@@ -36,7 +36,8 @@ h2 {
   font-weight: 600;
 }
 
-h3, h4 {
+h3,
+h4 {
   font-weight: 600;
   font-size: 18px;
 }
@@ -145,7 +146,9 @@ button.btn-save-changes:disabled {
 }
 
 // Form styles
-input, textarea, select {
+input,
+textarea,
+select {
   padding: .5rem;
   border-radius: 10px;
   outline: none;
@@ -187,7 +190,7 @@ img[alt="User Avatar"] {
 }
 
 // Toastify styles
-.Toastify__toast  {
+.Toastify__toast {
   color: $dark-gray !important;
 
   .Toastify__toast-icon {
@@ -248,5 +251,109 @@ a.profile-link {
 
   &:hover {
     text-decoration: underline;
+  }
+}
+
+// Search member styles
+section.search-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+
+  ul.members-list li.member {
+    &:hover {
+      background: $white;
+    }
+  }
+
+  form.search-member {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    .search-bar {
+      flex-grow: 1;
+      position: relative;
+
+      .search-icon {
+        position: absolute;
+        top: 50%;
+        left: .5rem;
+        transform: translateY(-50%);
+        transition: color .3s;
+      }
+
+      input {
+        width: 100%;
+        border-radius: 10px;
+        padding: .5rem .5rem .5rem 2rem;
+      }
+
+      &:focus-within {
+        .search-icon {
+          color: $purple;
+        }
+      }
+    }
+  }
+
+  .members-list {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin-top: 1rem;
+
+    li.no-member-found {
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid $light-gray;
+      border-radius: 5px;
+      padding: .25rem .5rem;
+    }
+
+    .member {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      border: 1px solid $light-gray;
+      border-radius: 10px;
+      padding: .25rem .5rem;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+
+      img {
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      .member-info {
+        flex-grow: 1;
+
+        p:nth-child(2) {
+          color: rgba($color: $black, $alpha: 0.5)
+        }
+
+        a {
+          width: fit-content;
+          display: flex;
+          flex-direction: column;
+
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      p {
+        margin: 0;
+      }
+    }
   }
 }

@@ -6,7 +6,7 @@ export interface Chat {
   Users: User[];
 }
 
-export interface ChatMessage {
+export interface Message {
   id: number;
   message: string;
   chatId: number;

@@ -183,47 +183,42 @@ router.get("/messages/:chatId", async (req, res) => {
 });
 
 //remove user from chat
-router.delete("/:chatID/removeUser/:userID", async (req, res) => {
-  const chatID = req.params.chatID;
-  const userID = req.params.userID;
+router.delete("/:chatId/users/:userId", async (req, res) => {
+  const chatId = req.params.chatId;
+  const userId = req.params.userId;
 
   try {
-    const chat = await Chat.findByPk(chatID);
+    const chat = await Chat.findByPk(chatId);
     if (!chat) {
       return res.status(404).json({ message: "Chat not found" });
     }
 
-    const user = await User.findByPk(userID);
+    const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     await chat.removeUser(user);
-    console.log(chat);
 
-    res.status(200).json({ message: "User removed from project" });
+    res.status(200).json({ message: "User removed from chat" });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
 //add users to a Chat
-router.post("/addUsers/:chatID", async (req, res) => {
-  const chatID = req.params.chatID;
-  console.log("hi");
-  console.log("ChatID  is: ", chatID);
-  const userIDs = req.body.userIDs;
-
-  console.log(userIDs);
+router.post("/:chatId/users", async (req, res) => {
+  const chatId = req.params.chatId;
+  const userIds = req.body.userIds;
 
   try {
-    const chat = await Chat.findByPk(chatID);
+    const chat = await Chat.findByPk(chatId);
     if (!chat) {
       return res.status(404).json({ message: "Chat not found" });
     }
 
-    for (let userID of userIDs) {
-      const user = await User.findByPk(userID);
+    for (let userId of userIds) {
+      const user = await User.findByPk(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
