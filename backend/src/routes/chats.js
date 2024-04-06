@@ -5,43 +5,35 @@ const validator = require("validator");
 const Sequelize = require("sequelize");
 
 // Add new chat for user
-router.post("/addChat", async (req, res) => {
-  const { chatName, userID, otherIDs } = req.body;
-  console.log("otherIDs is:", otherIDs);
+router.post("/", async (req, res) => {
+  let { name, userIds } = req.body;
   try {
-    //make a new Chat
-    // const [chat, user, other] = await Promise.all([
-    //   Chat.create({ name: chatName }),
-    //   User.findByPk(userID),
-    //   User.findByPk(otherID),
-    // ]);
-    const chat = await Chat.create({
-      name: chatName,
-    });
-
-    // get user by id
-    const user = await User.findByPk(userID);
-    if (!user) {
-      return res.status(400).json({ message: "User not found" });
+    // If name is empty, assign the current time as the name
+    if (!name) {
+      name = new Date().toLocaleString();
     }
 
-    //get all other user by id
-    const otherUsers = [];
-    otherIDs.forEach(async (otherID) => {
-      //get user
-      let other = await User.findByPk(otherID);
-      if (!other) {
-        return res.status(400).json({ message: "User not found" });
-      }
-      //add user to chat
-      await chat.addUser(other);
-      otherUsers.push(other);
+    // Create chat
+    const chat = await Chat.create({
+      name,
     });
 
-    //add sending user to the chat
-    await chat?.addUser(user);
-    //return information
-    res.json({ chat, user, otherUsers });
+    // Add users to chat
+    for (let userId of userIds) {
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      await chat.addUser(user);
+    }
+
+    // Return the new chat with id, name, and users
+    res.json({
+      id: chat.id,
+      name: chat.name,
+      Users: await chat.getUsers(),
+    });
   } catch (err) {
     console.error("Error adding chat:", err);
     res.status(400).json({ message: "Error adding chat", error: err.message });
@@ -84,27 +76,23 @@ router.post("/addProjectChat", async (req, res) => {
   }
 });
 
-//get chats for a certain userID
-router.get("/getChats/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
+// Get all chats for a user by user id, including the users in each chat
+router.get("/:userID", async (req, res) => {
+  const { userID } = req.params;
 
-    // Check if user exists
-    const user = await User.findByPk(id);
+  try {
+    const user = await User.findByPk(userID);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Get all chats for user, including associated users (id, name, username, email, profilePicture), and chat id & name, leave out the data from the juction table
-    const chats = await Chat.findAll({
+    const chats = await user.getChats({
       include: [
         {
           model: User,
-          attributes: ["id", "name", "username", "email", "profilePicture"],
+          attributes: ["id", "name", "username", "profilePicture"],
         },
       ],
-      attributes: ["id", "name"],
-      through: { attributes: [] },
     });
 
     res.json(chats);
@@ -112,6 +100,7 @@ router.get("/getChats/:id", async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+
 //get project chats for a certain userID
 router.get("/getProjectChats/:userID", async (req, res) => {
   const { userID } = req.params;
@@ -150,42 +139,42 @@ router.get("/getProjectChats/:userID", async (req, res) => {
   //for each project, get the chat that it is associated with it
 });
 
-//add a new message
-router.post("/addMessage", async (req, res) => {
-  const { chatID, userID, text, date } = req.body;
-  console.log(date);
+// Add a new message to a chat
+router.post("/messages", async (req, res) => {
+  const { chatId, message } = req.body;
+
   try {
-    const myMessage = await Message.create({
-      chatId: chatID,
-      userId: userID,
-      message: text,
-      date: date,
+    const chat = await Chat.findByPk(chatId);
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+
+    const newMessage = await Message.create({
+      message,
+      chatId,
+      userId: req.session.userId,
     });
 
-    //return information
-    res.json(myMessage);
+    res.status(201).json(newMessage);
   } catch (err) {
-    console.error("Error adding message:", err);
-    res
-      .status(400)
-      .json({ message: "Error adding message", error: err.message });
+    res.status(400).json({ message: err.message });
   }
 });
 
 //get all messages for a certain chat
-router.get("/getMessagesFromChat/:chatID", async (req, res) => {
+router.get("/messages/:chatId", async (req, res) => {
   try {
-    const { chatID } = req.params;
+    const { chatId } = req.params;
 
     const messages = await Message.findAll({
-      where: { chatId: chatID },
+      where: { chatId },
       include: [
         {
           model: User,
           attributes: ["id", "name", "username"],
         },
       ],
-      attributes: ["message", "date"], // get message and date
+      attributes: ["message", "createdAt", "chatId"], // get message and date
     });
     res.json(messages);
   } catch (err) {
@@ -194,47 +183,42 @@ router.get("/getMessagesFromChat/:chatID", async (req, res) => {
 });
 
 //remove user from chat
-router.delete("/:chatID/removeUser/:userID", async (req, res) => {
-  const chatID = req.params.chatID;
-  const userID = req.params.userID;
+router.delete("/:chatId/users/:userId", async (req, res) => {
+  const chatId = req.params.chatId;
+  const userId = req.params.userId;
 
   try {
-    const chat = await Chat.findByPk(chatID);
+    const chat = await Chat.findByPk(chatId);
     if (!chat) {
       return res.status(404).json({ message: "Chat not found" });
     }
 
-    const user = await User.findByPk(userID);
+    const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     await chat.removeUser(user);
-    console.log(chat);
 
-    res.status(200).json({ message: "User removed from project" });
+    res.status(200).json({ message: "User removed from chat" });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
 //add users to a Chat
-router.post("/addUsers/:chatID", async (req, res) => {
-  const chatID = req.params.chatID;
-  console.log("hi");
-  console.log("ChatID  is: ", chatID);
-  const userIDs = req.body.userIDs;
-
-  console.log(userIDs);
+router.post("/:chatId/users", async (req, res) => {
+  const chatId = req.params.chatId;
+  const userIds = req.body.userIds;
 
   try {
-    const chat = await Chat.findByPk(chatID);
+    const chat = await Chat.findByPk(chatId);
     if (!chat) {
       return res.status(404).json({ message: "Chat not found" });
     }
 
-    for (let userID of userIDs) {
-      const user = await User.findByPk(userID);
+    for (let userId of userIds) {
+      const user = await User.findByPk(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
