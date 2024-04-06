@@ -77,7 +77,6 @@ router.post("/signup", async (req, res) => {
 
     const userJSON = user.toJSON();
     delete userJSON.password;
-    delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
     await transaction.commit();
@@ -120,7 +119,6 @@ router.post("/login", async (req, res) => {
 
     const userJSON = user.toJSON();
     delete userJSON.password;
-    delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
     return res.status(200).json({ user: userJSON });
@@ -147,7 +145,6 @@ router.get("/me", async (req, res) => {
     if (user) {
       const userJSON = user.toJSON();
       delete userJSON.password;
-      delete userJSON.createdAt;
       delete userJSON.updatedAt;
       return res.json({ valid: true, user: userJSON });
     } else {
@@ -250,7 +247,6 @@ router.put("/me", async (req, res) => {
     // Return user without password, createdAt, updatedAt
     const userJSON = user.toJSON();
     delete userJSON.password;
-    delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
     await transaction.commit();
@@ -277,7 +273,6 @@ router.post("/me/profile-picture", upload.single("profilePicture"), validateImag
     // Return user without password, createdAt, updatedAt
     const userJSON = user.toJSON();
     delete userJSON.password;
-    delete userJSON.createdAt;
     delete userJSON.updatedAt;
     return res.json({ user: userJSON });
   } catch (error) {
