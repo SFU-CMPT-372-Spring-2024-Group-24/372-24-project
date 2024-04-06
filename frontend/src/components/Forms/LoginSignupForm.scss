@@ -6,6 +6,13 @@ form.login-signup {
   flex-direction: column;
   gap: 20px;
 
+  h2{
+    text-align: center  ;
+    font-family: "Lato", sans-serif;
+    font-weight: 500;
+    color: white;
+  }
+
   div.error-msg {
     margin: auto;
     width: 80%;
@@ -44,7 +51,7 @@ form.login-signup {
   .action-button {
     width: 80%;
     padding: 1rem;
-    background-color: $purple;
+      background-color: #0d8c88;
     color: #fff;
     border: none;
     border-radius: 50px;
@@ -52,10 +59,14 @@ form.login-signup {
     font-weight: 700;
     cursor: pointer;
     display: block;
-    margin: 20px auto;
+    margin: 10px auto;
 
     &:hover {
-      background-color: $light-purple;
+      background-color: #097774;
     }
   }
+}
+
+#signupf{
+  margin: 0;
 }
