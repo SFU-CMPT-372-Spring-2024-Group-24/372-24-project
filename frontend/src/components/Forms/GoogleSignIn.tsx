@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useUser } from "../../hooks/UserContext";
 import { useNavigate } from "react-router-dom";
@@ -16,22 +16,22 @@ const GoogleSignIn = () => {
 
       const { given_name, name, email, picture } = decodedToken;
 
-      // POST request to server 
+      // POST request to server
       const res = await fetch(`api/users/google-login`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ given_name, name, email, picture })
+        body: JSON.stringify({ given_name, name, email, picture }),
       });
 
       if (res.ok) {
         const newUser = await res.json();
-        console.log('New user:', newUser);
-        setUser(newUser); 
-        navigate("/projects"); 
+        console.log("New user:", newUser);
+        setUser(newUser);
+        navigate("/projects");
       } else {
-        console.error('Failed to create user:', await res.text());
+        console.error("Failed to create user:", await res.text());
       }
     } catch (error) {
       console.error(error);
@@ -41,20 +41,19 @@ const GoogleSignIn = () => {
   useEffect(() => {
     if (window.google && window.google.accounts) {
       window.google.accounts.id.initialize({
-        client_id: "921854374603-me6ko0fch21vb5t8i0vch7gh9bkcgrcg.apps.googleusercontent.com",
-        callback: handleCallbackResponse
+        client_id:
+          "921854374603-me6ko0fch21vb5t8i0vch7gh9bkcgrcg.apps.googleusercontent.com",
+        callback: handleCallbackResponse,
       });
 
       window.google.accounts.id.renderButton(
-        document.getElementById('signInDiv'),
-        { theme: 'outline', size: 'large', text: 'continue_with' }
+        document.getElementById("google-sign-in"),
+        { theme: "outline", size: "large", text: "continue_with" },
       );
     }
   }, []);
 
-  return (
-    <div id='signInDiv'></div>
-  )
-}
+  return <div id="google-sign-in"></div>;
+};
 
 export default GoogleSignIn;

@@ -45,7 +45,7 @@ const LoginForm = ({}: Props) => {
       if (response.data.user.isAdmin) {
         navigate("/admin");
       } else {
-        navigate("/projects");
+        navigate("/projects", { replace: true });
       }
     } catch (error) {
       setErrorMsg(handleApiFormError(error as AxiosError));

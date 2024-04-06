@@ -1,24 +1,25 @@
 // Libraries
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-// Icons
+import { toast } from "react-toastify";
+// Icons and styles
 import { FaUser } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import { RiContactsBook2Fill, RiLockPasswordFill } from "react-icons/ri";
 import { BsFillExclamationCircleFill } from "react-icons/bs";
+import "./LoginSignupForm.scss";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
 import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
-// Styles
-import "./LoginSignupForm.scss";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 // API
 import { api, AxiosError } from "../../api";
-import { toast } from "react-toastify";
 
-interface Props {}
+interface Props {
+  setAction: (action: string) => void;
+}
 
-const SignupForm = ({}: Props) => {
-  const { user, setUser } = useUser();
+const SignupForm = ({ setAction }: Props) => {
+  const { user } = useUser();
   const navigate = useNavigate();
 
   const [name, setName] = useState<string>("");
@@ -40,7 +41,7 @@ const SignupForm = ({}: Props) => {
     e.preventDefault();
 
     try {
-      const response = await api.post("/users/signup", {
+      await api.post("/users/signup", {
         name,
         username,
         email,
@@ -48,13 +49,10 @@ const SignupForm = ({}: Props) => {
         passwordConfirmation,
       });
 
-      setUser(response.data.user);
-
-      // if (response.data.loggedIn) {
-        navigate("/projects");
-      // } else {
-      //   setErrorMsg(response.data.message);
-      // }
+      toast.success(
+        "Your account has been created. Please log in to continue."
+      );
+      setAction("login");
     } catch (error) {
       setErrorMsg(handleApiFormError(error as AxiosError));
     }

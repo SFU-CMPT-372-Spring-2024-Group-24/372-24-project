@@ -12,10 +12,8 @@ import "./LoginSignup.scss";
 const LoginSignup = () => {
   //regular login
   const location = useLocation();
-  const defaultAction = new URLSearchParams(location.search).get("action") === "1" ? "Login" : "Sign Up";
+  const defaultAction = new URLSearchParams(location.search).get("action") === "1" ? "login" : "signup";
   const [action, setAction] = useState(defaultAction);
-
-  const handleActionChange = (newAction: string) => setAction(newAction);
 
   return (
     <div className="login-signup-page">
@@ -29,24 +27,19 @@ const LoginSignup = () => {
       </div>
 
       <div className="content">
-        {/* <div className="header">
-          <h2 className="form-name">{action}</h2>
-          <div className="underline"></div>
-        </div> */}
-
-        {action === "Login" ? <LoginForm /> : <SignupForm />}
+        {action === "login" ? <LoginForm /> : <SignupForm setAction={setAction}/>}
 
         <div className="or">— Or —</div>
 
         <GoogleSignIn />
 
         <div className="submit-container">
-          {action === "Sign Up" ? (
+          {action === "signup" ? (
             <>
               <span>Already have an account? </span>
               <button
                 className="login-btn"
-                onClick={() => handleActionChange("Login")}
+                onClick={() => setAction("login")}
               >
                 Log In
               </button>
@@ -56,7 +49,7 @@ const LoginSignup = () => {
               <span>Don't have an account yet? </span>
               <button
                 className="create-btn"
-                onClick={() => handleActionChange("Sign Up")}
+                onClick={() => setAction("signup")}
               >
                 Create an account
               </button>

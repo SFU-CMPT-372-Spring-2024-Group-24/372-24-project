@@ -7,14 +7,23 @@ import moment from "moment";
 // Icons
 import { AiOutlineUser } from "react-icons/ai";
 import { HiOutlineMail } from "react-icons/hi";
+// Hooks
+import { useUser } from "../../hooks/UserContext";
 
 interface Props {
   view: string;
   setView: (view: string) => void;
   isOwnProfile: boolean;
   profile: User;
+  setProfile: (profile: User) => void;
 }
-const ProfilePanel = ({ view, setView, isOwnProfile, profile }: Props) => {
+const ProfilePanel = ({ view, setView, isOwnProfile, profile, setProfile }: Props) => {
+  const { user } = useUser();
+
+  if (user && isOwnProfile) {
+    setProfile(user);
+  }
+
   return (
     <>
       <section className="profile-panel">

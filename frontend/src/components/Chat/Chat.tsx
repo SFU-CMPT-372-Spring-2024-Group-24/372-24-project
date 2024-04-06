@@ -50,10 +50,6 @@ const Chat = () => {
         const chats = response.data;
         setRecentChatters(chats);
         console.log("Recent Chats:", chats);
-
-        //trying to get chats that are project
-        const check = await api.get(`/chats/getProjectChats/${user!.id}`);
-        console.log("Check", check);
       }
     } catch (error) {
       console.error("Error fetching recent Chats", error);
