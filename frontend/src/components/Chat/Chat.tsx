@@ -48,7 +48,7 @@ const Chat = () => {
         const response = await api.get(`/chats/getChats/${user!.id}`);
         const chats = response.data;
         setRecentChatters(chats);
-        //console.log("Recent Chats:", chats);
+        console.log("Recent Chats:", chats);
       }
     } catch (error) {
       console.error("Error fetching recent Chats", error);

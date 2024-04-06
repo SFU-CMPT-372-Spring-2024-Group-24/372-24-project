@@ -73,14 +73,15 @@ router.post("/signup", async (req, res) => {
 
     // Create user
     const user = await User.create({ name, username, email, password: hash });
-    req.session.userId = user.id;
+    // req.session.userId = user.id;
 
-    const userJSON = user.toJSON();
-    delete userJSON.password;
-    delete userJSON.updatedAt;
+    // const userJSON = user.toJSON();
+    // delete userJSON.password;
+    // delete userJSON.updatedAt;
 
     await transaction.commit();
-    return res.json({ user: userJSON });
+    // return res.json({ user: userJSON });
+    return res.json({ message: "New user signed up successfully"});
   } catch (err) {
     await transaction.rollback();
     return res.status(500).json({ message: err.message });

@@ -1,5 +1,5 @@
 // Models
-const { Project, User, Role, UserProject, File } = require("../db");
+const { Project, User, Role, UserProject, File, Chat } = require("../db");
 // Third-party modules
 const express = require("express");
 const Sequelize = require("sequelize");
@@ -21,11 +21,20 @@ router.post("/", async (req, res) => {
       description,
     });
 
+    // Create Chat room for project, name the chat the same as project name and link it to the project
+    const chat = await Chat.create({
+      name: name,
+    });
+    await project.addChat(chat);
+
     // Add user to project
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
+
+    // Add user to the chat room
+    await chat.addUser(user);
 
     // Get Owner role
     const ownerRole = await Role.findOne({ where: { name: "Owner" } });
