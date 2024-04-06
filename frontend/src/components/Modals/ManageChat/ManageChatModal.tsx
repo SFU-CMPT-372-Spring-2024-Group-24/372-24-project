@@ -1,7 +1,7 @@
 // Use for creating a new chat room, or adding users to a chat room
 
 // Hooks
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../../../hooks/UserContext";
 import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 import useSearchUsers from "../../../hooks/useSearchUsers";
@@ -35,6 +35,7 @@ const ManageChatModal = ({
   setChat,
 }: Props) => {
   const { user } = useUser();
+  const [chatName, setChatName] = useState<string>("");
   const { socket, chats, setChats } = useChats();
   const { handleApiError } = useApiErrorHandler();
   const {
@@ -58,15 +59,33 @@ const ManageChatModal = ({
     setHasSearched(false);
   };
 
+  // set the chatName variable to what the user is inputting
+  const handleChatNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChatName(event.target.value);
+  };
+
+  // if there's only one selected user, make the chat name their name
+  useEffect(() => {
+    if (selectedUsers.length === 1) {
+      setChatName(selectedUsers[0].name);
+    } else {
+      setChatName("");
+    }
+  }, [selectedUsers]);
+
   // Create a new chat room
   const handleCreateChat = async () => {
     if (!selectedUsers.length) {
       return;
     }
-
+    if (chatName.trim() === "") {
+      alert("Please re-enter your chat name, it is empty.");
+      return;
+    }
     try {
+      //instead of name being empty string here, want to get name specified by a user input
       const response = await api.post("/chats", {
-        name: "",
+        name: chatName,
         userIds: [user!.id, ...selectedUsers.map((user) => user.id)],
       });
 
@@ -75,6 +94,9 @@ const ManageChatModal = ({
 
       // Use socket to broadcast to everyone else to refresh their list of chats
       socket.emit("chat_added");
+
+      // Set chat name back to empty string
+      setChatName("");
 
       // Close the modal
       closeModal();
@@ -123,8 +145,8 @@ const ManageChatModal = ({
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>
-            {action === "create-chat" && "Create chat"}
-            {action === "add-members" && "Add members"}
+            {action === "create-chat" && "Create Chat"}
+            {action === "add-members" && "Add Members"}
           </Modal.Title>
         </Modal.Header>
 
@@ -132,7 +154,19 @@ const ManageChatModal = ({
           <section className="search-section">
             <div>
               {action === "create-chat" && (
-                <h5>Select users you want to chat with</h5>
+                <>
+                  <h5>Select users you want to chat with: </h5>
+                  {selectedUsers.length > 1 && (
+                    <input
+                      type="text"
+                      className="insert-chat-name"
+                      value={chatName}
+                      onChange={handleChatNameChange}
+                      placeholder="Input your chat name"
+                      required
+                    ></input>
+                  )}
+                </>
               )}
 
               {action === "add-members" && (
