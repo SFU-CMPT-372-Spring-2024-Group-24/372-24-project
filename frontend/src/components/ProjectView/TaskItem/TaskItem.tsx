@@ -23,7 +23,7 @@ import Comments from "./Comments";
 import TaskMembers from "./TaskMembers";
 import TaskName from "./TaskName";
 import Attachments from "./Attachments";
-import MoveTaskModal from "../../Modals/MoveTaskModal";
+import MoveTaskModal from "../../Modals/MoveTask/MoveTaskModal";
 // API
 import { api, AxiosError } from "../../../api";
 // Custom hooks
@@ -37,7 +37,7 @@ interface Props {
 }
 
 const TaskItem = ({ list, task, index }: Props) => {
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
   const [showTaskItemModal, setShowTaskItemModal] = useState<boolean>(false);
   const [showMoveTaskModal, setShowMoveTaskModal] = useState<boolean>(false);
   const { project, removeTask, userCanPerform } = useTasks();

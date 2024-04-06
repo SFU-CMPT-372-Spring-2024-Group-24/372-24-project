@@ -18,7 +18,7 @@ const TaskName = ({ task }: Props) => {
   const { project, setTask, userCanPerform } = useTasks();
   const [taskName, setTaskName] = useState<string>(task.name);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
 
   const handleTaskNameChange = async (e: React.FormEvent) => {
     e.preventDefault();

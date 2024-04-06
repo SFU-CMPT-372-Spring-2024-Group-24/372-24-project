@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 // Icons
 import { FaUser } from "react-icons/fa6";
 import { RiLockPasswordFill } from "react-icons/ri";
+import { BsFillExclamationCircleFill } from "react-icons/bs";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
+import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
 // Styles
 import "./LoginSignupForm.scss";
 // API
-import { api } from "../../api";
+import { api, AxiosError } from "../../api";
 
 interface Props {}
 
@@ -21,6 +23,7 @@ const LoginForm = ({}: Props) => {
   const [password, setPassword] = useState<string>("");
 
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const { handleApiFormError } = useApiErrorHandler();
 
   useEffect(() => {
     if (user) {
@@ -37,25 +40,26 @@ const LoginForm = ({}: Props) => {
         password: password,
       });
 
-      if (response.data.loggedIn) {
-        setUser(response.data.user);
-        //if user is Admin, redirect to admin, else projects
-        if (response.data.user.isAdmin) {
-          navigate("/admin"); 
-        } else {
-          navigate("/projects"); 
-        }
+      setUser(response.data.user);
+      // if user is Admin, redirect to admin, else projects
+      if (response.data.user.isAdmin) {
+        navigate("/admin");
       } else {
-        setErrorMsg(response.data.message);
+        navigate("/projects");
       }
     } catch (error) {
-      console.error("An error occurred while logging in", error);
+      setErrorMsg(handleApiFormError(error as AxiosError));
     }
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <div className="error-msg">{errorMsg}</div>
+    <form onSubmit={handleLogin} className="login-signup">
+      {errorMsg && (
+        <div className="error-msg">
+          <BsFillExclamationCircleFill size={18} />
+          {errorMsg}
+        </div>
+      )}
 
       <div className="input">
         <FaUser size={17} />
@@ -82,7 +86,7 @@ const LoginForm = ({}: Props) => {
       </div>
 
       <button type="submit" className="action-button">
-        Sign In
+        Log In
       </button>
     </form>
   );

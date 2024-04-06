@@ -18,7 +18,7 @@ const Description = ({ task }: Props) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const { setTask, project, userCanPerform } = useTasks();
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
 
   // Update task description
   const handleDescriptionChange = async (e: React.FormEvent) => {

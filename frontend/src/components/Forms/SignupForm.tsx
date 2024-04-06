@@ -5,12 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import { RiContactsBook2Fill, RiLockPasswordFill } from "react-icons/ri";
+import { BsFillExclamationCircleFill } from "react-icons/bs";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
+import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
 // Styles
 import "./LoginSignupForm.scss";
 // API
-import { api } from "../../api";
+import { api, AxiosError } from "../../api";
+import { toast } from "react-toastify";
 
 interface Props {}
 
@@ -25,6 +28,7 @@ const SignupForm = ({}: Props) => {
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
 
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const { handleApiFormError } = useApiErrorHandler();
 
   useEffect(() => {
     if (user) {
@@ -32,62 +36,8 @@ const SignupForm = ({}: Props) => {
     }
   }, [user]);
 
-  // Todo: clean console error, only display error message on the app
-  // const handleCreateAccount = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   try {
-  //     const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/users/signup`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         name,
-  //         username,
-  //         email,
-  //         password,
-  //         passwordConfirmation,
-  //       }),
-  //     });
-
-  //     if (response.ok) {
-  //       const user = await response.json();
-  //       setUser(user);
-  //       navigate("/projects", { replace: true });
-  //     } else {
-  //       const errorData = await response.json();
-  //       setErrorMsg(errorData.message);
-  //     }
-  //   } catch (error) {
-  //     console.error(`An error occurred while creating your account: ${error}`);
-  //     setErrorMsg("An error occurred while creating your account");
-  //   }
-  // };
-
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // axios
-    //   .post(`${import.meta.env.VITE_APP_API_URL}/users/signup`, {
-    //     name,
-    //     username,
-    //     email,
-    //     password,
-    //     passwordConfirmation,
-    //   })
-    //   .then((response) => {
-    //     setUser(response.data.user);
-
-    //     if (response.data.loggedIn) {
-    //       navigate("/projects");
-    //     } else {
-    //       setErrorMsg(response.data.message);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error(`An error occurred while creating your account: ${error}`);
-    //   });
 
     try {
       const response = await api.post("/users/signup", {
@@ -100,19 +50,24 @@ const SignupForm = ({}: Props) => {
 
       setUser(response.data.user);
 
-      if (response.data.loggedIn) {
+      // if (response.data.loggedIn) {
         navigate("/projects");
-      } else {
-        setErrorMsg(response.data.message);
-      }
+      // } else {
+      //   setErrorMsg(response.data.message);
+      // }
     } catch (error) {
-      console.error(`An error occurred while creating your account: ${error}`);
+      setErrorMsg(handleApiFormError(error as AxiosError));
     }
   };
 
   return (
-    <form onSubmit={handleCreateAccount}>
-      <div className="error-msg">{errorMsg}</div>
+    <form onSubmit={handleCreateAccount} className="login-signup">
+      {errorMsg && (
+        <div className="error-msg">
+          <BsFillExclamationCircleFill size={18} />
+          {errorMsg}
+        </div>
+      )}
 
       <div className="input">
         <RiContactsBook2Fill size={20} />
@@ -175,7 +130,7 @@ const SignupForm = ({}: Props) => {
       </div>
 
       <button type="submit" className="action-button">
-        Create Account
+        Sign Up
       </button>
     </form>
   );

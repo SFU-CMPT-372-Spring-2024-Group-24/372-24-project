@@ -2,7 +2,7 @@
 import { useState } from "react";
 // Components
 import AddFileModal from "../../Modals/AddFileModal";
-import PreviewFileModal from "../../Modals/PreviewFileModal";
+import PreviewFileModal from "../../Modals/PreviewFile/PreviewFileModal";
 // Icons & styles
 import { IoMdAdd } from "react-icons/io";
 import { getFileIcon } from "../../../utils/fileUtils";

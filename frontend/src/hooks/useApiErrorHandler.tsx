@@ -10,5 +10,14 @@ export const useApiErrorHandler = () => {
     }
   };
 
-  return handleApiError;
+  const handleApiFormError = (error: AxiosError) => {
+    if (error.response) {
+      return error.response.data.message;
+    } else {
+      toast.error("An error occurred while processing your request in the server.");
+      return '';
+    }
+  };
+
+  return { handleApiError, handleApiFormError };
 }

@@ -10,7 +10,6 @@ module.exports = (sequelize) => {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: false
         },
         url: {
             type: DataTypes.STRING,
@@ -19,6 +18,10 @@ module.exports = (sequelize) => {
         type: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        hash: {
+            type: DataTypes.STRING,
+            allowNull: false,
         }
     });
 

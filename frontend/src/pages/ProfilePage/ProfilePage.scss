@@ -1,0 +1,66 @@
+@import '../../styles.scss';
+
+.profile-page {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 80%;
+  min-height: 75vh;
+  margin: 2rem auto;
+
+  .profile-panel {
+    width: 25%;
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+
+      img {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        align-self: center;
+      }
+
+      h2 {
+        width: fit-content;
+        margin: 1rem auto .5rem auto;
+      }
+
+      p {
+        margin: .5rem 0 0 0;
+        padding: 0 1rem;
+        color: $dark-gray;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+      }
+    }
+
+    .profile-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+
+      button {
+        background: #fff;
+
+        &:hover {
+          background: $purple;
+          color: white;
+        }
+      }
+
+      button.active {
+        background: $dark-gray;
+        color: white;
+      }
+    }
+  }
+
+  .profile-main-view {
+    flex-grow: 1;
+  }
+}
+

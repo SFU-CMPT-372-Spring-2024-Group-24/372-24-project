@@ -5,13 +5,13 @@ import { useEffect, useState } from "react";
 // Icons
 import { MdLogout } from "react-icons/md";
 // Files
-import defaultProfilePicture from "../../assets/default-profile-picture.png";
+import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Styles
 import "./UserModal.scss";
 // Hooks
-import { useUser } from "../../hooks/UserContext";
+import { useUser } from "../../../hooks/UserContext";
 // API
-import { api } from "../../api";
+import { api } from "../../../api";
 
 interface Props {}
 
@@ -38,7 +38,9 @@ const UserModal = ({}: Props) => {
 
   // Backdrop styling
   useEffect(() => {
-    profileIsOpen ? (document.body.classList.add("userModal-open")) : (document.body.classList.remove("userModal-open"));
+    profileIsOpen
+      ? document.body.classList.add("userModal-open")
+      : document.body.classList.remove("userModal-open");
   }, [profileIsOpen]);
 
   return (
@@ -68,12 +70,29 @@ const UserModal = ({}: Props) => {
             </Modal.Header>
 
             <Modal.Body>
-              <p>Username: {user.username}</p>
-              <p>Email address: {user.email}</p>
+              <p>
+                <span>Username: </span>
+                {user.username}
+              </p>
+
+              <p>
+                <span>Email address: </span>
+                {user.email}
+              </p>
+
+              <button
+                className="btn-text"
+                onClick={() => {
+                  navigate(`/profile/${user.username}`);
+                  closeModal();
+                }}
+              >
+                Go to your profile
+              </button>
             </Modal.Body>
 
             <Modal.Footer>
-              <button className="btn-logout" onClick={handleLogout}>
+              <button className="btn-icon" onClick={handleLogout}>
                 <MdLogout size={20} />
                 Sign Out
               </button>

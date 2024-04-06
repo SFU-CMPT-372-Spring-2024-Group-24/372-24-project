@@ -24,7 +24,7 @@ const DueDate = ({ task }: Props) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(task.dueDate);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const { setTask, project, userCanPerform } = useTasks();
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
 
   // For opening the modal
   const openDueDateModal = () => {

@@ -7,7 +7,7 @@ import { FileModel } from "../../../models/FileModel";
 import { Task } from "../../../models/Task";
 // Components
 import AddFileModal from "../../Modals/AddFileModal";
-import PreviewFileModal from "../../Modals/PreviewFileModal";
+import PreviewFileModal from "../../Modals/PreviewFile/PreviewFileModal";
 // Icons
 import { IoMdAdd, IoMdCloseCircleOutline } from "react-icons/io";
 import { getFileIcon } from "../../../utils/fileUtils";
@@ -19,14 +19,14 @@ interface Props {
 }
 
 const Attachments = ({ task }: Props) => {
-  const { project, projectFiles, setProjectFiles, userCanPerform } = useTasks();
+  const { project, projectFiles, userCanPerform } = useTasks();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [isShowingFilesDropdown, setIsShowingFilesDropdown] = useState<boolean>(false);
   const [taskFiles, setTaskFiles] = useState<FileModel[]>([]);
   const [isShowingAddFileModal, setIsShowingAddFileModal] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<FileModel>();
   const [isShowingPreviewFileModal, setIsShowingPreviewFileModal] = useState<boolean>(false);
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
 
   // Files dropdown
   useEffect(() => {

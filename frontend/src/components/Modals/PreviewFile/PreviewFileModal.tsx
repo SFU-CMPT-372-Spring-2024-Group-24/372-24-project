@@ -5,17 +5,17 @@ import Modal from "react-bootstrap/Modal";
 import { Document, Page, pdfjs } from "react-pdf";
 import { toast } from "react-toastify";
 // Model
-import { FileModel } from "../../models/FileModel";
+import { FileModel } from "../../../models/FileModel";
 // Icons & styles
 import { IoMdDownload, IoMdTrash } from "react-icons/io";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "./PreviewFileModal.scss";
 // API
-import { api, AxiosError } from "../../api";
+import { api, AxiosError } from "../../../api";
 // Custom hooks
-import { useTasks } from "../../hooks/TaskContext";
-import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
+import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 
 // Set pdf.js worker source
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -33,7 +33,7 @@ const PreviewFileModal = ({
 }: Props) => {
   const { project, projectFiles, setProjectFiles, userCanPerform } = useTasks();
   const [numPages, setNumPages] = useState<number>(0);
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);

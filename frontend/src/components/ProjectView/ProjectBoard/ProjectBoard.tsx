@@ -18,7 +18,7 @@ const ProjectBoard = ({}: Props) => {
   const { project, setProject, lists, moveTask, userCanPerform } = useTasks();
   const [editingName, setEditingName] = useState<boolean>(false);
   const [newName, setNewName] = useState<string>(project.name);
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
 
   // Edit project name
   const handleEditProjectName = async () => {

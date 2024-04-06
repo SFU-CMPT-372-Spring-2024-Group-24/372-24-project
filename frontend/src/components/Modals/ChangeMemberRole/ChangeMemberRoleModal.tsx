@@ -5,14 +5,14 @@ import { toast } from "react-toastify";
 // Styles
 import "./ChangeMemberRoleModal.scss";
 // Models
-import { Role, Roles } from "../../models/ProjectRole";
-import { User } from "../../models/User";
+import { Role, Roles } from "../../../models/ProjectRole";
+import { User } from "../../../models/User";
 // API
-import { AxiosError, api } from "../../api";
+import { AxiosError, api } from "../../../api";
 // Custom hooks
-import { useTasks } from "../../hooks/TaskContext";
-import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
-import { useUser } from "../../hooks/UserContext";
+import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
+import { useUser } from "../../../hooks/UserContext";
 
 interface Props {
   showModal: boolean;
@@ -25,7 +25,7 @@ const ChangeMemberRoleModal = ({ showModal, setShowModal, member }: Props) => {
 
   const { project, projectMembers, setProjectMembers, setUserRole } = useTasks();
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-  const handleApiError = useApiErrorHandler();
+  const {handleApiError} = useApiErrorHandler();
   const { user } = useUser();
 
   // Close modal

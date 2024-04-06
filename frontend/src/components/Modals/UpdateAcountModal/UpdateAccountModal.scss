@@ -1,0 +1,42 @@
+@import '../../../styles.scss';
+
+.account-modal-backdrop {
+  opacity: 0 !important;
+}
+
+.account-modal {
+  .modal-content {
+    box-shadow: 0 0 5px 2px $light-gray;
+  }
+
+  .modal-header {
+    background: $white;
+    padding: .5rem;
+  }
+
+  .modal-body {
+    padding: .5rem;
+
+    input {
+      width: 100%;
+    }
+
+    .input-field {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: .5rem 0;
+
+      label {
+        width: 60%;
+        font-weight: 600;
+        font-size: 15px;
+      }
+    }
+
+    .button-group {
+      margin-top: 1rem;
+      justify-content: right;
+    }
+  }
+}
