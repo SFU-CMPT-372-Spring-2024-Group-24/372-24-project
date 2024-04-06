@@ -79,7 +79,7 @@ const ManageChatModal = ({
       return;
     }
     if (chatName.trim() === "") {
-      alert("Please re-enter your chat name, it is empty.");
+      alert("Please re-enter your group chat name, it is empty.");
       return;
     }
     try {
