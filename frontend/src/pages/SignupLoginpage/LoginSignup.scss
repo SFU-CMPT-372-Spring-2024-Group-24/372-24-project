@@ -13,7 +13,8 @@
     justify-content: center;
     gap: .5rem;
 
-    .content-left, .content {
+    .content-left,
+    .content {
         width: 40%;
     }
 
@@ -65,24 +66,6 @@ h1.logo {
     align-items: center;
     gap: 1rem;
     margin-bottom: 20px;
-}
-
-.google-button {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    justify-content: center;
-    padding: 1rem;
-    width: 80%;
-    border: 1px solid $light-gray;
-    border-radius: 10px;
-    margin: 1rem auto;
-    cursor: pointer;
-    transition: .3s;
-
-    &:hover {
-        background-color: rgba($color: $dark-gray, $alpha: 0.1);
-    }
 }
 
 .or {

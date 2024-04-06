@@ -1,8 +1,8 @@
 // Hooks
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "../../hooks/UserContext";
 import { useEffect, useState } from "react";
-import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
+// import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
 // Components
 import ProfilePanel from "../../components/Profile/ProfilePanel";
 import AccountView from "../../components/Profile/AccountView/AccountView";
@@ -10,17 +10,18 @@ import ActivityView from "../../components/Profile/ActivityView";
 // Styles
 import "./ProfilePage.scss";
 // API
-import { api, AxiosError } from "../../api";
+import { api } from "../../api";
 // Models
 import { User } from "../../models/User";
 
 const ProfilePage = () => {
   const { username } = useParams();
   const { user } = useUser();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<User | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState<boolean>(false);
   const [view, setView] = useState<string>("activity");
-  const { handleApiError } = useApiErrorHandler();
+  // const { handleApiError } = useApiErrorHandler();
 
   useEffect(() => {
     // Check if the profile page is the user's own profile
@@ -40,7 +41,8 @@ const ProfilePage = () => {
         const response = await api.get(`/users/${username}`);
         setProfile(response.data.user);
       } catch (error) {
-        handleApiError(error as AxiosError);
+        // handleApiError(error as AxiosError);
+        navigate("/notfound");
       }
     };
 
@@ -56,6 +58,7 @@ const ProfilePage = () => {
             setView={setView}
             isOwnProfile={isOwnProfile}
             profile={profile}
+            setProfile={setProfile}
           />
 
           <section className="profile-main-view">

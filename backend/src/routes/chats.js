@@ -58,26 +58,25 @@ router.get("/getChats/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    //get user
+    // Check if user exists
     const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    //get chats that the user is associated with
-    const chats = await user.getChats();
+    // Get all chats for user, including associated users (id, name, username, email, profilePicture), and chat id & name, leave out the data from the juction table
+    const chats = await Chat.findAll({
+      include: [
+        {
+          model: User,
+          attributes: ["id", "name", "username", "email", "profilePicture"],
+        },
+      ],
+      attributes: ["id", "name"],
+      through: { attributes: [] },
+    });
 
-    // Get chat details along with associated users
-    const userChats = await Promise.all(
-      chats.map(async (chat) => {
-        const users = await chat.getUsers();
-        return {
-          chatID: chat.id,
-          users: users.map((user) => ({
-            id: user.id,
-            username: user.username,
-          })),
-        };
-      })
-    );
-    res.json(userChats);
+    res.json(chats);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

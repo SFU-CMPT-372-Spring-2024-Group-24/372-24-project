@@ -117,6 +117,10 @@ const App = () => {
                 </AuthRoute>
               }
             />
+            <Route
+              path="/notfound"
+              element={<NotFoundPage />}
+            />
           </Route>
           <Route element={<LayoutWithHeader />}>
             <Route

@@ -73,15 +73,15 @@ router.post("/signup", async (req, res) => {
 
     // Create user
     const user = await User.create({ name, username, email, password: hash });
-    req.session.userId = user.id;
+    // req.session.userId = user.id;
 
-    const userJSON = user.toJSON();
-    delete userJSON.password;
-    delete userJSON.createdAt;
-    delete userJSON.updatedAt;
+    // const userJSON = user.toJSON();
+    // delete userJSON.password;
+    // delete userJSON.updatedAt;
 
     await transaction.commit();
-    return res.json({ user: userJSON });
+    // return res.json({ user: userJSON });
+    return res.json({ message: "New user signed up successfully"});
   } catch (err) {
     await transaction.rollback();
     return res.status(500).json({ message: err.message });
@@ -120,7 +120,6 @@ router.post("/login", async (req, res) => {
 
     const userJSON = user.toJSON();
     delete userJSON.password;
-    delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
     return res.status(200).json({ user: userJSON });
@@ -147,7 +146,6 @@ router.get("/me", async (req, res) => {
     if (user) {
       const userJSON = user.toJSON();
       delete userJSON.password;
-      delete userJSON.createdAt;
       delete userJSON.updatedAt;
       return res.json({ valid: true, user: userJSON });
     } else {
@@ -250,7 +248,6 @@ router.put("/me", async (req, res) => {
     // Return user without password, createdAt, updatedAt
     const userJSON = user.toJSON();
     delete userJSON.password;
-    delete userJSON.createdAt;
     delete userJSON.updatedAt;
 
     await transaction.commit();
@@ -277,7 +274,6 @@ router.post("/me/profile-picture", upload.single("profilePicture"), validateImag
     // Return user without password, createdAt, updatedAt
     const userJSON = user.toJSON();
     delete userJSON.password;
-    delete userJSON.createdAt;
     delete userJSON.updatedAt;
     return res.json({ user: userJSON });
   } catch (error) {
