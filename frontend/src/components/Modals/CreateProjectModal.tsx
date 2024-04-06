@@ -54,6 +54,7 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
         userID: user.id,
         projectID: project.id,
       });
+      console.log("Project:", project);
       console.log(chatResponse);
       navigate(`/projects/${project.id}`);
       closeModal();

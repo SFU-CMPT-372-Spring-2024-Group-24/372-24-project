@@ -42,6 +42,7 @@ const Chat = () => {
   const [divIndexValue, setDivIndexValue] = useState(-1);
   const [usersForChat, setUsersForChat] = useState<User[]>([]);
 
+  //get chats for a certain ID
   const getRecentChats = async () => {
     try {
       if (user != null) {
@@ -49,6 +50,10 @@ const Chat = () => {
         const chats = response.data;
         setRecentChatters(chats);
         console.log("Recent Chats:", chats);
+
+        //trying to get chats that are project
+        const check = await api.get(`/chats/getProjectChats/${user!.id}`);
+        console.log("Check", check);
       }
     } catch (error) {
       console.error("Error fetching recent Chats", error);
@@ -61,6 +66,8 @@ const Chat = () => {
     } else {
       setUsername("");
     }
+
+    //get all users that have signed up
     const getAllUsers = async () => {
       try {
         const response = await api.get("/users");
@@ -78,10 +85,9 @@ const Chat = () => {
               myUser.name,
               myUser.username
             );
+            //create the options you can choose from
             options.push(option);
           });
-          //console.log("Users:", users);
-          //console.log("Options:", options);
           setUserList(options);
         }
       } catch (error) {
@@ -93,6 +99,7 @@ const Chat = () => {
     socket.on("refresh_user_list", getRecentChats);
   }, []);
 
+  //add new chat to database
   const addNewChat = async (chatName: any, userID: any, otherIDs: any) => {
     try {
       const response = await api.post("/chats/addChat", {
@@ -107,8 +114,7 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    // console.log("Username:", username);
-    // console.log(room);
+    //user clicks on whichever chat they want, they will join the room
     if (username !== "" && room !== "") {
       // console.log("Going to join room!");
       socket.emit("join_room", room);
@@ -122,20 +128,14 @@ const Chat = () => {
     chatName: string,
     users: User[]
   ) => {
+    //changing these two triggers useEffect above
     setRoom(roomVal);
     setDivIndexValue(index);
     setChatName(chatName);
     setUsersForChat(users);
     console.log("Users for chat when joining room:", usersForChat);
-    // console.log("Username:", username);
-    // console.log(room);
-    // if (username !== "" && room !== "") {
-    //   console.log("Going to join room!");
-    //   socket.emit("join_room", room);
-    //   setShowChat(true);
-    // }
   };
-
+  //when returning from the chat, update the users listed for each chat
   const changeMembersOfChat = (chatID: string, membersOfChat: User[]) => {
     //find the object in recentChatters, replace its users
     const myObject = recentChatters.find((item) => item.chatID === chatID);
@@ -144,6 +144,7 @@ const Chat = () => {
     }
     console.log("my object: ", myObject);
   };
+  //reset values when you click the goBack button
   const goBack = () => {
     setDivIndexValue(-1);
     changeMembersOfChat(room, usersForChat);
@@ -151,13 +152,13 @@ const Chat = () => {
     setRoom("");
     setChatName("");
     setUsersForChat([]);
-    //console.log("Users for chat after pressing back");
-    //set div value back to -1 here
   };
 
+  //keep track of selected options from user
   const updateValue = (selectedOptions: MultiValue<Option>) => {
     setCurrentSelectValue(selectedOptions);
   };
+
   const addChatter = async (event: any) => {
     //need to check if you haven't already added someone
     //use current select value to check in recent chatters
@@ -175,23 +176,14 @@ const Chat = () => {
         var option: Option = selectValue as Option;
         convertedArray.push(JSON.parse(option.value).id);
       });
-      // const myName = uuidv4();
       await addNewChat(chatName, user?.id, convertedArray);
       socket.emit("chat_added");
     } else {
       alert("Please add some users to your chat.");
     }
     getRecentChats();
-    //broadcast to others to
-    // Insert new chat into chats table, with a random chat name
-    // Also add two different users to this new chat
-    //then we can pull from database, all the users associated with this chat
-    //add to list of recent chatters
-    //this list of recent chatters gets refreshed and used to make the divs
-    //when you click on div, it sends the chatID to the joinRoom
-    //still need to pull from chats_users to get the information
   };
-
+  //set chat name
   const handleChatNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChatName(event.target.value);
   };
@@ -213,18 +205,6 @@ const Chat = () => {
               <>
                 <form onSubmit={addChatter}>
                   <label htmlFor="selectUser">Create a Chat:</label>
-                  {/* <select
-                    id="selectUser"
-                    value={currentSelectValue}
-                    onChange={updateValue}
-                  >
-                    <option value="">--Please choose an option--</option>
-                    {userList.map((item, index) => (
-                      <option key={index} value={JSON.stringify(item)}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </select> */}
                   <Select
                     isMulti
                     name="selectUsers"
@@ -249,16 +229,6 @@ const Chat = () => {
                 </form>
                 <br></br>
                 <br></br>
-                {/* <input
-                  type="text"
-                  placeholder="room_id"
-                  onChange={(event) => {
-                    setRoom(event.target.value);
-                  }}
-                /> */}
-                {/* <button className="btn btn-primary" onClick={joinRoom}>
-                  Join Room
-                </button> */}
                 {recentChatters.map((item, index) => (
                   <div
                     className="recentChatters"

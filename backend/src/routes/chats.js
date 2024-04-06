@@ -116,6 +116,43 @@ router.get("/getChats/:id", async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+//get project chats for a certain userID
+router.get("/getProjectChats/:userID", async (req, res) => {
+  const { userID } = req.params;
+
+  // const test = User.findAll({
+  //   where: { id: userID },
+  //   include: [
+  //     {
+  //       model: Project,
+  //       include: [User],
+  //     },
+  //   ],
+  // }).then((users) => {
+  //   res.json(users); // Send the chats data as JSON response
+  // });
+
+  const test = User.findAll({
+    where: { id: userID },
+    include: [
+      {
+        model: Chat,
+        include: [
+          {
+            model: Project,
+            include: [User],
+          },
+        ],
+      },
+    ],
+  }).then((users) => {
+    res.json(users); // Extract Chats from each user and flatten the array
+  });
+
+  //get projects user is associated with
+
+  //for each project, get the chat that it is associated with it
+});
 
 //add a new message
 router.post("/addMessage", async (req, res) => {
