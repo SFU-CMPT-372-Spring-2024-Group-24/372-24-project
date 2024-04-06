@@ -23,7 +23,7 @@ import Comments from "./Comments";
 import TaskMembers from "./TaskMembers";
 import TaskName from "./TaskName";
 import Attachments from "./Attachments";
-import MoveTaskModal from "../../Modals/MoveTaskModal";
+import MoveTaskModal from "../../Modals/MoveTask/MoveTaskModal";
 // API
 import { api, AxiosError } from "../../../api";
 // Custom hooks

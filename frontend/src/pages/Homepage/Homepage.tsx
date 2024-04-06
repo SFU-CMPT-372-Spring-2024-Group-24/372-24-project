@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 // Styles
 import "./Homepage.scss";
 // Components
-import CreateProjectModal from "../../components/Modals/CreateProjectModal";
+import CreateProjectModal from "../../components/Modals/CreateProject/CreateProjectModal";
 // Models
 import { Project } from "../../models/Project";
 // Hooks
