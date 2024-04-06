@@ -2,9 +2,9 @@
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
 // Models
-import { List } from "../../models/List";
+import { List } from "../../../models/List";
 // Custom hooks
-import { useTasks } from "../../hooks/TaskContext";
+import { useTasks } from "../../../hooks/TaskContext";
 // Styles
 import "./MoveTaskModal.scss";
 

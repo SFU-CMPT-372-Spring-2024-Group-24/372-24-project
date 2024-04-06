@@ -5,11 +5,11 @@ import { useNavigate } from "react-router-dom";
 // Styles
 import './CreateProjectModal.scss';
 // Hooks
-import { useUser } from "../../hooks/UserContext";
+import { useUser } from "../../../hooks/UserContext";
 // Models
-import { Project } from "../../models/Project";
+import { Project } from "../../../models/Project";
 // API
-import { api, AxiosError } from "../../api";
+import { api, AxiosError } from "../../../api";
 
 interface Props {
   showModal: boolean;

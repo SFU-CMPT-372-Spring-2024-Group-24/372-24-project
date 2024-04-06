@@ -2,24 +2,24 @@
 import Modal from "react-bootstrap/Modal";
 import React, { useState } from "react";
 // Models
-import { User } from "../../models/User";
-import { Role, Roles } from "../../models/ProjectRole";
+import { User } from "../../../models/User";
+import { Role, Roles } from "../../../models/ProjectRole";
 // API
-import { api, AxiosError } from "../../api";
+import { api, AxiosError } from "../../../api";
 // Files
-import defaultProfilePicture from "../../assets/default-profile-picture.png";
+import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Custom hooks
-import { useUser } from "../../hooks/UserContext";
+import { useUser } from "../../../hooks/UserContext";
 // Icons and styles
 import { IoSearch } from "react-icons/io5";
 import { FaCheck } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
 import "./ManageMemberModal.scss";
 // Components
-import ChangeMemberRoleModal from "./ChangeMemberRoleModal";
+import ChangeMemberRoleModal from "../ChangeMemberRole/ChangeMemberRoleModal";
 // Custom hooks
-import { useTasks } from "../../hooks/TaskContext";
-import { useApiErrorHandler } from "../../hooks/useApiErrorHandler";
+import { useTasks } from "../../../hooks/TaskContext";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 import { Link } from "react-router-dom";
 
 interface Props {

@@ -5,13 +5,13 @@ import { useEffect, useState } from "react";
 // Icons
 import { MdLogout } from "react-icons/md";
 // Files
-import defaultProfilePicture from "../../assets/default-profile-picture.png";
+import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Styles
 import "./UserModal.scss";
 // Hooks
-import { useUser } from "../../hooks/UserContext";
+import { useUser } from "../../../hooks/UserContext";
 // API
-import { api } from "../../api";
+import { api } from "../../../api";
 
 interface Props {}
 

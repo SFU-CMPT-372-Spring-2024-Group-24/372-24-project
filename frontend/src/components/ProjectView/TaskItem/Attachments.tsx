@@ -7,7 +7,7 @@ import { FileModel } from "../../../models/FileModel";
 import { Task } from "../../../models/Task";
 // Components
 import AddFileModal from "../../Modals/AddFileModal";
-import PreviewFileModal from "../../Modals/PreviewFileModal";
+import PreviewFileModal from "../../Modals/PreviewFile/PreviewFileModal";
 // Icons
 import { IoMdAdd, IoMdCloseCircleOutline } from "react-icons/io";
 import { getFileIcon } from "../../../utils/fileUtils";
