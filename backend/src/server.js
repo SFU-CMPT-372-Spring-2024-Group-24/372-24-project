@@ -117,7 +117,8 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("refresh_user_list");
   });
   socket.on("send_message", (data) => {
-    socket.to(data).emit("receive_message");
+    console.log(data);
+    socket.to(data.chatId).emit("receive_message", data);
   });
   socket.on("disconnect", () => {
     console.log("User Disconnected", socket.id);
