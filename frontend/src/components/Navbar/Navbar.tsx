@@ -14,10 +14,10 @@ const Navbar = () => {
           <img src={Logo} alt="logo" />
         </a>
         <ul className={showNav ? styles.show : ""}>
+          {/* <li onClick={() => setShowNav(false)}><a href="#">About</a></li>
+          <li onClick={() => setShowNav(false)}><a href="#">Feature</a></li>
           <li onClick={() => setShowNav(false)}><a href="#">Product</a></li>
-          <li onClick={() => setShowNav(false)}><a href="#">About</a></li>
-          <li onClick={() => setShowNav(false)}><a href="#">Team</a></li>
-          <li onClick={() => setShowNav(false)}><a href="#">Support</a></li>
+          <li onClick={() => setShowNav(false)}><a href="#">Developers</a></li> */}
         </ul>
 
         <div className={styles.navbar_btns}>

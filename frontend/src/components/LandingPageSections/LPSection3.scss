@@ -1,0 +1,134 @@
+@mixin respond($breakpoint) {
+    @if $breakpoint ==phone {
+
+        // 600px
+        @media screen and (max-width: 37.5em) {
+            @content;
+        }
+    }
+
+    @if $breakpoint ==tab-port {
+
+        // 900px
+        @media screen and (max-width: 56.25em) {
+            @content;
+        }
+    }
+
+    @if $breakpoint ==tab-land {
+
+        // 1200px
+        @media screen and (max-width: 75em) {
+            @content;
+        }
+    }
+}
+
+.wrapper {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 5rem;
+
+    @include respond(tab-land) {
+        padding-inline: 1.5rem;
+    }
+
+    @include respond(phone) {
+        padding-inline: 0.8rem;
+    }
+}
+
+:root {
+    --spanish-gray: #969696;
+    --cultured: #f6f6f6;
+    --black: #151515;
+    --eerie-black: #1b1b1b;
+    --gradient: linear-gradient(to right, #3fe8ab, #78cdcd);
+    --gradient2: linear-gradient(to right, rgb(63, 131, 232), #7883cd);
+}
+
+.lpsection3 {
+    background-color: var(--black);
+    padding-block: 5rem;
+    overflow-x: hidden;
+
+    &_container {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: center;
+        gap: 3rem;
+        margin-left: 5.5rem;
+
+        @include respond(tab-port) {
+            margin-left: 3rem;
+        }
+    }
+
+    &_container::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 100%;
+        background-image: url("../../assets/blur-white.png");
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
+        opacity: 0.2;
+        pointer-events: none;
+    }
+
+    &_right {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 1rem;
+
+        img {
+            width: 70%;
+            max-width: 100%;
+        }
+
+        @include respond(tab-port) {
+            margin-inline: auto;
+        }
+    }
+
+    h1 {
+        color: #e1e1e1;
+        text-transform: capitalize;
+        font-size: 3.3rem;
+        letter-spacing: 1px;
+        font-weight: 600;
+        line-height: 1.2;
+
+        @include respond(tab-port) {
+            font-size: 2rem;
+        }
+    }
+
+    p {
+        color: #969696;
+        margin-block: 1.45rem 2.45rem;
+        line-height: 1.4;
+    }
+
+    .btn {
+        background: var(--gradient2);
+        padding: 0.6rem 1.2rem;
+        color: var(--cultured) !important;
+        border-radius: 0.5rem;
+        border: 1px solid transparent;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+
+        &:hover {
+            border-color: #4a3fe8;
+            background: transparent;
+            color: var(--cultured);
+        }
+    }
+}

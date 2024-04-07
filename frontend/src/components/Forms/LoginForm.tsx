@@ -54,6 +54,7 @@ const LoginForm = ({}: Props) => {
 
   return (
     <form onSubmit={handleLogin} className="login-signup">
+      <h2>Log in to CollabHub</h2>
       {errorMsg && (
         <div className="error-msg">
           <BsFillExclamationCircleFill size={18} />

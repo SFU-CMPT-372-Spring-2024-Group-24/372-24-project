@@ -16,10 +16,11 @@ const LoginSignup = () => {
   const [action, setAction] = useState(defaultAction);
 
   return (
+    <div className="background" style={{ backgroundColor: "#f2k4h1" }}>
     <div className="login-signup-page">
       <div className="content-left">
         <Link to={"/"} className="">
-          <h1 className="logo">
+          <h1 className="logo" id="logols">
             <FaHandshakeSimple />
             CollabHub
           </h1>
@@ -36,27 +37,28 @@ const LoginSignup = () => {
         <div className="submit-container">
           {action === "signup" ? (
             <>
-              <span>Already have an account? </span>
+              <span className="account-text">Already have an account? </span>
               <button
                 className="login-btn"
                 onClick={() => setAction("login")}
               >
-                Log In
+                LOG IN
               </button>
             </>
           ) : (
             <>
-              <span>Don't have an account yet? </span>
+              <span className="account-text">Don't have an account yet? </span>
               <button
                 className="create-btn"
                 onClick={() => setAction("signup")}
               >
-                Create an account
+                CREATE AN ACCOUNT
               </button>
             </>
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 };
