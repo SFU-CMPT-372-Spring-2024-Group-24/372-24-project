@@ -77,21 +77,23 @@ File.belongsToMany(Task, { through: 'TaskFile' });
 Project.belongsToMany(File, { through: 'ProjectFile' });
 File.belongsToMany(Project, { through: 'ProjectFile' });
 
-// Populate Role table if empty when starting application, there are only 3 roles
-const roles = ['Owner', 'Editor', 'Viewer'];
-Role.findAndCountAll().then(result => {
-    if (result.count === 0) {
-        roles.forEach(role => {
-            Role.create({ name: role })
-                .catch(error => console.error(`Error creating role ${role}:`, error));
-        });
-    }
-});
+(async () => {
+    await sequelize.sync({
+        alter: true,
+        logging: false
+    });
 
-sequelize.sync({
-    alter: true,
-    logging: false
-});
+    // Populate Role table if empty when starting application, there are only 3 roles
+    const roles = ['Owner', 'Editor', 'Viewer'];
+    Role.findAndCountAll().then(result => {
+        if (result.count === 0) {
+            roles.forEach(role => {
+                Role.create({ name: role })
+                    .catch(error => console.error(`Error creating role ${role}:`, error));
+            });
+        }
+    });
+})();
 
 module.exports = {
     sequelize,
