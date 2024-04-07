@@ -45,7 +45,8 @@ router.post("/", async (req, res) => {
     // Add user to project with Owner role
     await project.addUser(user, { through: { roleId: ownerRole.id } });
 
-    res.json(project);
+    //return project, chat, and associated users with the chat
+    res.json({ project, chat });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
