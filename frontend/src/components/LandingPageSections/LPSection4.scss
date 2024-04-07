@@ -1,0 +1,149 @@
+@mixin respond ($breakpoint) {
+  @if $breakpoint ==phone {
+
+    //600px
+    @media screen and (max-width: 37.5em) {
+      @content;
+    }
+  }
+
+  @if $breakpoint ==tab-port {
+
+    //900px
+    @media screen and (max-width: 56.25em) {
+      @content;
+    }
+  }
+
+  @if $breakpoint ==tab-land {
+
+    //1200px
+    @media screen and (max-width: 75em) {
+      @content;
+    }
+  }
+}
+
+.wrapper {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 5rem;
+
+  @include respond(tab-land) {
+    padding-inline: 1.5rem;
+  }
+
+  @include respond (phone) {
+    padding-inline: 0.8rem;
+  }
+}
+
+:root {
+  --spanish-gray: #969696;
+  --cultured: #f6f6f6;
+  --black: #151515;
+  --eerie-black: #1b1b1b;
+  --gradient: linear-gradient(to right, #3fe8ab, #78cdcd);
+  --gradient2: linear-gradient(to right, rgb(63, 131, 232), #7883cd);
+}
+
+.lpsection4 {
+  background-color: var(--black);
+  padding-block: 5rem;
+  position: relative;
+  overflow: hidden;
+
+  .image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    .lp23 {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: translate(-10%, -10%);
+      z-index: 1;
+      border-radius: 10px;
+    }
+
+    .lp24 {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      transform: translate(10%, 10%);
+      z-index: 0;
+      border-radius: 10px;
+    }
+  }
+
+
+  &_container {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: 3rem;
+    margin-left: 2rem;
+
+    @include respond(tab-port) {
+      margin-left: 3rem;
+    }
+  }
+
+  &_container::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  &_right img {
+    width: 70%;
+    margin-left: 2rem;
+
+    @include respond(tab-port) {
+      width: 80%;
+      margin-inline: auto;
+    }
+  }
+
+  h1 {
+    color: #e1e1e1;
+    text-transform: capitalize;
+    font-size: 3.3rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+    line-height: 1.2;
+
+    @include respond (tab-port) {
+      font-size: 2rem;
+    }
+  }
+
+  p {
+    color: #969696;
+    margin-block: 1.45rem 2.45rem;
+    line-height: 1.4;
+  }
+
+  .btn {
+    background: var(--gradient);
+    padding: 0.6rem 1.2rem;
+    color: var(--cultured) !important;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    display: inline-block;
+
+    &:hover {
+      border-color: #3fe8ab;
+      background: transparent;
+      color: var(--cultured);
+    }
+  }
+}

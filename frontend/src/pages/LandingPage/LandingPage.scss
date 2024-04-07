@@ -104,8 +104,33 @@
 }
 
 .landing-page {
-  height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: var(--black);
+
+  footer{
+    color: white;
+    a{
+      color: white;
+    }
+    padding-bottom: 20px;
+  }
+}
+
+.scroll-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid white;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.scroll-to-top:hover {
+  background-color: #f8f8f8;
+  color: #151515;
 }

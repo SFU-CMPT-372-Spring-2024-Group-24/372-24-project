@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useUser } from "../../hooks/UserContext";
 import { useNavigate } from "react-router-dom";
-// import { api } from "../../api";
+import './GoogleSignIn.scss'
 
 const GoogleSignIn = () => {
   const { setUser } = useUser();

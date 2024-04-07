@@ -47,6 +47,26 @@
 .lpsection1 {
   background-color: var(--black);
   padding-block: 5rem;
+  padding-bottom: 200px;
+  position: relative;
+  
+    .image-container {
+      position: relative;
+  
+      .lp21 {
+        position: absolute;
+        top: -20px;
+        left: 0;
+        border-radius: 10px;
+      }
+  
+      .lp22 {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        border-radius: 10px;
+      }
+    }
 
   &_container {
     position: relative;
@@ -68,15 +88,10 @@
     transform: translateX(-50%);
     width: 100%;
     height: 100%;
-    background-image: url("../../assets/blur-white.png");
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    opacity: 0.2;
     pointer-events: none;
   }
 
-  &_right img {
+  &_left img {
     width: 70%;
     margin-left: 1rem;
 
@@ -106,18 +121,21 @@
   }
 
   .btn {
-    background: var(--gradient2);
-    padding: 0.6rem 1.2rem;
-    color: var(--cultured) !important;
+  padding: 0.6rem 1.2rem;
     border-radius: 0.5rem;
     border: 1px solid transparent;
     font-size: 1.1rem;
     transition: all 0.3s ease;
     display: inline-block;
+    border-color: #4a3fe8;
+    background: transparent;
+    color: var(--cultured) !important;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    display: inline-block;
 
     &:hover {
-      border-color: #4a3fe8;
-      background: transparent;
+      background: var(--gradient2);
       color: var(--cultured);
     }
   }

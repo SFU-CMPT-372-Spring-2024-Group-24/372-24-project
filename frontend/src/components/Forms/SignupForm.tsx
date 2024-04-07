@@ -59,7 +59,8 @@ const SignupForm = ({ setAction }: Props) => {
   };
 
   return (
-    <form onSubmit={handleCreateAccount} className="login-signup">
+    <form onSubmit={handleCreateAccount} className="login-signup" id="signupf">
+      <h2>Sign up to continue</h2>
       {errorMsg && (
         <div className="error-msg">
           <BsFillExclamationCircleFill size={18} />
