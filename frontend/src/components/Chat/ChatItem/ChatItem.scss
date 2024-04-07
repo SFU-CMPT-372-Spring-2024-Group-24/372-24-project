@@ -63,29 +63,29 @@
 }
 
 #you {
-  justify-content: flex-start;
+  justify-content: flex-end;
 }
 
 #you .message-content {
-  justify-content: flex-start;
+  justify-content: flex-end;
 }
 
 #you .message-meta {
-  justify-content: flex-start;
+  justify-content: flex-end;
   margin-left: 5px;
 }
 
 #other {
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 #other .message-content {
-  justify-content: flex-end;
+  justify-content: flex-start;
   background-color: cornflowerblue;
 }
 
 #other .message-meta {
-  justify-content: flex-end;
+  justify-content: flex-start;
   margin-right: 5px;
 }
 
@@ -145,4 +145,12 @@
 
 .chat-edit-button {
   color: white;
+}
+
+.chat-window {
+  img[alt="User Avatar"] {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
 }

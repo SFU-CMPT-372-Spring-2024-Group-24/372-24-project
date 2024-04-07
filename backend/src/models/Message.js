@@ -18,10 +18,6 @@ module.exports = (sequelize) => {
         message: {
             type: DataTypes.TEXT,
             allowNull: false
-        },
-        date: {
-            type: DataTypes.DATE,
-            allowNull: false
         }
     });
 

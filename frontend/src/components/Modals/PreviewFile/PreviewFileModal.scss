@@ -38,4 +38,8 @@
     height: auto !important;
     object-fit: contain;
   }
+
+  .modal-body .doc-viewer * {
+    height: 70vh !important;
+  }
 }

@@ -1,0 +1,65 @@
+@import '../../../styles.scss';
+
+.chatContainer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 1000;
+}
+#chatButton {
+  padding: 10px 10px;
+  border: none;
+  cursor: pointer;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 150px;
+}
+.chatWindow {
+  width: 400px;
+  height: 600px;
+  padding: 1rem;
+  background: $extra-white;
+  overflow-y: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 2px $light-gray;
+
+  .button-group {
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  ul.chat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    li.chat-item {
+      background: $white;
+      padding: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+
+      h3 {
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin: 0;
+      }
+
+      div {
+        display: flex;
+        gap: 1rem;
+
+        p {
+          margin: 0;
+        }
+      }
+
+      &:hover {
+        background: $light-gray;
+      }
+    }
+  }
+}
+

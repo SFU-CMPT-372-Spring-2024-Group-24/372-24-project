@@ -15,7 +15,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "./styles.scss";
 
 // Pages and components
-import Chat from "./components/Chat/Chat";
+import ChatList from "./components/Chat/ChatList/ChatList";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Homepage from "./pages/Homepage/Homepage";
@@ -24,14 +24,17 @@ import ProjectViewPage from "./pages/ProjectViewPage/ProjectViewPage";
 import LoginSignup from "./pages/SignupLoginpage/LoginSignup";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import Adminpage from "./pages/AdminPage/Adminpage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 
 // Contexts
 import { UserProvider, useUser } from "./hooks/UserContext";
-import ProfilePage from "./pages/ProfilePage/ProfilePage";
+import { ChatProvider, socket } from "./hooks/ChatContext";
 
 // Declaration for google
 declare global {
-  interface Window { google: any; }
+  interface Window {
+    google: any;
+  }
 }
 
 function Layout() {
@@ -41,7 +44,7 @@ function Layout() {
       <main>
         <Outlet />
       </main>
-      <Chat />
+      <ChatList />
       <Footer />
     </>
   );
@@ -54,7 +57,7 @@ function LayoutWithHeader() {
       <main>
         <Outlet />
       </main>
-      <Chat />
+      <ChatList />
     </>
   );
 }
@@ -86,65 +89,64 @@ const AdminAuthRoute = ({ children }: AuthRouteProps) => {
 const App = () => {
   return (
     <UserProvider>
-      <ToastContainer
-        position="bottom-center"
-        autoClose={3000}
-        hideProgressBar={true}
-        draggable={true}
-        pauseOnHover={true}
-      />
-      <BrowserRouter>
-        <Routes>
-          <Route element={<Layout />}>
+      <ChatProvider socket={socket}>
+        <ToastContainer
+          position="bottom-center"
+          autoClose={3000}
+          hideProgressBar={true}
+          draggable={true}
+          pauseOnHover={true}
+        />
+        <BrowserRouter>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route
+                path="/projects"
+                element={
+                  <AuthRoute>
+                    <Homepage />
+                  </AuthRoute>
+                }
+              />
+              <Route path="/projects/notfound" element={<NotFoundPage />} />
+              <Route
+                path="/projects/*"
+                element={<Navigate to={"/projects/notfound"} />}
+              />
+              <Route
+                path="/profile/:username"
+                element={
+                  <AuthRoute>
+                    <ProfilePage />
+                  </AuthRoute>
+                }
+              />
+              <Route path="/notfound" element={<NotFoundPage />} />
+            </Route>
+            <Route element={<LayoutWithHeader />}>
+              <Route
+                path="/projects/:id"
+                element={
+                  <AuthRoute>
+                    <ProjectViewPage />
+                  </AuthRoute>
+                }
+              />
+            </Route>
+            <Route path="/login" element={<LoginSignup />} />
             <Route
-              path="/projects"
+              path="/admin"
               element={
-                <AuthRoute>
-                  <Homepage />
-                </AuthRoute>
+                <AdminAuthRoute>
+                  <Adminpage />
+                </AdminAuthRoute>
               }
             />
-            <Route path="/projects/notfound" element={<NotFoundPage />} />
-            <Route
-              path="/projects/*"
-              element={<Navigate to={"/projects/notfound"} />}
-            />
-            <Route
-              path="/profile/:username"
-              element={
-                <AuthRoute>
-                  <ProfilePage />
-                </AuthRoute>
-              }
-            />
-            <Route
-              path="/notfound"
-              element={<NotFoundPage />}
-            />
-          </Route>
-          <Route element={<LayoutWithHeader />}>
-            <Route
-              path="/projects/:id"
-              element={
-                <AuthRoute>
-                  <ProjectViewPage />
-                </AuthRoute>
-              }
-            />
-          </Route>
-          <Route path="/login" element={<LoginSignup />} />
-          <Route
-            path="/admin"
-            element={
-              <AdminAuthRoute>
-                <Adminpage />
-              </AdminAuthRoute>
-            }
-          />
-          <Route path="/" element={<LandingPage />} />
-          <Route path="*" element={<Navigate to={"/"} />} />
-        </Routes>
-      </BrowserRouter>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="*" element={<Navigate to={"/"} />} />
+          </Routes>
+        </BrowserRouter>
+      </ChatProvider>
     </UserProvider>
   );
 };
