@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import "./CreateProjectModal.scss";
 // Hooks
 import { useUser } from "../../../hooks/UserContext";
+import { useChats } from "../../../hooks/ChatContext";
 // Models
 import { Project } from "../../../models/Project";
 // API
@@ -23,6 +24,8 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
   const navigate = useNavigate();
   const { user } = useUser();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const { chats, setChats } = useChats();
 
   const closeModal = () => {
     setErrorMsg("");
@@ -48,6 +51,7 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
         userId: user.id,
       });
       const project: Project = response.data.project;
+      setChats([...chats, response.data.chat]);
       navigate(`/projects/${project.id}`);
       closeModal();
     } catch (error) {
