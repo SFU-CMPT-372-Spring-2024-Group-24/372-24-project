@@ -2,6 +2,7 @@
 
 .taskList {
   width: 33%;
+  height: 100% !important;
   border: 2px solid $light-gray;
   border-radius: 10px;
   padding: 1rem 1rem .75rem 1rem;
@@ -31,7 +32,7 @@
   }
 
   .list-main {
-    height: 70vh;
+    // height: 70vh;
     overflow-y: auto; // enable vertical scrollbar
     overflow-x: hidden; // hide horizontal scrollbar
     padding-right: .5rem;
