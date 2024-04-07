@@ -113,11 +113,29 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
   // Remove user from project
   const handleRemoveUser = async (user: User) => {
     try {
-      await api.delete(`/projects/${project.id}/users/${user.id}`);
+      const response = await api.delete(
+        `/projects/${project.id}/users/${user.id}`
+      );
 
       setProjectMembers(
         projectMembers.filter((member) => member.id !== user.id)
       );
+
+      //get chat id from api response, find the correct chat, and adjust the memebers
+      setChats(
+        chats.map((chat: Chat) => {
+          if (chat.id === response.data.id) {
+            console.log("found it!");
+            return {
+              ...chat,
+              Users: projectMembers.filter((member) => member.id !== user.id),
+            };
+          }
+          return chat;
+        })
+      );
+      //tell other users to refresh their chat list
+      socket.emit("chat_added");
     } catch (error) {
       handleApiError(error as AxiosError);
     }

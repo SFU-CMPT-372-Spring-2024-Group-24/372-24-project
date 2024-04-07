@@ -238,7 +238,14 @@ router.delete(
 
       await project.removeUser(user);
 
-      res.status(200).json({ message: "User removed from project" });
+      //get the project chat and remove the user from the chat
+      const chats = await project.getChats();
+      chats[0].removeUser(user);
+
+      //return the
+      res.status(200).json({
+        id: chats[0].id,
+      });
     } catch (err) {
       res.status(400).json({ message: err.message });
     }
