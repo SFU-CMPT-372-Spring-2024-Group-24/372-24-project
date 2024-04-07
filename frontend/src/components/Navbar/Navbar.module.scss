@@ -44,8 +44,6 @@
   --gradient2: linear-gradient(to right, rgb(63, 131, 232), #7883cd);
 }
 
-//navbar scss
-
 .navbar {
   background: var(--black);
   padding-block: 0.6rem;
@@ -63,7 +61,7 @@
     width: 5rem;
     position: absolute;
     top: 1em;
-    left: 1em;
+    left: 2.5em;
   }
 
   ul {
@@ -74,7 +72,7 @@
     @include respond(tab-port) {
       flex-direction: column;
       gap: 1.2rem;
-      align-items: center; //can be flex-start
+      align-items: center; 
       position: absolute;
       top: 100%;
       left: 0;
