@@ -15,6 +15,7 @@ import { api, AxiosError } from "../../../api";
 import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Custom hooks
 import { useUser } from "../../../hooks/UserContext";
+import { useChats } from "../../../hooks/ChatContext";
 // Icons and styles
 import { IoSearch } from "react-icons/io5";
 import { FaCheck } from "react-icons/fa6";
@@ -22,6 +23,7 @@ import { IoMdAdd } from "react-icons/io";
 import "./ManageMemberModal.scss";
 // Components
 import ChangeMemberRoleModal from "../ChangeMemberRole/ChangeMemberRoleModal";
+import { Chat } from "../../../models/Chat";
 
 interface Props {
   showModal: boolean;
@@ -41,6 +43,7 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
   // const [searchResults, setSearchResults] = useState<User[]>([]);
   // const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const { user } = useUser();
+  const { socket, chats, setChats } = useChats();
   const [showChangeRoleModal, setShowChangeRoleModal] =
     useState<boolean>(false);
   const [selectedMember, setSelectedMember] = useState<User | null>(null);
@@ -81,14 +84,25 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
       });
 
       if (response.status === 201) {
+        console.log("Response:", response);
         const newMembers = selectedUsers.map((user) => {
           return {
             ...user,
             role: Roles.find((role) => role.name === "Viewer") as Role,
           };
         });
-
+        socket.emit("chat_added");
         setProjectMembers([...projectMembers, ...newMembers]);
+        //return the chatID from the response, find the certain chatID, add the user to the list
+        setChats(
+          chats.map((chat: Chat) => {
+            if (chat.id === response.data.id) {
+              return { ...chat, Users: [...projectMembers, ...newMembers] };
+            }
+            return chat;
+          })
+        );
+
         resetSearch();
       }
     } catch (error) {

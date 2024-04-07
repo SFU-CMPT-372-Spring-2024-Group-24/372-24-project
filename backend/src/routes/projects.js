@@ -194,16 +194,23 @@ router.post(
         return res.status(500).json({ message: "Role not found" });
       }
 
+      const chats = await project.getChats();
+
       for (let userId of userIds) {
         const user = await User.findByPk(userId);
         if (!user) {
           return res.status(404).json({ message: "User not found" });
         }
-
+        //only one chat per project, so this should be fine
+        chats[0].addUser(user);
         await project.addUser(user, { through: { roleId: viewerRole.id } });
       }
 
-      res.status(201).json({ message: "Users added to project" });
+      // res.status(201).json({ message: "Users added to project" });
+      //return the chatID
+      res.status(201).json({
+        id: chats[0].id,
+      });
     } catch (err) {
       res.status(400).json({ message: err.message });
     }
