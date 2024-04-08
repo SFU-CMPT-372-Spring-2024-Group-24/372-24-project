@@ -51,6 +51,13 @@ const ManageChatModal = ({
     handleSelectUser,
   } = useSearchUsers();
 
+  let excludeIds: number[] = [];
+  if (chat != undefined) {
+    excludeIds = chat.Users.map((user) => user.id);
+  } else {
+    excludeIds = [user!.id];
+  }
+
   const closeModal = () => {
     setShowModal(false);
     setSearchQuery("");
@@ -174,7 +181,7 @@ const ManageChatModal = ({
               )}
               <form
                 className="search-member"
-                onSubmit={(e) => handleSearchUsers(e, [user!.id])}
+                onSubmit={(e) => handleSearchUsers(e, excludeIds)}
               >
                 <div className="search-bar">
                   <IoSearch size={18} className="search-icon" />

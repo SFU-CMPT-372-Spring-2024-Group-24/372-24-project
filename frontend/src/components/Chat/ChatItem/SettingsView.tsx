@@ -41,7 +41,7 @@ const SettingsView = ({ chat, setChat }: Props) => {
               Users: chat.Users.filter((u) => u.id !== user.id),
             };
           }
-          return chat;
+          return myChat;
         })
       );
       socket.emit("chat_added");
