@@ -17,13 +17,15 @@ import Files from "./Files";
 import { useUser } from "../../../hooks/UserContext";
 import { useTasks } from "../../../hooks/TaskContext";
 import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
+import { useChats } from "../../../hooks/ChatContext";
+import { Chat } from "../../../models/Chat";
 
 const ProjectInfo = () => {
   const navigate = useNavigate();
   const { user } = useUser();
   const { project, projectMembers, userCanPerform } = useTasks();
-  const {handleApiError} = useApiErrorHandler();
-
+  const { handleApiError } = useApiErrorHandler();
+  const { chats, setChats } = useChats();
   // Delete project
   const handleDeleteProject = async () => {
     try {
@@ -44,7 +46,9 @@ const ProjectInfo = () => {
       (member) => member.role?.name === "Owner" && member.id !== user!.id
     );
     if (!otherOwners.length) {
-      toast.error("You can't leave the project because you are the only owner.");
+      toast.error(
+        "You can't leave the project because you are the only owner."
+      );
       return;
     }
 
@@ -54,6 +58,8 @@ const ProjectInfo = () => {
         toast("You have left the project.");
         navigate("/projects");
       }
+      //get the chatID from the response, find the chat in the list of chats, remove that specifc chat
+      setChats(chats.filter((chat) => chat.id !== response.data.id));
     } catch (error) {
       handleApiError(error as AxiosError);
     }
