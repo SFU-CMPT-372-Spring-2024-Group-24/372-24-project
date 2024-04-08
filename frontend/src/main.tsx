@@ -28,7 +28,7 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage";
 
 // Contexts
 import { UserProvider, useUser } from "./hooks/UserContext";
-import { ChatProvider, socket } from "./hooks/ChatContext";
+import { ChatProvider } from "./hooks/ChatContext";
 
 // Declaration for google
 declare global {
@@ -89,7 +89,7 @@ const AdminAuthRoute = ({ children }: AuthRouteProps) => {
 const App = () => {
   return (
     <UserProvider>
-      <ChatProvider socket={socket}>
+      <ChatProvider>
         <ToastContainer
           position="bottom-center"
           autoClose={3000}
