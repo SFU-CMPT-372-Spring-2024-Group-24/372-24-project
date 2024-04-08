@@ -56,7 +56,11 @@ function ChatItem({ setShowChatItem, chat, setChat }: Props) {
     <>
       <div className="chat-window">
         <div className="chat-header">
-          <button id="backButton" className="btn btn-primary" onClick={() => setShowChatItem(false)}>
+          <button
+            id="backButton"
+            className="btn btn-primary"
+            onClick={() => setShowChatItem(false)}
+          >
             GO BACK
           </button>
           <button
@@ -76,9 +80,7 @@ function ChatItem({ setShowChatItem, chat, setChat }: Props) {
           <p> {chat.name} </p>
         </div>
 
-        {view === "chatView" && (
-          <ChatView chat={chat} />
-        )}
+        {view === "chatView" && <ChatView chat={chat} />}
 
         {/* Chat Settings */}
         {view === "chatSettings" && (

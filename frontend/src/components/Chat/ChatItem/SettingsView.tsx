@@ -21,8 +21,9 @@ interface Props {
 
 const SettingsView = ({ chat, setChat }: Props) => {
   const { handleApiError } = useApiErrorHandler();
-  const [showManageChatModal, setShowManageChatModal] = useState<boolean>(false);
-  const { socket } = useChats();
+  const [showManageChatModal, setShowManageChatModal] =
+    useState<boolean>(false);
+  const { socket, chats: globalChats, setChats: setGlobalChats } = useChats();
 
   // Remove a user from the chat
   const handleRemoveUser = async (user: User) => {
@@ -32,6 +33,17 @@ const SettingsView = ({ chat, setChat }: Props) => {
         ...chat,
         Users: chat.Users.filter((u) => u.id !== user.id),
       });
+      setGlobalChats(
+        globalChats.map((myChat: Chat) => {
+          if (myChat.id == chat.id) {
+            return {
+              ...chat,
+              Users: chat.Users.filter((u) => u.id !== user.id),
+            };
+          }
+          return chat;
+        })
+      );
       socket.emit("chat_added");
     } catch (error) {
       handleApiError(error as AxiosError);
@@ -70,7 +82,13 @@ const SettingsView = ({ chat, setChat }: Props) => {
         </div>
       </section>
 
-      <ManageChatModal showModal={showManageChatModal} setShowModal={setShowManageChatModal} action="add-members" chat={chat} setChat={setChat} />
+      <ManageChatModal
+        showModal={showManageChatModal}
+        setShowModal={setShowManageChatModal}
+        action="add-members"
+        chat={chat}
+        setChat={setChat}
+      />
     </>
   );
 };
