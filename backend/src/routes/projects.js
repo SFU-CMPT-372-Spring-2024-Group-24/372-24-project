@@ -142,10 +142,16 @@ router.delete(
         return res.status(404).json({ message: "Project not found" });
       }
 
+      //delete the chats associated as well
+      const chats = await project.getChats();
+      //get the id of the chat
+      const id = chats[0].id;
+      await chats[0].destroy();
+
       // Delete project
       await project.destroy();
 
-      res.status(200).json({ message: "Project deleted." });
+      res.status(200).json({ id: id, message: "Project deleted." });
     } catch (err) {
       res.status(400).json({ message: err.message });
     }

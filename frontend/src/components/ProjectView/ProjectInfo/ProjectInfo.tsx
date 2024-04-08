@@ -18,7 +18,6 @@ import { useUser } from "../../../hooks/UserContext";
 import { useTasks } from "../../../hooks/TaskContext";
 import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 import { useChats } from "../../../hooks/ChatContext";
-import { Chat } from "../../../models/Chat";
 
 const ProjectInfo = () => {
   const navigate = useNavigate();
@@ -31,6 +30,7 @@ const ProjectInfo = () => {
     try {
       const response = await api.delete(`/projects/${project.id}`);
       if (response.status === 200) {
+        setChats(chats.filter((chat) => chat.id !== response.data.id));
         toast.success("Project has been deleted for you and all members.");
         navigate("/projects");
       }
