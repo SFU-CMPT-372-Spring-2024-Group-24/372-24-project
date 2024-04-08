@@ -41,15 +41,17 @@ export const useChats = (): ChatContextType => {
 // Chat provider
 interface Props {
   children: ReactNode;
-  socket: Socket;
+  // socket: Socket;
 }
-export const ChatProvider = ({ children, socket }: Props) => {
+export const ChatProvider = ({ children }: Props) => {
   const { user } = useUser();
   const [chats, setChats] = useState<Chat[]>([]);
   const { handleApiError } = useApiErrorHandler();
 
   useEffect(() => {
     const getRecentChats = async () => {
+      if (!user) return;
+
       try {
         const response = await api.get(`/chats/${user?.id}`);
         setChats(response.data);
