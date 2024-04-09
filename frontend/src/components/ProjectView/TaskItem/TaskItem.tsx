@@ -8,8 +8,6 @@ import { IoMdClose, IoMdTrash } from "react-icons/io";
 import { TbArrowsExchange } from "react-icons/tb";
 import { FaRegClock } from "react-icons/fa6";
 import "./TaskItem.scss";
-// Utils
-// import { priorities } from "../../../utils/priorityColorUtils";
 // Models
 import { Task } from "../../../models/Task";
 import { List } from "../../../models/List";
@@ -48,9 +46,6 @@ const TaskItem = ({ list, task, index }: Props) => {
   // Confirmation modal for deleting a task
   const [showConfirmationModal, setShowConfirmationModal] =
     useState<boolean>(false);
-  // const priorityColor = priorities.find(
-  //   (p) => p.value === task.priority
-  // )?.color;
 
   // Toggle Task Item Modal visibility
   const toggleTaskItemModal = () => setShowTaskItemModal(!showTaskItemModal);
@@ -84,21 +79,28 @@ const TaskItem = ({ list, task, index }: Props) => {
           <li
             className="task-item"
             onClick={toggleTaskItemModal}
-            // style={{ borderColor: priorityColor }}
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
           >
             <h3>{task.name}</h3>
 
-            {task.dueDate && (
-              <div className="info">
-                <div className="due-date">
-                  <FaRegClock size={12} />
-                  {moment(task.dueDate).format("MMM D hh:mma")}
-                </div>
+            <div className="info">
+              <div className="due-date">
+                {task.dueDate && (
+                  <>
+                    <FaRegClock size={12} />
+                    {moment(task.dueDate).format("MMM D hh:mma")}
+                  </>
+                )}
               </div>
-            )}
+
+              {task.priority && task.priority !== "unset" && (
+                <div className={`priority priority-${task.priority}`}>
+                  {task.priority}
+                </div>
+              )}
+            </div>
           </li>
         )}
       </Draggable>
