@@ -1,5 +1,5 @@
 // Icons and Styles
-import { IoChatbox, IoSearch } from "react-icons/io5";
+import { IoChatbox } from "react-icons/io5";
 import { FaHandshakeSimple } from "react-icons/fa6";
 import "./Header.scss";
 // Libraries
