@@ -7,13 +7,18 @@ import { Link } from "react-router-dom";
 // Components
 import UserModal from "../Modals/UserModal/UserModal";
 import ChatList from "../Chat/ChatList/ChatList";
+import SearchBar from "./SearchBar";
 // Hooks
 import { useState } from "react";
 
 // Todo:
 // Display search results from backend
 
-const Header = () => {
+interface Props {
+  searchPlaceholder: string;
+}
+
+const Header = ({ searchPlaceholder }: Props) => {
   const [showChat, setShowChat] = useState<boolean>(false);
   
   return (
@@ -25,10 +30,7 @@ const Header = () => {
         </h1>
       </Link>
 
-      <div className="search-bar">
-        <IoSearch size={20} className="search-icon" />
-        <input type="text" placeholder="Search" />
-      </div>
+      <SearchBar placeholder={searchPlaceholder} />
 
       <button
         type="button"

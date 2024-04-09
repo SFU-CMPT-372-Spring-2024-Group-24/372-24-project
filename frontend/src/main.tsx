@@ -39,7 +39,7 @@ declare global {
 function Layout() {
   return (
     <>
-      <Header />
+      <Header searchPlaceholder="Search"/>
       <main>
         <Outlet />
       </main>
@@ -51,7 +51,7 @@ function Layout() {
 function LayoutWithHeader() {
   return (
     <>
-      <Header />
+      <Header searchPlaceholder="Search this project"/>
       <main>
         <Outlet />
       </main>
