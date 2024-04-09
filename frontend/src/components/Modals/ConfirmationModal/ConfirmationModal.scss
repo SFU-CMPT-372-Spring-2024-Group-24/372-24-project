@@ -1,0 +1,47 @@
+@import '../../../styles.scss';
+
+.confirmation-modal-backdrop {
+  opacity: 0 !important;
+}
+
+.confirmation-modal {
+
+  .modal-content {
+    box-shadow: 0 0 5px 0 $dark-gray;
+  }
+
+  .modal-header {
+    background: $red;
+    color: $white;
+    justify-content: space-between;
+    padding: .5rem 1rem;
+
+    .modal-title {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    button.btn-icon {
+      color: $light-gray;
+      padding: .5rem 0;
+
+      &:hover {
+        color: $white;
+        background: transparent;
+      }
+    }
+  }
+
+  .modal-body {
+    p {
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  .modal-footer {
+    padding: .5rem 1rem;
+    background: $white;
+  }
+}

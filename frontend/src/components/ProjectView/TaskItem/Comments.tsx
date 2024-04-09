@@ -16,21 +16,30 @@ import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 import { useEffect, useRef, useState } from "react";
 // Files
 import defaultProfilePicture from "../../../assets/default-profile-picture.png";
+// Components
+import ConfirmationModal from "../../Modals/ConfirmationModal/ConfirmationModal";
 
 interface Props {
   task: Task;
 }
-
 const Comments = ({ task }: Props) => {
+  // User
+  const { user } = useUser();
+  // Comments
   const [comments, setComments] = useState<Comment[]>([]);
   const [displayCount, setDisplayCount] = useState<number>(3);
-  const { user } = useUser();
+  // New comment
   const [newComment, setNewComment] = useState<string>("");
-  // const [isEditing, setIsEditing] = useState<boolean>(false);
+  // Comment editing
   const [editingCommentId, setEditingCommentId] = useState<number>(-1);
   const [editedComment, setEditedComment] = useState<string>("");
+  // Textarea reference
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  // Error handling
   const { handleApiError } = useApiErrorHandler();
+  // Confirmation modal for deleting a comment
+  const [showConfirmationModal, setShowConfirmationModal] =
+    useState<boolean>(false);
 
   // Fetch comments from server
   useEffect(() => {
@@ -72,10 +81,12 @@ const Comments = ({ task }: Props) => {
       toast.success("Comment deleted.");
     } catch (error) {
       handleApiError(error as AxiosError);
+    } finally {
+      setShowConfirmationModal(false);
     }
   };
 
-  // Make cursor appear at the end of the textarea when editing a comment
+  // Focus and make cursor appear at the end of the textarea when editing a comment
   useEffect(() => {
     if (editingCommentId !== -1 && textAreaRef.current) {
       const textarea = textAreaRef.current;
@@ -184,10 +195,19 @@ const Comments = ({ task }: Props) => {
 
                     <button
                       className="btn-icon"
-                      onClick={() => handleDeleteComment(comment.id)}
+                      onClick={() => setShowConfirmationModal(true)}
                     >
                       <IoMdTrash size={14} />
                     </button>
+
+                    {/* Confirmation modal when deleting a comment */}
+                    <ConfirmationModal
+                      show={showConfirmationModal}
+                      message="Are you sure you want to delete this comment?"
+                      confirmText="Delete my comment"
+                      onConfirm={() => handleDeleteComment(comment.id)}
+                      onCancel={() => setShowConfirmationModal(false)}
+                    />
                   </>
                 )}
               </div>
