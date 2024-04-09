@@ -1,14 +1,17 @@
 // Models
 import { Chat, Message } from "../../../models/Chat";
-// Libraries
-import ScrollToBottom, { useAnimating } from "react-scroll-to-bottom";
 // Hooks
 import { useUser } from "../../../hooks/UserContext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 import { useChats } from "../../../hooks/ChatContext";
 // API
 import { api, AxiosError } from "../../../api";
+// Icons, files
+import { IoSend } from "react-icons/io5";
+import defaultProfilePicture from "../../../assets/default-profile-picture.png";
+// Libraries
+import { Tooltip } from "react-tooltip";
 
 interface Props {
   chat: Chat;
@@ -23,6 +26,12 @@ const ChatView = ({ chat }: Props) => {
   const { handleApiError } = useApiErrorHandler();
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+  }, [messages]);
 
   // Fetch messages for the chat
   useEffect(() => {
@@ -84,7 +93,7 @@ const ChatView = ({ chat }: Props) => {
   useEffect(() => {
     const receiveMessage = (newMessage: Message) => {
       setMessages((list) => [...list, newMessage]);
-    }
+    };
 
     socket.on("receive_message", receiveMessage);
 
@@ -93,47 +102,78 @@ const ChatView = ({ chat }: Props) => {
     };
   }, [socket, chats, setChats]);
 
+  // Group messages by date
+  function groupByDate(messages: Message[]) {
+    return messages.reduce((groups: { [key: string]: Message[] }, message) => {
+      const date = new Date(message.createdAt).toDateString();
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(message);
+      return groups;
+    }, {});
+  }
+
+  const messagesByDate = groupByDate(messages);
+
   return (
-    <>
+    <section className="chat-view">
       <div className="chat-body">
-        {/* Chat View */}
-        <ScrollToBottom className="message-container">
-          {messages.map((messageContent, index) => {
-            return (
-              <div
-                className="message"
-                id={user.id === messageContent.User.id ? "you" : "other"}
-                key={index}
-              >
-                <div>
-                  <div className="message-content">
-                    <p>{messageContent.message}</p>{" "}
-                  </div>
+        <div className="message-container">
+          {Object.entries(messagesByDate).map(([date, messages], index) => (
+            <div key={index}>
+              <div className="date">{date}</div>
+
+              {messages.map((message, index) => (
+                <div
+                  className="message"
+                  id={user.id === message.User.id ? "you" : "other"}
+                  key={index}
+                >
                   <div className="message-meta">
-                    {/* <p id="time">{convertTime(messageContent.createdAt)}</p> */}
-                    <p id="author">{messageContent.User.name}</p>
+                    {user.id !== message.User.id && (
+                      <>
+                        <Tooltip
+                          id="tooltip"
+                          content={`${message.User.name}`}
+                        ></Tooltip>
+                        <img
+                          src={`${
+                            message.User.profilePicture || defaultProfilePicture
+                          }`}
+                          alt="User Avatar"
+                          data-tooltip-id="tooltip"
+                        />
+                      </>
+                    )}
                   </div>
+                  <div className="message-content">{message.message}</div>
                 </div>
-              </div>
-            );
-          })}
-        </ScrollToBottom>
+              ))}
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
+
       <div className="chat-footer">
         <input
           type="text"
           value={newMessage}
-          placeholder="Insert Chat here..."
+          placeholder="Aa"
           onChange={(event) => {
             setNewMessage(event.target.value);
           }}
           onKeyDown={(event) => {
             event.key === "Enter" && handleAddMessage();
           }}
+          autoFocus
         />
-        <button onClick={handleAddMessage}>&#9658;</button>
+        <button onClick={handleAddMessage}>
+          <IoSend size={20} />
+        </button>
       </div>
-    </>
+    </section>
   );
 };
 

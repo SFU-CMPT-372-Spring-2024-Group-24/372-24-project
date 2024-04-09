@@ -1,10 +1,10 @@
 // Hooks
 import { useState } from "react";
 import { useUser } from "../../../hooks/UserContext";
-// import { useChats } from "../../../hooks/ChatContext";
 // Icons and styles
 import { IoSettingsOutline } from "react-icons/io5";
-import { CiChat2 } from "react-icons/ci";
+import { IoIosArrowDropleft } from "react-icons/io";
+import { TbMessage } from "react-icons/tb";
 import "./ChatItem.scss";
 // Models
 import { Chat } from "../../../models/Chat";
@@ -28,30 +28,41 @@ function ChatItem({ setShowChatItem, chat, setChat }: Props) {
 
   return (
     <>
-      <div className="chat-window">
-        <div className="chat-header">
+      <div className="chat-item">
+        <div className="chat-item-header">
+          {/* Go back to chat list */}
           <button
             id="backButton"
-            className="btn btn-primary"
+            className="btn-icon"
             onClick={() => setShowChatItem(false)}
           >
-            GO BACK
+            <IoIosArrowDropleft size={20} />
           </button>
+
+          {/* If it's a direct chat, show the other user's name as chat name. Otherwise, leave as it is */}
+          <h3>
+            {chat.Users.length <= 2
+              ? chat.Users[0].id === user.id
+                ? chat.Users[1].name
+                : chat.Users[0].name
+              : chat.name}
+          </h3>
+
           <button
             type="button"
-            className="btn-icon"
+            className={`btn-icon ${view === "chatView" ? "active" : ""}`}
             onClick={() => setView("chatView")}
           >
-            <CiChat2 size={20} />
+            <TbMessage size={18} />
           </button>
+
           <button
             type="button"
-            className="chat-edit-button"
+            className={`btn-icon ${view === "chatSettings" ? "active" : ""}`}
             onClick={() => setView("chatSettings")}
           >
-            <IoSettingsOutline size={20} />
+            <IoSettingsOutline size={18} />
           </button>
-          <p> {chat.name} </p>
         </div>
 
         {view === "chatView" && <ChatView chat={chat} />}
