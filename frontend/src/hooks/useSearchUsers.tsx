@@ -19,7 +19,7 @@ const useSearchUsers = () => {
     console.log(excludeIds);
     try {
       const response = await api.get(
-        `/search/users?query=${query}&exclude=${JSON.stringify(excludeIds)}`
+        `/search/users/exclude?query=${query}&exclude=${JSON.stringify(excludeIds)}`
       );
 
       if (response.status === 200) {
