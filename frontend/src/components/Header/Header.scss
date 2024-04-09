@@ -42,5 +42,39 @@ header {
         color: $purple;
       }
     }
+
+    .search-results {
+      position: absolute;
+      background-color: white;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 0.25rem;
+    }
+
+    .search-result-header {
+      background-color: darkgrey;
+      padding-left: 0.5rem;
+    }
+    
+    .search-result {
+      padding: 0.5rem;
+      border-bottom: 1px solid #ccc;
+
+      p {
+        margin-bottom: 0 !important;
+      }
+
+      &:hover, &>p:hover {
+        cursor: pointer !important;
+        background-color: $light-gray;
+        text-decoration: underline;
+      }
+    }
+    
+    .search-result:last-child {
+      border-bottom: none;
+    }
   }
 }

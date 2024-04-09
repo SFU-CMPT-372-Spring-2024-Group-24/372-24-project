@@ -3,4 +3,5 @@ export interface FileModel {
     name: string;
     url: string;
     type: string;
+    hash: string;
 }
