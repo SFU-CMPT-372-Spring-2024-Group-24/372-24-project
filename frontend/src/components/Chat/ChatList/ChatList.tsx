@@ -67,7 +67,12 @@ const ChatList = () => {
                 <ul className="chat-list">
                   {chats.map((chat, index) => (
                     <li
-                      className="chat-item"
+                      // className="chat-item"
+                      className={
+                        chat.Projects.length == 0
+                          ? "chat-item"
+                          : "chat-item-project"
+                      }
                       key={index}
                       onClick={() => handleViewChat(chat)}
                     >

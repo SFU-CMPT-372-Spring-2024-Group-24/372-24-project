@@ -48,6 +48,7 @@ router.post("/", async (req, res) => {
         id: chat.id,
         name: chat.name,
         Users: await chat.getUsers(),
+        Projects: await chat.getProjects(),
       },
     });
   } catch (err) {
