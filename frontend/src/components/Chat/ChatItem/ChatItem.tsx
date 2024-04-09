@@ -75,11 +75,12 @@ function ChatItem({ setShowChatItem, chat, setChat }: Props) {
 
           {/* If it's a direct chat, show the other user's name as chat name. Otherwise, leave as it is */}
           <h3>
-            {chat.Users.length <= 2
+            {chat.Users.length == 2
               ? chat.Users[0].id === user.id
                 ? chat.Users[1].name
                 : chat.Users[0].name
               : chat.name}
+            {chat.Users.length === 1 ? chat.name : null}
           </h3>
 
           <button

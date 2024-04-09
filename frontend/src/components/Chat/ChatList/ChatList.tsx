@@ -79,7 +79,7 @@ const ChatList = ({ showChat, setShowChat }: Props) => {
                       )}
 
                       {/* If it's a direct chat, show the other user's profile picture */}
-                      {chat.Users.length <= 2 && (
+                      {chat.Users.length == 2 && (
                         <img
                           src={
                             chat.Users[0].id === user.id
@@ -91,16 +91,27 @@ const ChatList = ({ showChat, setShowChat }: Props) => {
                           alt="User Avatar"
                         />
                       )}
+                      {/* If there's only yourself in chat */}
+                      {chat.Users.length < 2 && (
+                        <img
+                          src={
+                            chat.Users[0].profilePicture ||
+                            defaultProfilePicture
+                          }
+                          alt="User Avatar"
+                        />
+                      )}
                     </div>
 
                     <div className="chat">
                       {/* If it's a direct chat, show the other user's name as chat name. Otherwise, leave as it is */}
                       <h3>
-                        {chat.Users.length <= 2
+                        {chat.Users.length == 2
                           ? chat.Users[0].id === user.id
                             ? chat.Users[1].name
                             : chat.Users[0].name
                           : chat.name}
+                        {chat.Users.length === 1 ? chat.name : null}
                       </h3>
 
                       {chat.lastMessage && chat.Users.length > 2 && (
