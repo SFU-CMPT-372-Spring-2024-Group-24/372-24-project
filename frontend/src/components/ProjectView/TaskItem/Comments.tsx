@@ -40,6 +40,7 @@ const Comments = ({ task }: Props) => {
   // Confirmation modal for deleting a comment
   const [showConfirmationModal, setShowConfirmationModal] =
     useState<boolean>(false);
+  const [deletingCommentId, setDeletingCommentId] = useState<number>(-1);
 
   // Fetch comments from server
   useEffect(() => {
@@ -130,133 +131,138 @@ const Comments = ({ task }: Props) => {
   };
 
   return (
-    <div className="comments">
-      <h4>Comments</h4>
+    <>
+      <div className="comments">
+        <h4>Comments</h4>
 
-      {/* View more comments button */}
-      {comments.length > displayCount && (
-        <button
-          className="btn-view-more-comments"
-          onClick={() => setDisplayCount((prev) => prev + 3)}
-        >
-          View more comments
-        </button>
-      )}
+        {/* View more comments button */}
+        {comments.length > displayCount && (
+          <button
+            className="btn-view-more-comments"
+            onClick={() => setDisplayCount((prev) => prev + 3)}
+          >
+            View more comments
+          </button>
+        )}
 
-      {/* Display all comments */}
-      {comments.slice(-displayCount).map((comment) => (
-        <div className="comment" key={comment.id}>
-          <Link to={`/profile/${comment.User.username}`}>
-            <img
-              src={comment.User.profilePicture || defaultProfilePicture}
-              alt="User Avatar"
-            />
-          </Link>
+        {/* Display all comments */}
+        {comments.slice(-displayCount).map((comment) => (
+          <div className="comment" key={comment.id}>
+            <Link to={`/profile/${comment.User.username}`}>
+              <img
+                src={comment.User.profilePicture || defaultProfilePicture}
+                alt="User Avatar"
+              />
+            </Link>
 
-          <div className="comment-details">
-            {/* Comment header: name, time, edit and delete buttons */}
-            <div className="comment-header">
-              <div>
-                <Link to={`/profile/${comment.User.username}`}>
-                  <span className="comment-name">{comment.User.name}</span>
-                </Link>
+            <div className="comment-details">
+              {/* Comment header: name, time, edit and delete buttons */}
+              <div className="comment-header">
+                <div>
+                  <Link to={`/profile/${comment.User.username}`}>
+                    <span className="comment-name">{comment.User.name}</span>
+                  </Link>
 
-                <span className="comment-time">
-                  {moment(comment.createdAt).fromNow()}
-                </span>
+                  <span className="comment-time">
+                    {moment(comment.createdAt).fromNow()}
+                  </span>
 
-                {comment.isEdited && (
-                  <span className="comment-isEdited">Edited</span>
-                )}
-              </div>
+                  {comment.isEdited && (
+                    <span className="comment-isEdited">Edited</span>
+                  )}
+                </div>
 
-              <div className="button-group">
-                {/* If the user is the author of the comment, display edit and delete buttons */}
-                {user?.id === comment.User.id && (
-                  <>
-                    {editingCommentId === comment.id ? (
-                      <button
-                        className="btn-icon"
-                        onClick={handleCancelEditComment}
-                      >
-                        Cancel
-                      </button>
-                    ) : (
+                <div className="button-group">
+                  {/* If the user is the author of the comment, display edit and delete buttons */}
+                  {user?.id === comment.User.id && (
+                    <>
+                      {editingCommentId === comment.id ? (
+                        <button
+                          className="btn-icon"
+                          onClick={handleCancelEditComment}
+                        >
+                          Cancel
+                        </button>
+                      ) : (
+                        <button
+                          className="btn-icon"
+                          onClick={() => {
+                            setEditedComment(comment.comment);
+                            setEditingCommentId(comment.id);
+                          }}
+                        >
+                          <FiEdit2 size={12} />
+                        </button>
+                      )}
+
                       <button
                         className="btn-icon"
                         onClick={() => {
-                          setEditedComment(comment.comment);
-                          setEditingCommentId(comment.id);
+                          setDeletingCommentId(comment.id);
+                          setShowConfirmationModal(true);
                         }}
                       >
-                        <FiEdit2 size={12} />
+                        <IoMdTrash size={14} />
                       </button>
-                    )}
-
-                    <button
-                      className="btn-icon"
-                      onClick={() => setShowConfirmationModal(true)}
-                    >
-                      <IoMdTrash size={14} />
-                    </button>
-
-                    {/* Confirmation modal when deleting a comment */}
-                    <ConfirmationModal
-                      show={showConfirmationModal}
-                      message="Are you sure you want to delete this comment?"
-                      confirmText="Delete my comment"
-                      onConfirm={() => handleDeleteComment(comment.id)}
-                      onCancel={() => setShowConfirmationModal(false)}
-                    />
-                  </>
-                )}
+                    </>
+                  )}
+                </div>
               </div>
+
+              {/* If the comment is being edited, display a textarea, otherwise display the comment */}
+              {editingCommentId === comment.id ? (
+                <div className="editing-comment">
+                  <textarea
+                    ref={textAreaRef}
+                    name="editedComment"
+                    id="editedComment"
+                    value={editedComment}
+                    onChange={(e) => setEditedComment(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey)
+                        handleEditComment(comment.id);
+                    }}
+                  ></textarea>
+                  <button
+                    className="btn-icon btn-edit-comment"
+                    onClick={() => handleEditComment(comment.id)}
+                  >
+                    <IoSend size={15} />
+                  </button>
+                </div>
+              ) : (
+                <p className="comment-content">{comment.comment}</p>
+              )}
             </div>
-
-            {/* If the comment is being edited, display a textarea, otherwise display the comment */}
-            {editingCommentId === comment.id ? (
-              <div className="editing-comment">
-                <textarea
-                  ref={textAreaRef}
-                  name="editedComment"
-                  id="editedComment"
-                  value={editedComment}
-                  onChange={(e) => setEditedComment(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey)
-                      handleEditComment(comment.id);
-                  }}
-                ></textarea>
-                <button
-                  className="btn-icon btn-edit-comment"
-                  onClick={() => handleEditComment(comment.id)}
-                >
-                  <IoSend size={15} />
-                </button>
-              </div>
-            ) : (
-              <p className="comment-content">{comment.comment}</p>
-            )}
           </div>
-        </div>
-      ))}
+        ))}
 
-      <div className="add-comment">
-        <textarea
-          name="comment"
-          id="comment"
-          placeholder="Write a comment..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) handleAddComment();
-          }}
-        ></textarea>
-        <button className="btn-icon" onClick={handleAddComment}>
-          <IoSend size={16} />
-        </button>
+        <div className="add-comment">
+          <textarea
+            name="comment"
+            id="comment"
+            placeholder="Write a comment..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) handleAddComment();
+            }}
+          ></textarea>
+          <button className="btn-icon" onClick={handleAddComment}>
+            <IoSend size={16} />
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* Confirmation modal when deleting a comment */}
+      <ConfirmationModal
+        show={showConfirmationModal}
+        message="Are you sure you want to delete this comment?"
+        confirmText="Delete my comment"
+        onConfirm={() => handleDeleteComment(deletingCommentId)}
+        onCancel={() => setShowConfirmationModal(false)}
+      />
+    </>
   );
 };
 
