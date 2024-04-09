@@ -52,10 +52,10 @@ const ManageChatModal = ({
   } = useSearchUsers();
 
   let excludeIds: number[] = [];
-  if (chat != undefined) {
-    excludeIds = chat.Users.map((user) => user.id);
+  if (chat) {
+    excludeIds = chat.Users.map((user) => user.id); // If we're adding members to a chat, exclude the current members
   } else {
-    excludeIds = [user!.id];
+    excludeIds = [user!.id]; // If we're creating a chat, exclude the current user
   }
 
   const closeModal = () => {
