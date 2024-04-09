@@ -1,10 +1,10 @@
 // Icons
-import { IoSearch } from "react-icons/io5";
 import { FaHandshakeSimple } from "react-icons/fa6";
 // Libraries
 import { Link } from "react-router-dom";
 // Components
 import UserModal from "../Modals/UserModal/UserModal";
+import SearchBar from "./SearchBar";
 // Styles
 import "./Header.scss";
 
@@ -12,7 +12,11 @@ import "./Header.scss";
 // Display search results from backend
 // User profile picture fetched from backend
 
-const Header = () => {
+interface Props {
+  searchPlaceholder: string;
+}
+
+const Header = ({ searchPlaceholder }: Props) => {
   return (
     <header>
       <Link to={"/projects"} className="">
@@ -22,10 +26,7 @@ const Header = () => {
         </h1>
       </Link>
 
-      <div className="search-bar">
-        <IoSearch size={20} className="search-icon" />
-        <input type="text" placeholder="Search" />
-      </div>
+      <SearchBar placeholder={searchPlaceholder} />
 
       <UserModal />
     </header>
