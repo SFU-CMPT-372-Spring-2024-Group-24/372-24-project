@@ -141,6 +141,8 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
 
   const onTaskClick = (task: Task) => {
     // TODO: Open task modal
+    console.log("Open task modal", task);
+    
   };
 
   const isResultsEmpty = results.users.length === 0 && results.files.length === 0 && results.tasks.length === 0 && results.projects.length === 0 && results.otherProjects.length === 0;

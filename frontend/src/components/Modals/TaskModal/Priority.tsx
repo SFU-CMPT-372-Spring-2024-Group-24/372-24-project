@@ -5,7 +5,7 @@ import { ButtonGroup, ToggleButton } from "react-bootstrap";
 // Models
 import { Task, PriorityTypes } from "../../../models/Task";
 // Utils
-import { priorities } from "../../../utils/priorityColorUtils";
+// import { priorities } from "../../../utils/priorityColorUtils";
 // API
 import { api, AxiosError } from "../../../api";
 // Custom hooks
@@ -24,6 +24,15 @@ const Priority = ({ task }: Props) => {
   );
   const { setTask, project, userCanPerform } = useTasks();
   const {handleApiError} = useApiErrorHandler();
+  // Priority values
+  const prioritiesValues: { value: PriorityTypes }[] = [
+    { value: "unset" },
+    { value: "planning" },
+    { value: "low" },
+    { value: "medium" },
+    { value: "high" },
+    { value: "urgent" },
+  ];
 
   // For toggling the modal
   const togglePriorityModal = () => setShowPriorityModal(!showPriorityModal);
@@ -68,10 +77,6 @@ const Priority = ({ task }: Props) => {
                 togglePriorityModal();
               }
             }}
-            style={{
-              borderColor: priorities.find((p) => p.value === task.priority)?.color,
-              backgroundColor: priorities.find((p) => p.value === task.priority)?.color,
-            }}
           >
             {task.priority}
           </span>
@@ -96,7 +101,7 @@ const Priority = ({ task }: Props) => {
 
         <Modal.Body>
           <ButtonGroup>
-            {priorities.map((priority, idx) => (
+            {prioritiesValues.map((priority, idx) => (
               <ToggleButton
                 key={idx}
                 id={`priority-${idx}`}
@@ -108,8 +113,6 @@ const Priority = ({ task }: Props) => {
                   handlePriorityChange(e.currentTarget.value as PriorityTypes);
                 }}
                 style={{
-                  backgroundColor:
-                    priorityValue === priority.value ? priority.color : "",
                   borderRadius: "10px",
                 }}
               >

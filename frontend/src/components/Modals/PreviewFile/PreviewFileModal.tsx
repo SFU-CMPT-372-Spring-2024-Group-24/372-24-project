@@ -77,7 +77,7 @@ const PreviewFileModal = ({
   if (selectedFile?.type === "pdf") {
     content = (
       <Document file={selectedFile} onLoadSuccess={onDocumentLoadSuccess}>
-        {Array.from(new Array(numPages), (el, index) => (
+        {Array.from(new Array(numPages), (_, index) => (
           <Page key={`page_${index + 1}`} pageNumber={index + 1} />
         ))}
       </Document>
