@@ -262,11 +262,14 @@
 
       form {
         margin-top: 0;
+        display: flex;
+        flex-direction: column;
       }
 
       textarea {
         flex-grow: 1;
         height: 100px;
+        margin-bottom: .5rem;
       }
 
       p {
