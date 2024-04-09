@@ -1,4 +1,4 @@
-@import '../../../styles.scss';
+@import "../../../styles.scss";
 
 .chatContainer {
   position: fixed;
@@ -60,6 +60,31 @@
         background: $light-gray;
       }
     }
+    li.chat-item-project {
+      background: $green;
+      padding: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+
+      h3 {
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin: 0;
+      }
+
+      div {
+        display: flex;
+        gap: 1rem;
+
+        p {
+          margin: 0;
+        }
+      }
+
+      &:hover {
+        background: $dark-gray;
+      }
+    }
   }
 }
-

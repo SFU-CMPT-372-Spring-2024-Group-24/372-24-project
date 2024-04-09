@@ -60,7 +60,7 @@ const SettingsView = ({ chat, setChat }: Props) => {
             className="btn-text-secondary"
           >
             <IoMdAdd />
-            Add Members
+            Add Members/Change Chat Name
           </button>
 
           <p>Members</p>

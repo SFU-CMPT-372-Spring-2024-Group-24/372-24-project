@@ -33,6 +33,7 @@ router.post("/", async (req, res) => {
       id: chat.id,
       name: chat.name,
       Users: await chat.getUsers(),
+      Projects: await chat.getProjects(),
     });
   } catch (err) {
     console.error("Error adding chat:", err);
@@ -91,6 +92,10 @@ router.get("/:userID", async (req, res) => {
         {
           model: User,
           attributes: ["id", "name", "username", "profilePicture"],
+        },
+        {
+          model: Project,
+          attributes: ["id"],
         },
       ],
     });
@@ -217,6 +222,7 @@ router.post("/:chatId/users", async (req, res) => {
       return res.status(404).json({ message: "Chat not found" });
     }
 
+    //add each user to the chat
     for (let userId of userIds) {
       const user = await User.findByPk(userId);
       if (!user) {
@@ -230,4 +236,23 @@ router.post("/:chatId/users", async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+
+//rename chat Name
+router.post("/:chatId/chatName", async (req, res) => {
+  try {
+    const chatId = req.params.chatId;
+    const chatName = req.body.chatName;
+
+    const chat = await Chat.findByPk(chatId);
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+    //rename the chat
+    await chat.update({ name: chatName });
+    res.status(201).json({ message: "Chat Name updated" });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 module.exports = router;

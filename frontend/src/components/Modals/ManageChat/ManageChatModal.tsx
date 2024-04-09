@@ -73,18 +73,35 @@ const ManageChatModal = ({
 
   // if there's only one selected user, make the chat name their name
   useEffect(() => {
-    if (selectedUsers.length === 1) {
-      setChatName(selectedUsers[0].name);
-    } else {
-      setChatName("");
+    //if we're creating a chat, there is no initial chat
+    if (action == "create-chat") {
+      if (selectedUsers.length === 1) {
+        setChatName(selectedUsers[0].name);
+      } else {
+        setChatName("");
+      }
     }
-  }, [selectedUsers]);
+    //if we're adding member to the chat, there is a chat, so we can use that
+    if (action == "add-members") {
+      //one situation is where you removed some people in chat and then add more people again
+      //the default chat name shouldn't change,, it should still be the same as before
+      if (
+        selectedUsers.length == 1 &&
+        chat!.Users.length + selectedUsers.length == 1
+      ) {
+        setChatName(selectedUsers[0].name);
+      } else {
+        setChatName(chat!.name);
+      }
+    }
+  }, [selectedUsers, chat?.Users]);
 
   // Create a new chat room
   const handleCreateChat = async () => {
     if (!selectedUsers.length) {
       return;
     }
+    console.log("Value is: ", chat?.Users.length);
     if (chatName.trim() === "") {
       alert("Please re-enter your group chat name, it is empty.");
       return;
@@ -135,14 +152,37 @@ const ManageChatModal = ({
 
       // Use socket to broadcast to everyone else to refresh their list of chats
       socket.emit("chat_added");
-
-      // Close the modal
-      closeModal();
     } catch (error) {
       handleApiError(error as AxiosError);
     }
   };
+  const handleChatNameSubmit = async () => {
+    if (chatName.trim() === "") {
+      alert("Please re-enter your group chat name, it is empty.");
+      return;
+    }
+    try {
+      //update chat name in database
+      await api.post(`/chats/${chat!.id}/chatName`, {
+        chatName: chatName,
+      });
 
+      // Updated chat
+      const updatedChat = {
+        ...chat!,
+        name: chatName,
+      };
+
+      // Update the current chat and also the list of chats to include the new members
+      setChat!(updatedChat);
+      setChats(chats.map((c) => (c.id === chat!.id ? updatedChat : c)));
+
+      // Use socket to broadcast to everyone else to refresh their list of chats
+      socket.emit("chat_added");
+    } catch (error) {
+      handleApiError(error as AxiosError);
+    }
+  };
   useEffect(() => {
     console.log("chats", chats);
   }, [chats]);
@@ -177,7 +217,29 @@ const ManageChatModal = ({
               )}
 
               {action === "add-members" && (
-                <h5>Select users you want to add to the chat</h5>
+                <>
+                  <h5>Select users you want to add to the chat</h5>
+                  {chat != undefined &&
+                    selectedUsers.length + chat?.Users.length > 1 && (
+                      <>
+                        <input
+                          type="text"
+                          className="insert-chat-name"
+                          value={chatName}
+                          onChange={handleChatNameChange}
+                          placeholder="Input your chat name"
+                          required
+                        />
+                        <button
+                          type="button"
+                          className="btn-text"
+                          onClick={handleChatNameSubmit}
+                        >
+                          Change Chat Name
+                        </button>
+                      </>
+                    )}
+                </>
               )}
               <form
                 className="search-member"

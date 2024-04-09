@@ -1,7 +1,7 @@
 // Models
 import { Chat, Message } from "../../../models/Chat";
 // Libraries
-import ScrollToBottom from "react-scroll-to-bottom";
+import ScrollToBottom, { useAnimating } from "react-scroll-to-bottom";
 import { Socket } from "socket.io-client";
 // Hooks
 import { useUser } from "../../../hooks/UserContext";
