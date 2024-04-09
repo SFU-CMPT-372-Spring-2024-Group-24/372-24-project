@@ -7,29 +7,24 @@ import { User } from "../models/User";
 import { api, AxiosError } from "../api";
 
 const useSearchUsers = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [query, setQuery] = useState<string>("");
+  const [results, setResults] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-  const [hasSearched, setHasSearched] = useState(false);
+  const [searched, setSearched] = useState<boolean>(false);
   const { handleApiError } = useApiErrorHandler();
 
   // Search users
-  const handleSearchUsers = async (
-    e: React.FormEvent,
-    excludeIds: number[]
-  ) => {
+  const handleSearch = async (e: React.FormEvent, excludeIds: number[]) => {
     e.preventDefault();
     console.log(excludeIds);
     try {
       const response = await api.get(
-        `/search/users?query=${searchQuery}&exclude=${JSON.stringify(
-          excludeIds
-        )}`
+        `/search/users?query=${query}&exclude=${JSON.stringify(excludeIds)}`
       );
 
       if (response.status === 200) {
-        setSearchResults(response.data.users);
-        setHasSearched(true);
+        setResults(response.data.users);
+        setSearched(true);
       }
     } catch (error) {
       handleApiError(error as AxiosError);
@@ -37,7 +32,7 @@ const useSearchUsers = () => {
   };
 
   // Select user
-  const handleSelectUser = (user: User) => {
+  const handleSelect = (user: User) => {
     if (selectedUsers.some((selected) => selected.id === user.id)) {
       setSelectedUsers(selectedUsers.filter((u) => u !== user));
     } else {
@@ -46,16 +41,16 @@ const useSearchUsers = () => {
   };
 
   return {
-    searchQuery,
-    setSearchQuery,
-    searchResults,
-    setSearchResults,
+    query,
+    setQuery,
+    results,
+    setResults,
     selectedUsers,
     setSelectedUsers,
-    hasSearched,
-    setHasSearched,
-    handleSearchUsers,
-    handleSelectUser,
+    searched,
+    setSearched,
+    handleSearch,
+    handleSelect,
   };
 };
 

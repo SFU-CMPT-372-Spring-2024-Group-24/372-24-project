@@ -51,7 +51,15 @@ function ChatItem({ setShowChatItem, chat, setChat }: Props) {
   //     }
   //   }
   // };
-
+  const chatSettingsCheck = () => {
+    if (chat.Projects.length == 0) {
+      setView("chatSettings");
+    } else {
+      alert(
+        "Because this is a Project Chat, you need to add/remove members from the Project Page."
+      );
+    }
+  };
   return (
     <>
       <div className="chat-window">
@@ -73,7 +81,7 @@ function ChatItem({ setShowChatItem, chat, setChat }: Props) {
           <button
             type="button"
             className="chat-edit-button"
-            onClick={() => setView("chatSettings")}
+            onClick={chatSettingsCheck}
           >
             <IoSettingsOutline size={20} />
           </button>

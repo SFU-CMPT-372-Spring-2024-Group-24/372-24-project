@@ -46,7 +46,7 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
         description: projectDescription,
       });
       const project: Project = response.data.project;
-      setChats([...chats, response.data.chat]);
+      setChats([response.data.chat, ...chats]);
       navigate(`/projects/${project.id}`);
       closeModal();
     } catch (error) {

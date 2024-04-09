@@ -136,6 +136,16 @@ button.btn-cancel {
   }
 }
 
+button.btn-danger {
+  background: $red;
+  color: $white;
+
+  &:hover {
+    background: $light-red;
+    box-shadow: 0 0 5px 2px $light-gray;
+  }
+}
+
 button.btn-save-changes:disabled {
   background: $light-gray;
   color: $dark-gray;

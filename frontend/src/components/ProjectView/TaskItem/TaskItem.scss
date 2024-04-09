@@ -17,7 +17,7 @@
   h3 {
     font-size: 15px;
     font-weight: 500;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.3rem;
   }
 
   .info {
@@ -32,6 +32,14 @@
       gap: 0.5rem;
       font-weight: 500;
     }
+
+    .priority {
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 15px;
+      padding: 0.25rem 0.5rem;
+      color: $white;
+    }
   }
 
   img.assignee {
@@ -39,6 +47,37 @@
     height: 30px;
     border-radius: 50%;
   }
+}
+
+// Set color for different priorities
+.priority-urgent {
+  background: $dark-red !important;
+  border-color: $dark-red !important;
+}
+
+.priority-high {
+  background: $orange !important;
+  border-color: $orange !important;
+}
+
+.priority-medium {
+  background: $yellow !important;
+  border-color: $yellow !important;
+}
+
+.priority-low {
+  background: $green !important;
+  border-color: $green !important;
+}
+
+.priority-planning {
+  background: $sky-blue !important;
+  border-color: $sky-blue !important;
+}
+
+.priority-unset {
+  background: $light-gray !important;
+  border-color: $light-gray !important;
 }
 
 // The modal for setting the priority of the task
@@ -198,7 +237,7 @@
         .task-priority {
           font-size: 14px;
           font-weight: 600;
-          border: 1px solid $light-gray;
+          border: 1px solid transparent;
           border-radius: 15px;
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
@@ -262,11 +301,14 @@
 
       form {
         margin-top: 0;
+        display: flex;
+        flex-direction: column;
       }
 
       textarea {
         flex-grow: 1;
         height: 100px;
+        margin-bottom: .5rem;
       }
 
       p {
@@ -511,6 +553,24 @@
 
             .button-group {
               gap: 0.1rem;
+            }
+          }
+
+          div.editing-comment {
+            position: relative;
+
+            textarea {
+              width: 100%;
+              height: 70px;
+              margin-top: 0.5rem;
+              padding-right: 2.5rem;
+            }
+
+            button.btn-edit-comment {
+              position: absolute;
+              right: 5px;
+              top: 30px;
+              // color: $purple;
             }
           }
 

@@ -1,9 +1,10 @@
-import { User } from './User';
-
+import { User } from "./User";
+import { Project } from "./Project";
 export interface Chat {
   id: number;
   name: string;
   Users: User[];
+  Projects: Project[];
 }
 
 export interface Message {

@@ -5,17 +5,17 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useTasks } from "../../../hooks/TaskContext";
 import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
-import useUserManagement from "../../../hooks/useSearchUsers";
+import useSearchUsers from "../../../hooks/useSearchUsers";
+import { useUser } from "../../../hooks/UserContext";
+import { useChats } from "../../../hooks/ChatContext";
 // Models
 import { User } from "../../../models/User";
 import { Role, Roles } from "../../../models/ProjectRole";
+import { Chat } from "../../../models/Chat";
 // API
 import { api, AxiosError } from "../../../api";
 // Files
 import defaultProfilePicture from "../../../assets/default-profile-picture.png";
-// Custom hooks
-import { useUser } from "../../../hooks/UserContext";
-import { useChats } from "../../../hooks/ChatContext";
 // Icons and styles
 import { IoSearch } from "react-icons/io5";
 import { FaCheck } from "react-icons/fa6";
@@ -23,7 +23,7 @@ import { IoMdAdd } from "react-icons/io";
 import "./ManageMemberModal.scss";
 // Components
 import ChangeMemberRoleModal from "../ChangeMemberRole/ChangeMemberRoleModal";
-import { Chat } from "../../../models/Chat";
+import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
 
 interface Props {
   showModal: boolean;
@@ -31,6 +31,7 @@ interface Props {
 }
 
 const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
+  // Task context
   const {
     projectMembers,
     setProjectMembers,
@@ -38,36 +39,40 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
     project,
     userCanPerform,
   } = useTasks();
-  // const [searchQuery, setSearchQuery] = useState<string>("");
-  // const [hasSearched, setHasSearched] = useState<boolean>(false);
-  // const [searchResults, setSearchResults] = useState<User[]>([]);
-  // const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  // User context
   const { user } = useUser();
+  // Chat context
   const { socket, chats, setChats } = useChats();
+  // Change member role modal
   const [showChangeRoleModal, setShowChangeRoleModal] =
     useState<boolean>(false);
   const [selectedMember, setSelectedMember] = useState<User | null>(null);
+  // Error handling
   const { handleApiError } = useApiErrorHandler();
+  // Search users
   const {
-    searchQuery,
-    setSearchQuery,
-    searchResults,
-    setSearchResults,
+    query,
+    setQuery,
+    results,
+    setResults,
     selectedUsers,
     setSelectedUsers,
-    hasSearched,
-    setHasSearched,
-    handleSearchUsers,
-    handleSelectUser,
-  } = useUserManagement();
+    searched,
+    setSearched,
+    handleSearch,
+    handleSelect,
+  } = useSearchUsers();
   const excludeIds = projectMembers.map((user) => user.id);
+  // Confirmation modal for removing a user
+  const [showConfirmationModal, setShowConfirmationModal] =
+    useState<boolean>(false);
 
   // Reset search
   const resetSearch = () => {
-    setSearchQuery("");
-    setSearchResults([]);
+    setQuery("");
+    setResults([]);
     setSelectedUsers([]);
-    setHasSearched(false);
+    setSearched(false);
   };
 
   // Close modal
@@ -138,6 +143,8 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
       socket.emit("chat_added");
     } catch (error) {
       handleApiError(error as AxiosError);
+    } finally {
+      setShowConfirmationModal(false);
     }
   };
 
@@ -172,7 +179,7 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
                 <h5>Add members to your project</h5>
                 <form
                   className="search-member"
-                  onSubmit={(e) => handleSearchUsers(e, excludeIds)}
+                  onSubmit={(e) => handleSearch(e, excludeIds)}
                 >
                   <div className="search-bar">
                     <IoSearch size={18} className="search-icon" />
@@ -182,9 +189,9 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
                       id="search"
                       type="text"
                       placeholder="Search by name, username or email"
-                      value={searchQuery}
+                      value={query}
                       onChange={(e) => {
-                        setSearchQuery(e.target.value);
+                        setQuery(e.target.value);
                       }}
                     />
                   </div>
@@ -193,16 +200,16 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
                 </form>
 
                 <ul className="members-list">
-                  {hasSearched && !searchResults.length && (
+                  {searched && !results.length && (
                     <li className="no-member-found">User not found</li>
                   )}
 
-                  {searchResults.map((user) => (
+                  {results.map((user) => (
                     <li
                       className="member"
                       key={user.id}
                       onClick={() => {
-                        handleSelectUser(user);
+                        handleSelect(user);
                       }}
                     >
                       <img
@@ -258,10 +265,7 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
                 />
 
                 <div className="member-info">
-                  <Link
-                    to={`/profile/${user!.username}`}
-                    // className="profile-link"
-                  >
+                  <Link to={`/profile/${user!.username}`}>
                     <p>{user!.name}</p>
                     <p>{user!.username}</p>
                   </Link>
@@ -292,10 +296,7 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
                       />
 
                       <div className="member-info">
-                        <Link
-                          to={`/profile/${member.username}`}
-                          // className="profile-link"
-                        >
+                        <Link to={`/profile/${member.username}`}>
                           <p>{member.name}</p>
                           <p>{member.username}</p>
                         </Link>
@@ -311,12 +312,17 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
                       </div>
 
                       {userCanPerform("manageMembers") && (
-                        <button
-                          className="btn-icon btn-remove-user"
-                          onClick={() => handleRemoveUser(member)}
-                        >
-                          Remove
-                        </button>
+                        <>
+                          <button
+                            className="btn-icon btn-remove-user"
+                            onClick={() => {
+                              setSelectedMember(member);
+                              setShowConfirmationModal(true);
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </>
                       )}
                     </li>
                   );
@@ -332,6 +338,14 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
         showModal={showChangeRoleModal}
         setShowModal={setShowChangeRoleModal}
         member={selectedMember!}
+      />
+
+      {/* Confirmation modal when removing a member */}
+      <ConfirmationModal
+        show={showConfirmationModal}
+        message={`Are you sure you want to remove ${selectedMember?.name} from the project?`}
+        onConfirm={() => handleRemoveUser(selectedMember!)}
+        onCancel={() => setShowConfirmationModal(false)}
       />
     </>
   );

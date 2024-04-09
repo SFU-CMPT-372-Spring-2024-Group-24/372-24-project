@@ -1,16 +1,20 @@
 // Color variables
 
+$dark-red: #B22222;
 $red: #CE4F51;
+$sky-blue: #6fcef3;
 $blue: #014dff;
 $purple: #8C54FB;
 $green: #48c96f;
 $yellow: #F7CB15;
+$orange: #FF8C00;
 $extra-white: #FFF;
 $white: #F5F5F7;
 $light-gray: #D1D1D1;
 $dark-gray: #4D4A4F;
 $black: #0C0D0E;
 $light-purple: rgba($color: $purple, $alpha: 0.9);
+$light-red: rgba($color: $red, $alpha: 0.9);
 
 // Font variable
 $font: 'Archivo', Helvetica, sans-serif;
