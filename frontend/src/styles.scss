@@ -155,6 +155,15 @@ button.btn-save-changes:disabled {
   }
 }
 
+button.btn-remove-user {
+  color: $dark-gray;
+
+  &:hover {
+    background: $red;
+    color: $white;
+  }
+}
+
 // Form styles
 input,
 textarea,
@@ -275,6 +284,10 @@ section.search-section {
     &:hover {
       background: $white;
     }
+  }
+
+  input {
+    width: 100%;
   }
 
   form.search-member {

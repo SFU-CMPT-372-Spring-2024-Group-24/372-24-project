@@ -41,107 +41,64 @@ router.post("/", async (req, res) => {
   }
 });
 
-//create a chat when creating a project
-router.post("/addProjectChat", async (req, res) => {
-  const { chatName, userID, projectID } = req.body;
-  try {
-    const chat = await Chat.create({
-      name: chatName,
-    });
-
-    // get user by id
-    const user = await User.findByPk(userID);
-    if (!user) {
-      return res.status(400).json({ message: "User not found" });
-    }
-
-    //add sending user to the chat
-    await chat.addUser(user);
-
-    //get project by id
-    const project = await Project.findByPk(projectID);
-
-    if (!project) {
-      return res.status(400).json({ message: "Project not found" });
-    }
-
-    //add project to the chat
-
-    await project.addChat(chat);
-
-    //return information
-    res.json({ chat, user, project });
-  } catch (err) {
-    console.error("Error adding chat:", err);
-    res.status(400).json({ message: "Error adding chat", error: err.message });
-  }
-});
-
-// Get all chats for a user by user id, including the users in each chat
-router.get("/:userID", async (req, res) => {
-  const { userID } = req.params;
+// Get all chats for a user by user id
+// For each chat: get chat id, name, and users in the chat, for each user: get user id, name, and profile picture
+// Also, for each chat: get the last message in the chat: message, createdAt, and user who sent the message: id, name, and profile picture
+router.get("/", async (req, res) => {
+  // const { userID } = req.params;
+  const userId = req.session.userId;
 
   try {
-    const user = await User.findByPk(userID);
+    const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Get all chats for the user
     const chats = await user.getChats({
+      attributes: ["id", "name", "createdAt"],
       include: [
         {
           model: User,
           attributes: ["id", "name", "username", "profilePicture"],
         },
         {
-          model: Project,
-          attributes: ["id"],
+          model: Message,
+          attributes: ["id", "userId", "chatId", "message", "createdAt"],
+          include: [
+            {
+              model: User,
+              attributes: ["id", "name", "profilePicture"],
+            },
+          ],
+          limit: 1,
+          order: [["createdAt", "DESC"]],
         },
       ],
     });
 
-    res.json(chats);
+    // res.json(chats);
+    res.json(
+      chats.map((chat) => {
+        return {
+          id: chat.id,
+          name: chat.name,
+          createdAt: chat.createdAt,
+          Users: chat.Users.map((user) => {
+            return {
+              id: user.id,
+              name: user.name,
+              username: user.username,
+              profilePicture: user.profilePicture,
+            };
+          }),
+          lastMessage: chat.Messages[0]
+        };
+      }),
+    );
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
-});
-
-//get project chats for a certain userID
-router.get("/getProjectChats/:userID", async (req, res) => {
-  const { userID } = req.params;
-
-  // const test = User.findAll({
-  //   where: { id: userID },
-  //   include: [
-  //     {
-  //       model: Project,
-  //       include: [User],
-  //     },
-  //   ],
-  // }).then((users) => {
-  //   res.json(users); // Send the chats data as JSON response
-  // });
-
-  const test = User.findAll({
-    where: { id: userID },
-    include: [
-      {
-        model: Chat,
-        include: [
-          {
-            model: Project,
-            include: [User],
-          },
-        ],
-      },
-    ],
-  }).then((users) => {
-    res.json(users); // Extract Chats from each user and flatten the array
-  });
-
-  //get projects user is associated with
-
-  //for each project, get the chat that it is associated with it
 });
 
 // Add a new message to a chat
@@ -176,10 +133,11 @@ router.get("/messages/:chatId", async (req, res) => {
       include: [
         {
           model: User,
-          attributes: ["id", "name", "username"],
+          attributes: ["id", "name", "profilePicture"],
         },
       ],
-      attributes: ["message", "createdAt", "chatId"], // get message and date
+      attributes: ["message", "createdAt", "chatId"],
+      order: [["createdAt", "ASC"]],
     });
     res.json(messages);
   } catch (err) {
