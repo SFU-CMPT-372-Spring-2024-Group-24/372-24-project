@@ -9,6 +9,7 @@ import { AiOutlineUser } from "react-icons/ai";
 import { HiOutlineMail } from "react-icons/hi";
 // Hooks
 import { useUser } from "../../hooks/UserContext";
+import { useEffect } from "react";
 
 interface Props {
   view: string;
@@ -20,9 +21,10 @@ interface Props {
 const ProfilePanel = ({ view, setView, isOwnProfile, profile, setProfile }: Props) => {
   const { user } = useUser();
 
-  if (user && isOwnProfile) {
-    setProfile(user);
-  }
+  // If the profile is the user's own profile, set the profile to the user
+  useEffect(() => {
+    if (user && isOwnProfile) setProfile(user);
+  }, [user, isOwnProfile]);
 
   return (
     <>
