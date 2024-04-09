@@ -55,7 +55,6 @@ export const ChatProvider = ({ children }: Props) => {
       try {
         const response = await api.get(`/chats`);
         setChats(response.data);
-        
         // Join chat rooms to receive messages
         response.data.forEach((chat: Chat) => {
           socket.emit("join_room", chat.id);
@@ -86,7 +85,7 @@ export const ChatProvider = ({ children }: Props) => {
       });
 
       setChats(updatedChats);
-    }
+    };
     socket.on("receive_message", receiveMessage);
 
     return () => {
