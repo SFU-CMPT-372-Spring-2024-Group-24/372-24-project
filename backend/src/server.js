@@ -41,7 +41,7 @@ app.use(
 
 // Serve React app (for production)
 if (process.env.NODE_ENV === "production") {
-app.use(express.static(path.join(__dirname, "../dist")));
+  app.use(express.static(path.join(__dirname, "../dist")));
 }
 
 // Static files (for testing)
@@ -90,9 +90,9 @@ app.use("/api/roles", require("./routes/roles"));
 
 // Catch-all route
 if (process.env.NODE_ENV === "production") {
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../dist", "index.html"));
-});
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../dist", "index.html"));
+  });
 }
 
 // HTTP server
@@ -104,23 +104,39 @@ httpServer.listen(port, () =>
 
 // Chat server
 const io = new SocketIOServer(httpServer);
+let chatRooms = {};
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
-  // this would be the chat_id instead of room
-  socket.on("join_room", (data) => {
-    socket.join(data);
+
+  // Join room
+  socket.on("join_room", (roomId) => {
+    // socket.join(data);
+    if (!chatRooms[roomId]) {
+      chatRooms[roomId] = [];
+    }
+    chatRooms[roomId].push(socket.id);
+    socket.join(roomId);
+  });
+
+  // Leave room
+  socket.on('leave_room', (roomId) => {
+    chatRooms[roomId] = chatRooms[roomId].filter(id => id !== socket.id);
+    socket.leave(roomId);
   });
 
   socket.on("chat_added", () => {
     socket.broadcast.emit("refresh_user_list");
   });
 
-  socket.on("send_message", (data) => {
-    socket.to(data.chatId).emit("receive_message", data);
+  socket.on("send_message", (message) => {
+    socket.to(message.chatId).emit("receive_message", message);
   });
 
   socket.on("disconnect", () => {
     console.log("User Disconnected", socket.id);
+    for (let roomId in chatRooms) {
+      chatRooms[roomId] = chatRooms[roomId].filter(id => id !== socket.id);
+    }
   });
 });
 

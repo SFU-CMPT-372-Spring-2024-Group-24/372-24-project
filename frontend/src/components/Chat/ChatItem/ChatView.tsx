@@ -2,7 +2,6 @@
 import { Chat, Message } from "../../../models/Chat";
 // Libraries
 import ScrollToBottom, { useAnimating } from "react-scroll-to-bottom";
-import { Socket } from "socket.io-client";
 // Hooks
 import { useUser } from "../../../hooks/UserContext";
 import { useEffect, useState } from "react";
@@ -20,7 +19,7 @@ const ChatView = ({ chat }: Props) => {
   const { user } = useUser();
   if (!user) return null;
 
-  const { socket } = useChats();
+  const { socket, chats, setChats } = useChats();
   const { handleApiError } = useApiErrorHandler();
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -52,7 +51,11 @@ const ChatView = ({ chat }: Props) => {
         message: response.data.message,
         chatId: response.data.chatId,
         createdAt: response.data.createdAt,
-        User: { id: user.id, name: user.name, username: user.username },
+        User: {
+          id: user.id,
+          name: user.name,
+          profilePicture: user.profilePicture,
+        },
       };
 
       // Emit message to socket server
@@ -61,6 +64,15 @@ const ChatView = ({ chat }: Props) => {
       // Update message list
       setMessages([...messages, data]);
 
+      // Update last message in chat list
+      const updatedChats = chats.map((chatItem) => {
+        if (chatItem.id === chat.id) {
+          return { ...chatItem, lastMessage: data };
+        }
+        return chatItem;
+      });
+      setChats(updatedChats);
+
       // Clear message input
       setNewMessage("");
     } catch (error) {
@@ -68,16 +80,18 @@ const ChatView = ({ chat }: Props) => {
     }
   };
 
-  // Listen for new messages
+  // Listen for new messages and update the chat view
   useEffect(() => {
-    socket.on("receive_message", (newMessage: Message) => {
+    const receiveMessage = (newMessage: Message) => {
       setMessages((list) => [...list, newMessage]);
-    });
+    }
+
+    socket.on("receive_message", receiveMessage);
 
     return () => {
-      socket.off("receive_message");
+      socket.off("receive_message", receiveMessage);
     };
-  }, [socket]);
+  }, [socket, chats, setChats]);
 
   return (
     <>
@@ -88,11 +102,7 @@ const ChatView = ({ chat }: Props) => {
             return (
               <div
                 className="message"
-                id={
-                  user.username === messageContent.User.username
-                    ? "you"
-                    : "other"
-                }
+                id={user.id === messageContent.User.id ? "you" : "other"}
                 key={index}
               >
                 <div>

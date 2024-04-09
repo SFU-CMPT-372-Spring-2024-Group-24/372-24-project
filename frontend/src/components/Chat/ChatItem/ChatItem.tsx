@@ -26,32 +26,6 @@ function ChatItem({ setShowChatItem, chat, setChat }: Props) {
 
   const [view, setView] = useState<string>("chatView");
 
-  // const addNewMembers = async (event: any) => {
-  //   event.preventDefault();
-  //   console.log("Adding new Members!");
-  //   console.log(currentSelectValue);
-  //   // console.log(
-  //   //   "mapping:",
-  //   //   currentSelectValue.map((user) => JSON.parse(user.value).id)
-  //   // );
-  //   //console.log(currentSelectValue.map((user) => JSON.parse(user.value).id));
-  //   //call api to add users to the chat
-  //   if (currentSelectValue.length > 0) {
-  //     const response = await api.post(`/chats/addUsers/${chatID}`, {
-  //       userIDs: currentSelectValue.map((user) => JSON.parse(user.value).id),
-  //     });
-  //     //update members to include the values before and also the new users added before the response
-  //     if (response.status === 201) {
-  //       setMembers([
-  //         ...members,
-  //         ...currentSelectValue.map((user) => JSON.parse(user.value)),
-  //       ]);
-  //       setCurrentSelectValue([]);
-  //       socket.emit("chat_added");
-  //     }
-  //   }
-  // };
-
   return (
     <>
       <div className="chat-window">

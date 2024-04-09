@@ -277,6 +277,10 @@ section.search-section {
     }
   }
 
+  input {
+    width: 100%;
+  }
+
   form.search-member {
     display: flex;
     flex-direction: row;

@@ -66,21 +66,16 @@ const ManageChatModal = ({
     setSearched(false);
   };
 
-  // set the chatName variable to what the user is inputting
-  const handleChatNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChatName(event.target.value);
-  };
-
   // if there's only one selected user, make the chat name their name
   useEffect(() => {
     //if we're creating a chat, there is no initial chat
-    if (action == "create-chat") {
-      if (selectedUsers.length === 1) {
-        setChatName(selectedUsers[0].name);
-      } else {
-        setChatName("");
-      }
-    }
+    // if (action == "create-chat") {
+    //   if (selectedUsers.length === 1) {
+    //     setChatName(selectedUsers[0].name);
+    //   } else {
+    //     setChatName("");
+    //   }
+    // }
     //if we're adding member to the chat, there is a chat, so we can use that
     if (action == "add-members") {
       //one situation is where you removed some people in chat and then add more people again
@@ -101,11 +96,11 @@ const ManageChatModal = ({
     if (!selectedUsers.length) {
       return;
     }
-    console.log("Value is: ", chat?.Users.length);
-    if (chatName.trim() === "") {
-      alert("Please re-enter your group chat name, it is empty.");
-      return;
-    }
+    // console.log("Value is: ", chat?.Users.length);
+    // if (chatName.trim() === "") {
+    //   alert("Please re-enter your group chat name, it is empty.");
+    //   return;
+    // }
     try {
       //instead of name being empty string here, want to get name specified by a user input
       const response = await api.post("/chats", {
@@ -183,9 +178,6 @@ const ManageChatModal = ({
       handleApiError(error as AxiosError);
     }
   };
-  useEffect(() => {
-    console.log("chats", chats);
-  }, [chats]);
 
   return (
     <>
@@ -208,8 +200,8 @@ const ManageChatModal = ({
                       type="text"
                       className="insert-chat-name"
                       value={chatName}
-                      onChange={handleChatNameChange}
-                      placeholder="Input your chat name"
+                      onChange={(e) => setChatName(e.target.value)}
+                      placeholder="Enter a chat name"
                       required
                     ></input>
                   )}
@@ -226,7 +218,7 @@ const ManageChatModal = ({
                           type="text"
                           className="insert-chat-name"
                           value={chatName}
-                          onChange={handleChatNameChange}
+                          onChange={(e) => setChatName(e.target.value)}
                           placeholder="Input your chat name"
                           required
                         />

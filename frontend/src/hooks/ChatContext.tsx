@@ -7,7 +7,7 @@ import {
   useEffect,
 } from "react";
 // Models
-import { Chat } from "../models/Chat";
+import { Chat, Message } from "../models/Chat";
 // API
 import { api, AxiosError } from "../api";
 // Libraries
@@ -41,20 +41,25 @@ export const useChats = (): ChatContextType => {
 // Chat provider
 interface Props {
   children: ReactNode;
-  // socket: Socket;
 }
 export const ChatProvider = ({ children }: Props) => {
   const { user } = useUser();
   const [chats, setChats] = useState<Chat[]>([]);
   const { handleApiError } = useApiErrorHandler();
 
+  // Fetch chats for the user
   useEffect(() => {
     const getRecentChats = async () => {
       if (!user) return;
 
       try {
-        const response = await api.get(`/chats/${user?.id}`);
+        const response = await api.get(`/chats`);
         setChats(response.data);
+        
+        // Join chat rooms to receive messages
+        response.data.forEach((chat: Chat) => {
+          socket.emit("join_room", chat.id);
+        });
       } catch (error) {
         handleApiError(error as AxiosError);
       }
@@ -67,10 +72,30 @@ export const ChatProvider = ({ children }: Props) => {
     };
   }, [user]);
 
+  // Listen for new messages to update the last message of a chat
+  useEffect(() => {
+    const receiveMessage = (message: Message) => {
+      const updatedChats = chats.map((chat) => {
+        if (chat.id === message.chatId) {
+          return {
+            ...chat,
+            lastMessage: message,
+          };
+        }
+        return chat;
+      });
+
+      setChats(updatedChats);
+    }
+    socket.on("receive_message", receiveMessage);
+
+    return () => {
+      socket.off("receive_message", receiveMessage);
+    };
+  }, [chats, setChats, socket]);
+
   return (
-    <ChatContext.Provider
-      value={{ chats, setChats, socket }}
-    >
+    <ChatContext.Provider value={{ chats, setChats, socket }}>
       {children}
     </ChatContext.Provider>
   );
