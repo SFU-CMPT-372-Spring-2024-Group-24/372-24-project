@@ -95,7 +95,6 @@ const ChatView = ({ chat }: Props) => {
     const receiveMessage = (newMessage: Message) => {
       setMessages((list) => [...list, newMessage]);
     };
-
     socket.on("receive_message", receiveMessage);
 
     return () => {
