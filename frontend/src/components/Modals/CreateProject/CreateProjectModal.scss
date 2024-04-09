@@ -18,14 +18,10 @@
         grid-template-columns: 1fr 3fr;
         align-items: center;
         gap: 1rem;
+        margin: .5rem 0;
 
         label {
           font-weight: 600;
-        }
-
-        input,
-        textarea {
-          letter-spacing: .3px;
         }
       }
     }

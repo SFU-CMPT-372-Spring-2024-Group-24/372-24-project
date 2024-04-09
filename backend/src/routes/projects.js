@@ -1,5 +1,5 @@
 // Models
-const { Project, User, Role, UserProject, File, Chat } = require("../db");
+const { sequelize, Project, User, Role, UserProject, File, Chat } = require("../db");
 // Third-party modules
 const express = require("express");
 const Sequelize = require("sequelize");
@@ -12,41 +12,37 @@ const router = express.Router();
 
 // Add new project for user
 router.post("/", async (req, res) => {
-  const { name, description, userId } = req.body;
+  const { name, description } = req.body;
+  const userId = req.session.userId;
+
+  // Start transaction
+  const transaction = await sequelize.transaction();
 
   try {
     // Create project
     const project = await Project.create({
       name,
       description,
-    });
+    }, { transaction });
 
     // Create Chat room for project, name the chat the same as project name and link it to the project
     const chat = await Chat.create({
       name: name,
-    });
-    await project.addChat(chat);
+    }, { transaction });
+    await project.addChat(chat, { transaction });
 
-    // Add user to project
+    // Add user to project and chat
     const user = await User.findByPk(userId);
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
-
+    // Add user to project with Owner role (roleId: 1)
+    await project.addUser(user, { through: { roleId: 1 }, transaction });
     // Add user to the chat room
-    await chat.addUser(user);
+    await chat.addUser(user, { transaction });
 
-    // Get Owner role
-    const ownerRole = await Role.findOne({ where: { name: "Owner" } });
-    if (!ownerRole) {
-      return res.status(500).json({ message: "Role not found" });
-    }
-
-    // Add user to project with Owner role
-    await project.addUser(user, { through: { roleId: ownerRole.id } });
-
-    //return project, the new chat, and associated users with the chat
-    res.json({
+    await transaction.commit();
+    res.status(201).json({
       project,
       chat: {
         id: chat.id,
@@ -55,7 +51,8 @@ router.post("/", async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    await transaction.rollback();
+    res.status(500).json({ message: err.message });
   }
 });
 
