@@ -36,15 +36,6 @@
     }
   }
 
-  button.btn-remove-user {
-    color: $dark-gray;
-
-    &:hover {
-      background: $red;
-      color: $white;
-    }
-  }
-
   form.search-member {
     display: flex;
     flex-direction: row;
@@ -121,7 +112,7 @@
           width: fit-content;
           display: flex;
           flex-direction: column;
-          
+
 
           &:hover {
             text-decoration: underline;

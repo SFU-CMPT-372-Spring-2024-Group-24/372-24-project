@@ -60,7 +60,7 @@ router.get("/", async (req, res) => {
       include: [
         {
           model: User,
-          attributes: ["id", "name", "profilePicture"],
+          attributes: ["id", "name", "username", "profilePicture"],
         },
         {
           model: Message,
@@ -88,6 +88,7 @@ router.get("/", async (req, res) => {
             return {
               id: user.id,
               name: user.name,
+              username: user.username,
               profilePicture: user.profilePicture,
             };
           }),

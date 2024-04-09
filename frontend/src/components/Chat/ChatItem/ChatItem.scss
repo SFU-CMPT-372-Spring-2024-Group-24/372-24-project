@@ -23,7 +23,7 @@ div.chat-item {
 
   .chat-view {
     background: $white;
-    
+
     .chat-body {
       height: 400px;
       overflow-y: auto;
@@ -34,7 +34,7 @@ div.chat-item {
         display: flex;
         flex-direction: column;
         gap: .5rem;
-        
+
         .message {
           display: flex;
           align-items: center;
@@ -86,6 +86,58 @@ div.chat-item {
 
       input {
         flex-grow: 1;
+      }
+    }
+  }
+
+  .settings-view {
+    height: 465px;
+    overflow-y: auto;
+    background: $white;
+    padding: .5rem;
+
+    div.button-group {
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    div.members {
+
+
+      img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+      }
+
+      ul.member-list {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+
+        li.member-list-item {
+          display: flex;
+          align-items: center;
+          gap: .5rem;
+          background: $extra-white;
+          padding: .5rem;
+          border-radius: 10px;
+
+          .member-info {
+            flex-grow: 1;
+          }
+
+          a {
+            width: fit-content;
+
+            p {
+              margin: 0;
+              font-size: 14px;
+              font-weight: 500;
+            }
+          }
+        }
       }
     }
   }

@@ -14,6 +14,6 @@ export interface Message {
   message: string;
   chatId: number;
   createdAt: Date;
-  User: { id: number; name: string; profilePicture: string};
+  User: { id: number; name: string; username: string; profilePicture: string};
   // User: User;
 }

@@ -224,7 +224,7 @@ const ManageChatModal = ({
                         />
                         <button
                           type="button"
-                          className="btn-text"
+                          className="btn-icon"
                           onClick={handleChatNameSubmit}
                         >
                           Change Chat Name

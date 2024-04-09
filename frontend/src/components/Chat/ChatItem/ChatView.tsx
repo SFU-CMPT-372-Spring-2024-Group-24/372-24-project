@@ -63,6 +63,7 @@ const ChatView = ({ chat }: Props) => {
         User: {
           id: user.id,
           name: user.name,
+          username: user.username,
           profilePicture: user.profilePicture,
         },
       };

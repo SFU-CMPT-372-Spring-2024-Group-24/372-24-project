@@ -155,6 +155,15 @@ button.btn-save-changes:disabled {
   }
 }
 
+button.btn-remove-user {
+  color: $dark-gray;
+
+  &:hover {
+    background: $red;
+    color: $white;
+  }
+}
+
 // Form styles
 input,
 textarea,

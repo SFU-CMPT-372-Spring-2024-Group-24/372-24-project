@@ -10,9 +10,11 @@ import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 import { useState } from "react";
 import { useChats } from "../../../hooks/ChatContext";
 // Icons
-import { IoMdAdd } from "react-icons/io";
+import { IoMdAdd, IoMdTrash } from "react-icons/io";
+import { RiLogoutCircleRLine } from "react-icons/ri";
 // Components
 import ManageChatModal from "../../Modals/ManageChat/ManageChatModal";
+import { Link } from "react-router-dom";
 
 interface Props {
   chat: Chat;
@@ -53,27 +55,51 @@ const SettingsView = ({ chat, setChat }: Props) => {
   return (
     <>
       <section className="settings-view">
-        <div className="members">
+        <div className="button-group">
           <button
             type="button"
             onClick={() => setShowManageChatModal(true)}
-            className="btn-text-secondary"
+            className="btn-icon"
           >
-            <IoMdAdd />
-            Add Members/Change Chat Name
+            <IoMdAdd size={15} />
+            Add Members / Change Chat Name
           </button>
+          {/* <button type="button" className="btn-icon" onClick={() => {}}>
+            <RiLogoutCircleRLine size={15} />
+            Leave Chat
+          </button>
+          <button
+            type="button"
+            className="btn-icon btn-danger"
+            onClick={() => {}}
+          >
+            <IoMdTrash size={15} />
+            Delete Chat
+          </button> */}
+        </div>
 
-          <p>Members</p>
+        <div className="members">
+          <h3>Members</h3>
 
-          <ul>
+          <ul className="member-list">
             {chat.Users.map((user, index) => (
-              <li key={index}>
-                <img
-                  src={user.profilePicture || defaultProfilePicture}
-                  alt="User Avatar"
-                />
-                <p>{user.username}</p>
-                <button type="button" onClick={() => handleRemoveUser(user)}>
+              <li key={index} className="member-list-item">
+
+                <div className="member-info">
+                  <Link to={`/profile/${user.username}`} className="profile-link">
+                    <img
+                      src={user.profilePicture || defaultProfilePicture}
+                      alt="User Avatar"
+                    />
+                    <p>{user.name}</p>
+                  </Link>
+                </div>
+
+                <button
+                  className="btn-remove-user"
+                  type="button"
+                  onClick={() => handleRemoveUser(user)}
+                >
                   Remove
                 </button>
               </li>
