@@ -7,7 +7,7 @@ import { BiSolidUserDetail } from "react-icons/bi";
 // Files
 import defaultProfilePicture from "../../../assets/default-profile-picture.png";
 // Components
-import ManageMemberModal from "../../Modals/ManageMember/ManageMemberModal";
+import ManageMemberModal from "../../Modals/ManageProjectMember/ManageMemberModal";
 // Custom hooks
 import { useTasks } from "../../../hooks/TaskContext";
 

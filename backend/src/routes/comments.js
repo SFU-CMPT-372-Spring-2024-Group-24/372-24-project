@@ -33,7 +33,8 @@ router.get('/:taskId', async (req, res) => {
 // Create comment using userId, taskId and comment
 // Return the created comment with attributes id, comment, updatedAt and user (id, name, username, email, profilePicture)
 router.post('/', async (req, res) => {
-  const { userId, taskId, comment } = req.body;
+  const { taskId, comment } = req.body;
+  const userId = req.session.userId;
 
   try {
     const newComment = await Comment.create({
@@ -71,23 +72,12 @@ router.put('/:id', async (req, res) => {
   const { comment } = req.body;
 
   try {
-    await Comment.update({ 
+    await Comment.update({
       comment,
       isEdited: true
     }, { where: { id } });
 
-    const updatedComment = await Comment.findOne({
-      where: { id },
-      include: [
-        {
-          model: User,
-          attributes: ['id', 'name', 'username', 'email', 'profilePicture']
-        }
-      ],
-      attributes: ['id', 'comment', 'createdAt', 'isEdited']
-    });
-
-    res.json(updatedComment);
+    res.json({ message: 'Comment updated' });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

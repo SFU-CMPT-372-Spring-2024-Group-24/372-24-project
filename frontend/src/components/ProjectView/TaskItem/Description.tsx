@@ -16,7 +16,6 @@ const Description = ({ task }: Props) => {
   const [showTextArea, setShowTextArea] = useState<boolean>(false);
   const [description, setDescription] = useState<string>(task.description);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [errorMsg, setErrorMsg] = useState<string>("");
   const { setTask, project, userCanPerform } = useTasks();
   const {handleApiError} = useApiErrorHandler();
 
@@ -39,7 +38,6 @@ const Description = ({ task }: Props) => {
       });
 
       setTask({ ...task, description: response.data.description });
-      setErrorMsg("");
       setShowTextArea(false);
     } catch (error) {
       handleApiError(error as AxiosError);
@@ -68,13 +66,10 @@ const Description = ({ task }: Props) => {
       <div className="description">
         {showTextArea ? (
           <form onSubmit={handleDescriptionChange}>
-            {errorMsg && <div className="error-msg">{errorMsg}</div>}
-
             <textarea
               ref={textareaRef}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              autoFocus
             />
 
             <div className="button-group">

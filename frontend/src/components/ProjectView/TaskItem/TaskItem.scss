@@ -262,11 +262,14 @@
 
       form {
         margin-top: 0;
+        display: flex;
+        flex-direction: column;
       }
 
       textarea {
         flex-grow: 1;
         height: 100px;
+        margin-bottom: .5rem;
       }
 
       p {
@@ -511,6 +514,24 @@
 
             .button-group {
               gap: 0.1rem;
+            }
+          }
+
+          div.editing-comment {
+            position: relative;
+
+            textarea {
+              width: 100%;
+              height: 70px;
+              margin-top: 0.5rem;
+              padding-right: 2.5rem;
+            }
+
+            button.btn-edit-comment {
+              position: absolute;
+              right: 5px;
+              top: 30px;
+              // color: $purple;
             }
           }
 

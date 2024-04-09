@@ -39,16 +39,16 @@ const ManageChatModal = ({
   const { socket, chats, setChats } = useChats();
   const { handleApiError } = useApiErrorHandler();
   const {
-    searchQuery,
-    setSearchQuery,
-    searchResults,
-    setSearchResults,
+    query,
+    setQuery,
+    results,
+    setResults,
     selectedUsers,
     setSelectedUsers,
-    hasSearched,
-    setHasSearched,
-    handleSearchUsers,
-    handleSelectUser,
+    searched,
+    setSearched,
+    handleSearch,
+    handleSelect,
   } = useSearchUsers();
 
   let excludeIds: number[] = [];
@@ -60,10 +60,10 @@ const ManageChatModal = ({
 
   const closeModal = () => {
     setShowModal(false);
-    setSearchQuery("");
-    setSearchResults([]);
+    setQuery("");
+    setResults([]);
     setSelectedUsers([]);
-    setHasSearched(false);
+    setSearched(false);
   };
 
   // set the chatName variable to what the user is inputting
@@ -181,7 +181,7 @@ const ManageChatModal = ({
               )}
               <form
                 className="search-member"
-                onSubmit={(e) => handleSearchUsers(e, excludeIds)}
+                onSubmit={(e) => handleSearch(e, excludeIds)}
               >
                 <div className="search-bar">
                   <IoSearch size={18} className="search-icon" />
@@ -191,9 +191,9 @@ const ManageChatModal = ({
                     id="search"
                     type="text"
                     placeholder="Search by name, username or email"
-                    value={searchQuery}
+                    value={query}
                     onChange={(e) => {
-                      setSearchQuery(e.target.value);
+                      setQuery(e.target.value);
                     }}
                   />
                 </div>
@@ -202,16 +202,16 @@ const ManageChatModal = ({
               </form>
 
               <ul className="members-list">
-                {hasSearched && !searchResults.length && (
+                {searched && !results.length && (
                   <li className="no-member-found">User not found</li>
                 )}
 
-                {searchResults.map((user) => (
+                {results.map((user) => (
                   <li
                     className="member"
                     key={user.id}
                     onClick={() => {
-                      handleSelectUser(user);
+                      handleSelect(user);
                     }}
                   >
                     <img

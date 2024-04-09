@@ -1,15 +1,13 @@
 // Libraries
 import Modal from "react-bootstrap/Modal";
-import { useState } from "react";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { Draggable } from "@hello-pangea/dnd";
-// Styles
-import "./TaskItem.scss";
-// Icons
+// Icons and styles
 import { IoMdClose, IoMdTrash } from "react-icons/io";
 import { TbArrowsExchange } from "react-icons/tb";
 import { FaRegClock } from "react-icons/fa6";
+import "./TaskItem.scss";
 // Utils
 // import { priorities } from "../../../utils/priorityColorUtils";
 // Models
@@ -24,11 +22,13 @@ import TaskMembers from "./TaskMembers";
 import TaskName from "./TaskName";
 import Attachments from "./Attachments";
 import MoveTaskModal from "../../Modals/MoveTask/MoveTaskModal";
+import ConfirmationModal from "../../Modals/ConfirmationModal/ConfirmationModal";
 // API
 import { api, AxiosError } from "../../../api";
-// Custom hooks
+// Hooks
 import { useTasks } from "../../../hooks/TaskContext";
 import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
+import { useState } from "react";
 
 interface Props {
   list: List;
@@ -37,10 +37,17 @@ interface Props {
 }
 
 const TaskItem = ({ list, task, index }: Props) => {
-  const {handleApiError} = useApiErrorHandler();
+  // Error handling
+  const { handleApiError } = useApiErrorHandler();
+  // Task Item Modal
   const [showTaskItemModal, setShowTaskItemModal] = useState<boolean>(false);
+  // Move Task Modal
   const [showMoveTaskModal, setShowMoveTaskModal] = useState<boolean>(false);
+  // Task Context
   const { project, removeTask, userCanPerform } = useTasks();
+  // Confirmation modal for deleting a task
+  const [showConfirmationModal, setShowConfirmationModal] =
+    useState<boolean>(false);
   // const priorityColor = priorities.find(
   //   (p) => p.value === task.priority
   // )?.color;
@@ -61,10 +68,12 @@ const TaskItem = ({ list, task, index }: Props) => {
       if (response.status === 200) {
         removeTask(list.id, task.id);
         setShowTaskItemModal(false);
-        toast(response.data.message);
+        toast.success(response.data.message);
       }
     } catch (error) {
       handleApiError(error as AxiosError);
+    } finally {
+      setShowConfirmationModal(false);
     }
   };
 
@@ -133,7 +142,7 @@ const TaskItem = ({ list, task, index }: Props) => {
 
                 <button
                   className="btn-icon delete-btn"
-                  onClick={handleDeleteTask}
+                  onClick={() => setShowConfirmationModal(true)}
                 >
                   <IoMdTrash size={20} />
                 </button>
@@ -156,12 +165,23 @@ const TaskItem = ({ list, task, index }: Props) => {
         </Modal.Footer>
       </Modal>
 
+      {/* Move task modal */}
       <MoveTaskModal
         list={list}
         index={index}
         showModal={showMoveTaskModal}
         setShowModal={setShowMoveTaskModal}
         setShowTaskItemModal={setShowTaskItemModal}
+      />
+
+      {/* Confirmation modal for deleting a task */}
+      <ConfirmationModal
+        show={showConfirmationModal}
+        message="Are you sure you want to delete this task?"
+        secondMessage="All comments will be lost."
+        confirmText="Delete"
+        onConfirm={handleDeleteTask}
+        onCancel={() => setShowConfirmationModal(false)}
       />
     </>
   );
