@@ -8,6 +8,7 @@ import "./ConfirmationModal.scss";
 interface Props {
   show: boolean;
   message: string;
+  secondMessage?: string;
   confirmText?: string;
   onConfirm: () => void;
   onCancel: () => void;
@@ -16,6 +17,7 @@ interface Props {
 const ConfirmationModal = ({
   show,
   message,
+  secondMessage,
   confirmText,
   onConfirm,
   onCancel,
@@ -40,7 +42,9 @@ const ConfirmationModal = ({
         </button>
       </Modal.Header>
       <Modal.Body>
-        <p>{message}</p>
+        <h2>{message}</h2>
+
+        {secondMessage && <p>{secondMessage}</p>}
       </Modal.Body>
       <Modal.Footer>
         <div className="button-group">
