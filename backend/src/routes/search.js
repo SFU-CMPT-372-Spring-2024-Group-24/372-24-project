@@ -4,7 +4,7 @@ const { User, Project, File, List, Task } = require("../db");
 const Sequelize = require("sequelize");
 
 // Search users excluding certain users
-router.get("/users", async (req, res) => {
+router.get("/users/exclude", async (req, res) => {
   const { query, exclude } = req.query;
 
   // Convert exclude to array of excluded user ids
