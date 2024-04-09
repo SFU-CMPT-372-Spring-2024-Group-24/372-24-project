@@ -1,5 +1,5 @@
 // Hooks
-import { useState } from "react";
+// import { useState } from "react";
 import { useTasks } from "../../../hooks/TaskContext";
 import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 // Components
@@ -31,7 +31,7 @@ interface Props {
 const TaskModal = ({ isShowing, setIsShowing, list, task }: Props) => {
   const {handleApiError} = useApiErrorHandler();
   const { project, removeTask, userCanPerform } = useTasks();
-  const [isShowingMoveTaskModal, setIsShowingMoveTaskModal] = useState<boolean>(false);
+  // const [isShowingMoveTaskModal, setIsShowingMoveTaskModal] = useState<boolean>(false);
 
   const handleDeleteTask = async () => {
     try {
@@ -83,7 +83,8 @@ const TaskModal = ({ isShowing, setIsShowing, list, task }: Props) => {
             <>
               <button
                 className="btn-icon move-btn"
-                onClick={() => setIsShowingMoveTaskModal(true)}
+                // onClick={() => setIsShowingMoveTaskModal(true)}
+                onClick={() => {setIsShowing(true)}}
               >
                 <TbArrowsExchange size={20} />
               </button>
@@ -114,3 +115,5 @@ const TaskModal = ({ isShowing, setIsShowing, list, task }: Props) => {
     </Modal>
   );
 };
+
+export default TaskModal;

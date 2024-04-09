@@ -10,8 +10,8 @@ import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 import { useState } from "react";
 import { useChats } from "../../../hooks/ChatContext";
 // Icons
-import { IoMdAdd, IoMdTrash } from "react-icons/io";
-import { RiLogoutCircleRLine } from "react-icons/ri";
+import { IoMdAdd } from "react-icons/io";
+// import { RiLogoutCircleRLine } from "react-icons/ri";
 // Components
 import ManageChatModal from "../../Modals/ManageChat/ManageChatModal";
 import { Link } from "react-router-dom";
