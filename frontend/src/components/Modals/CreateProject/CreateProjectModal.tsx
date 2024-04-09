@@ -1,11 +1,12 @@
 // Libraries
 import Modal from "react-bootstrap/Modal";
+// Hooks
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 // Styles
 import "./CreateProjectModal.scss";
 // Hooks
-import { useUser } from "../../../hooks/UserContext";
 import { useChats } from "../../../hooks/ChatContext";
 // Models
 import { Project } from "../../../models/Project";
@@ -22,8 +23,8 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
   const [projectDescription, setProjectDescription] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string>("");
   const navigate = useNavigate();
-  const { user } = useUser();
   const [loading, setLoading] = useState<boolean>(false);
+  const { handleApiError } = useApiErrorHandler();
 
   const { chats, setChats } = useChats();
 
@@ -39,28 +40,17 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
 
     setLoading(true);
 
-    if (!user) {
-      setErrorMsg("You must be logged in to create a project.");
-      return;
-    }
-
     try {
       const response = await api.post("/projects", {
         name: projectName,
         description: projectDescription,
-        userId: user.id,
       });
       const project: Project = response.data.project;
       setChats([...chats, response.data.chat]);
       navigate(`/projects/${project.id}`);
       closeModal();
     } catch (error) {
-      const axiosError = error as AxiosError;
-      if (axiosError.response) {
-        setErrorMsg(axiosError.response.data.message);
-      } else {
-        setErrorMsg("An error occurred while creating the project.");
-      }
+      handleApiError(error as AxiosError);
     } finally {
       setLoading(false);
     }
@@ -79,7 +69,7 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
 
       {loading && <div className="loading">Creating your project...</div>}
 
-      <div className="error-msg">{errorMsg}</div>
+      {errorMsg && <div className="error-msg">{errorMsg}</div>}
 
       <form onSubmit={handleCreateProject}>
         <div className="input-field">
