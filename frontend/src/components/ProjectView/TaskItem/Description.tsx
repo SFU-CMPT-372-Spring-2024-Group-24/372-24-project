@@ -70,7 +70,6 @@ const Description = ({ task }: Props) => {
               ref={textareaRef}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              autoFocus
             />
 
             <div className="button-group">
