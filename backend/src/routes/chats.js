@@ -74,6 +74,11 @@ router.get("/", async (req, res) => {
           limit: 1,
           order: [["createdAt", "DESC"]],
         },
+        {
+          model: Project,
+          attributes: ["id"],
+          required: false, // Left join to include all chats, even those without a project
+        },
       ],
     });
 
@@ -92,9 +97,14 @@ router.get("/", async (req, res) => {
               profilePicture: user.profilePicture,
             };
           }),
-          lastMessage: chat.Messages[0]
+          lastMessage: chat.Messages[0],
+          Projects: chat.Projects.map((project) => {
+            return {
+              id: project.id,
+            };
+          }),
         };
-      }),
+      })
     );
   } catch (err) {
     res.status(400).json({ message: err.message });
