@@ -26,7 +26,7 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const { handleApiError } = useApiErrorHandler();
 
-  const { chats, setChats } = useChats();
+  const { chats, setChats, setShowChat, setShowChatItem } = useChats();
 
   const closeModal = () => {
     setErrorMsg("");
@@ -47,6 +47,8 @@ const CreateProjectModal = ({ showModal, setShowModal }: Props) => {
       });
       const project: Project = response.data.project;
       setChats([response.data.chat, ...chats]);
+      setShowChat(false);
+      setShowChatItem(false);
       navigate(`/projects/${project.id}`);
       closeModal();
     } catch (error) {

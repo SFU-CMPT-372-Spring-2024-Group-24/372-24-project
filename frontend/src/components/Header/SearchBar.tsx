@@ -11,6 +11,7 @@ import { Role } from "../../models/ProjectRole";
 // Components
 import PreviewFileModal from "../Modals/PreviewFile/PreviewFileModal";
 import TaskModal from "../Modals/TaskModal/TaskModal";
+import GeneralSearchBar from "./GeneralSearchBar";
 // Icons
 import { IoSearch } from "react-icons/io5";
 // API
@@ -23,6 +24,11 @@ interface Props {
 const SearchBar = ({ placeholder = "Search" }: Props) => {
   const pathname = window.location.pathname.split("/");
   const projectId = parseInt(pathname[2]);
+
+  if (isNaN(projectId)) {
+    return <GeneralSearchBar placeholder={placeholder} />;
+  }
+
   // TaskProvider
   const { user } = useUser();
   const [project, setProject] = useState<Project | null>(null);
@@ -299,6 +305,7 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
   );
 
   if (!isNaN(projectId)) {
+    console.log("Here")
     return (<>
       {project && userRole && <>
         {content}
@@ -317,6 +324,7 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
       </>}
     </>);
   } else {
+    console.log
     return content;
   }
 };
