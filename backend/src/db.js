@@ -77,9 +77,6 @@ File.belongsToMany(Task, { through: 'TaskFile' });
 Project.belongsToMany(File, { through: 'ProjectFile' });
 File.belongsToMany(Project, { through: 'ProjectFile' });
 
-// Hash password
-const { hashPassword } = require('./utils/userUtils');
-
 (async () => {
     await sequelize.sync({
         alter: true,
