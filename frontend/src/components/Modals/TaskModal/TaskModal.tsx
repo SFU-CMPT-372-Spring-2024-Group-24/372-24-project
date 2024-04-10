@@ -49,7 +49,7 @@ const TaskModal = ({ isShowing, setIsShowing, task }: Props) => {
       if (response.status === 200) {
         removeTask(list.id, task.id);
         setIsShowing(false);
-        toast(response.data.message);
+        toast.success(response.data.message);
       }
     } catch (error) {
       handleApiError(error as AxiosError);

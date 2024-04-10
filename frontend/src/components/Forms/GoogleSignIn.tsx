@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useUser } from "../../hooks/UserContext";
 import { useNavigate } from "react-router-dom";
-import './GoogleSignIn.scss'
+import "./GoogleSignIn.scss";
 
 const GoogleSignIn = () => {
   const { setUser } = useUser();
@@ -10,9 +10,9 @@ const GoogleSignIn = () => {
 
   const handleCallbackResponse = async (response: any) => {
     try {
-      console.log("Encoded HWT ID token: " + response.credential);
+      // console.log("Encoded HWT ID token: " + response.credential);
       const decodedToken: any = jwtDecode(response.credential);
-      console.log(decodedToken);
+      // console.log(decodedToken);
 
       const { given_name, name, email, picture } = decodedToken;
 
@@ -48,7 +48,7 @@ const GoogleSignIn = () => {
 
       window.google.accounts.id.renderButton(
         document.getElementById("google-sign-in"),
-        { theme: "outline", size: "large", text: "continue_with" },
+        { theme: "outline", size: "large", text: "continue_with" }
       );
     }
   }, []);

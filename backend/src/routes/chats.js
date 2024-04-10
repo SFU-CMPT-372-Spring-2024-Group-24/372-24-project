@@ -80,16 +80,7 @@ router.get("/", async (req, res) => {
       ],
       order: [[Sequelize.literal('"Messages"."createdAt"'), "DESC"]],
     });
-    // console.log(
-    //   chats.map((chat) => {
-    //     if (chat.Messages != []) {
-    //       chat.Messages.dataValues;
-    //     } else {
-    //       return chat.Messages;
-    //     }
-    //   })
-    // );
-    // res.json(chats);
+
     res.json(
       chats.map((chat) => {
         return {
@@ -235,7 +226,7 @@ router.delete("/:chatId/leave/:userId", async (req, res) => {
   try {
     const chatId = req.params.chatId;
     const userId = req.params.userId;
-    console.log(userId);
+    // console.log(userId);
     const chat = await Chat.findByPk(chatId);
     if (!chat) {
       return res.status(404).json({ message: "Chat not found" });

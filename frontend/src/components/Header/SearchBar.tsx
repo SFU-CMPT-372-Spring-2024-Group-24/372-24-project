@@ -130,13 +130,13 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
     }
 
     if (pathname[1] === "projects" && !isNaN(projectId)) {
-      await searchInProject(projectId);
+      await searchInProject();
     } else {
       await search();
     }
   };
 
-  const searchInProject = async (projectId: number) => {
+  const searchInProject = async () => {
     try {
       // const userResponse = await api.get(`search/users/project/${projectId}?query=${searchTerm}`);
       // const fileResponse = await api.get(`search/files/project/${projectId}?query=${searchTerm}`);
@@ -305,7 +305,6 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
   );
 
   if (!isNaN(projectId)) {
-    console.log("Here")
     return (<>
       {project && userRole && <>
         {content}
@@ -324,7 +323,6 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
       </>}
     </>);
   } else {
-    console.log
     return content;
   }
 };
