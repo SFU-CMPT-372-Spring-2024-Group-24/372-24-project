@@ -34,6 +34,10 @@ interface ChatContextType {
   chats: Chat[];
   setChats: (chats: Chat[]) => void;
   socket: Socket;
+  showChat: boolean;
+  setShowChat: (value: boolean) => void;
+  showChatItem: boolean;
+  setShowChatItem: (value: boolean) => void;
 }
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
@@ -53,7 +57,8 @@ export const ChatProvider = ({ children }: Props) => {
   const { user } = useUser();
   const [chats, setChats] = useState<Chat[]>([]);
   const { handleApiError } = useApiErrorHandler();
-
+  const [showChat, setShowChat] = useState<boolean>(false);
+  const [showChatItem, setShowChatItem] = useState<boolean>(false);
   // Fetch chats for the user
   useEffect(() => {
     const getRecentChats = async () => {
@@ -102,7 +107,17 @@ export const ChatProvider = ({ children }: Props) => {
   }, [chats, setChats, socket]);
 
   return (
-    <ChatContext.Provider value={{ chats, setChats, socket }}>
+    <ChatContext.Provider
+      value={{
+        chats,
+        setChats,
+        socket,
+        showChat,
+        setShowChat,
+        showChatItem,
+        setShowChatItem,
+      }}
+    >
       {children}
     </ChatContext.Provider>
   );

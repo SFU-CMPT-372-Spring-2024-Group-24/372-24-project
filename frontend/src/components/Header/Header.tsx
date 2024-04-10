@@ -9,8 +9,7 @@ import UserModal from "../Modals/UserModal/UserModal";
 import ChatList from "../Chat/ChatList/ChatList";
 import SearchBar from "./SearchBar";
 // Hooks
-import { useState } from "react";
-
+import { useChats } from "../../hooks/ChatContext";
 // Todo:
 // Display search results from backend
 
@@ -19,8 +18,9 @@ interface Props {
 }
 
 const Header = ({ searchPlaceholder }: Props) => {
-  const [showChat, setShowChat] = useState<boolean>(false);
-  
+  // const [showChat, setShowChat] = useState<boolean>(false);
+  const { showChat, setShowChat } = useChats();
+
   return (
     <header>
       <Link to={"/projects"} className="">
@@ -37,13 +37,13 @@ const Header = ({ searchPlaceholder }: Props) => {
         className="btn-text"
         onClick={() => setShowChat(!showChat)}
       >
-        <IoChatbox size={20}/>
+        <IoChatbox size={20} />
       </button>
 
       <UserModal />
 
-      <ChatList showChat={showChat} setShowChat={setShowChat} />
-    </header> 
+      <ChatList />
+    </header>
   );
 };
 

@@ -42,7 +42,7 @@ const ManageChatModal = ({
 }: Props) => {
   const { user } = useUser();
   const [chatName, setChatName] = useState<string>("");
-  const { socket, chats, setChats } = useChats();
+  const { socket, chats, setChats, setShowChatItem } = useChats();
   const { handleApiError } = useApiErrorHandler();
   const [confirmMsg, setConfirmMsg] = useState<string>("");
   const [confirmText, setConfirmText] = useState<string>("");
@@ -114,6 +114,7 @@ const ManageChatModal = ({
     } finally {
       setShowConfirmationModal(false);
       closeModal();
+      setShowChatItem(false);
     }
   };
   const handleLeaveChat = async () => {
@@ -131,6 +132,7 @@ const ManageChatModal = ({
     } finally {
       setShowConfirmationModal(false);
       closeModal();
+      setShowChatItem(false);
     }
   };
   // Create a new chat room
