@@ -67,7 +67,6 @@ export const ChatProvider = ({ children }: Props) => {
       try {
         const response = await api.get(`/chats`);
         setChats(response.data);
-        console.log(response.data);
         // Join chat rooms to receive messages
         response.data.forEach((chat: Chat) => {
           socket.emit("join_room", chat.id);
