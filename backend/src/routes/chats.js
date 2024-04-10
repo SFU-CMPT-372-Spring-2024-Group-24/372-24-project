@@ -76,10 +76,9 @@ router.get("/", async (req, res) => {
         {
           model: Project,
           attributes: ["id"],
-          required: false, // Left join to include all chats, even those without a project
         },
       ],
-      order: [[Sequelize.literal('"Messages"."createdAt"'), "ASC"]],
+      order: [[Sequelize.literal('"Messages"."createdAt"'), "DESC"]],
     });
     // console.log(
     //   chats.map((chat) => {
@@ -105,7 +104,7 @@ router.get("/", async (req, res) => {
               profilePicture: user.profilePicture,
             };
           }),
-          lastMessage: chat.Messages[chat.Messages.length - 1],
+          lastMessage: chat.Messages[0],
           Projects: chat.Projects.map((project) => {
             return {
               id: project.id,
