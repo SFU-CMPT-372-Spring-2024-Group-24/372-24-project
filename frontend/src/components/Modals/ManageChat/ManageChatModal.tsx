@@ -350,7 +350,7 @@ const ManageChatModal = ({
                   }}
                 >
                   <IoMdTrash size={18} />
-                  Delete this project
+                  Delete this chat
                 </button>
                 <button
                   type="button"
@@ -362,7 +362,7 @@ const ManageChatModal = ({
                   }}
                 >
                   <BiLogOutCircle size={18} />
-                  Leave this project
+                  Leave this chat
                 </button>
               </>
             )}
