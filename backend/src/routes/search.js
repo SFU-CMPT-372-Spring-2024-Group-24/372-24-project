@@ -172,7 +172,6 @@ router.get("/projects/", async (req, res) => {
 
     res.status(200).json({ projects });
   } catch (err) {
-    console.log(err);
     res.status(400).json({ message: err.message });
   }
 });
@@ -205,7 +204,6 @@ router.get("/projects/", async (req, res) => {
 
 //     res.status(200).json({ projects: otherProjects });
 //   } catch (err) {
-//     console.log(err);
 //     res.status(400).json({ message: err.message });
 //   }
 // });

@@ -1,5 +1,5 @@
 // Hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUser } from "../../hooks/UserContext";
 import { TaskProvider } from "../../hooks/TaskContext";
 // Models
@@ -10,6 +10,7 @@ import { Project } from "../../models/Project";
 import { Role } from "../../models/ProjectRole";
 // Components
 import PreviewFileModal from "../Modals/PreviewFile/PreviewFileModal";
+import TaskModal from "../Modals/TaskModal/TaskModal";
 // Icons
 import { IoSearch } from "react-icons/io5";
 // API
@@ -80,12 +81,39 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<{ users: User[], files: File[], tasks: Task[], projects: Project[], otherProjects: Project[] }>({ users: [], files: [], tasks: [], projects: [], otherProjects: [] });
+  const [isResultsVisible, setIsResultsVisible] = useState(false);
+  const searchInputRef = useRef(null);
+  const searchResultsRef = useRef<HTMLDivElement | null>(null);
+  
   const [isShowingPreviewFileModal, setIsShowingPreviewFileModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
+  const [isShowingTaskModal, setIsShowingTaskModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isShowingPreviewFileModal || isShowingTaskModal) return;
+
+      if (
+        searchResultsRef.current &&
+        !searchResultsRef.current.contains(event.target as Node) &&
+        searchInputRef.current &&
+        !(searchInputRef.current as HTMLInputElement).contains(event.target as Node)
+      ) {
+        setIsResultsVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isShowingPreviewFileModal, isShowingTaskModal]);
 
   const handleSearchTermChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     setSearchTerm(value);
+    setIsResultsVisible(true);
 
     if (value.trim().length === 0) {
       setResults({ users: [], files: [], tasks: [], projects: [], otherProjects: [] });
@@ -140,9 +168,8 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
   };
 
   const onTaskClick = (task: Task) => {
-    // TODO: Open task modal
-    console.log("Open task modal", task);
-    
+    setSelectedTask(task);
+    setIsShowingTaskModal(true);
   };
 
   const isResultsEmpty = results.users.length === 0 && results.files.length === 0 && results.tasks.length === 0 && results.projects.length === 0 && results.otherProjects.length === 0;
@@ -151,98 +178,101 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
     <div className="search-bar">
       <IoSearch size={20} className="search-icon" />
       <input
+        ref={searchInputRef}
         type="text"
         placeholder={placeholder}
         value={searchTerm}
         onChange={handleSearchTermChange}
+        onFocus={() => setIsResultsVisible(true)}
       />
-      {searchTerm.trim().length !== 0 && (
-        <div className="search-results">
-          {results.users.length > 0 && (
-            <>
-              <div className="search-result-header">
-                <b>Users</b>
-              </div>
-              {results.users.map(user => (
-                <div
-                  key={user.id}
-                  className="search-result"
-                  onClick={() => open(`/profile/${user.username}`, "_self")}
-                >
-                  <b>{user.name}</b>
-                  <p>@{user.username}</p>
+      {searchTerm.trim().length !== 0 &&
+        isResultsVisible && (
+          <div className="search-results" ref={searchResultsRef}>
+            {results.users.length > 0 && (
+              <>
+                <div className="search-result-header">
+                  <b>Users</b>
                 </div>
-              ))}
-            </>
-          )}
-          {results.files.length > 0 && (
-            <>
-              <div className="search-result-header">
-                <b>Files</b>
-              </div>
-              {results.files.map(file => (
-                <div
-                  key={file.id}
-                  className="search-result"
-                  onClick={() => onFileClick(file)}
-                >
-                  <p>{file.name}</p>
+                {results.users.map(user => (
+                  <div
+                    key={user.id}
+                    className="search-result"
+                    onClick={() => open(`/profile/${user.username}`, "_self")}
+                  >
+                    <b>{user.name}</b>
+                    <p>@{user.username}</p>
+                  </div>
+                ))}
+              </>
+            )}
+            {results.files.length > 0 && (
+              <>
+                <div className="search-result-header">
+                  <b>Files</b>
                 </div>
-              ))}
-            </>
-          )}
-          {results.tasks.length > 0 && (
-            <>
-              <div className="search-result-header">
-                <b>Tasks</b>
-              </div>
-              {results.tasks.map(task => (
-                <div
-                  key={task.id}
-                  className="search-result"
-                  onClick={() => onTaskClick(task)}
-                >
-                  <p>{task.name}</p>
+                {results.files.map(file => (
+                  <div
+                    key={file.id}
+                    className="search-result"
+                    onClick={() => onFileClick(file)}
+                  >
+                    <p>{file.name}</p>
+                  </div>
+                ))}
+              </>
+            )}
+            {results.tasks.length > 0 && (
+              <>
+                <div className="search-result-header">
+                  <b>Tasks</b>
                 </div>
-              ))}
-            </>
-          )}
-          {results.projects.length > 0 && (
-            <>
-              <div className="search-result-header">
-                <b>Projects</b>
-              </div>
-              {results.projects.map(project => (
-                <div
-                  key={project.id}
-                  className="search-result"
-                  onClick={() => open(`/projects/${project.id}`, "_self")}
-                >
-                  <b>{project.name}</b>
-                  <p>{project.description}</p>
+                {results.tasks.map(task => (
+                  <div
+                    key={task.id}
+                    className="search-result"
+                    onClick={() => onTaskClick(task)}
+                  >
+                    <p>{task.name}</p>
+                  </div>
+                ))}
+              </>
+            )}
+            {results.projects.length > 0 && (
+              <>
+                <div className="search-result-header">
+                  <b>Projects</b>
                 </div>
-              ))}
-            </>
-          )}
-          {results.otherProjects.length > 0 && (
-            <>
-              <div className="search-result-header">
-                <b>Other projects</b>
-              </div>
-              {results.otherProjects.map(project => (
-                <div key={project.id} className="search-result">
-                  <p>{project.name}</p>
+                {results.projects.map(project => (
+                  <div
+                    key={project.id}
+                    className="search-result"
+                    onClick={() => open(`/projects/${project.id}`, "_self")}
+                  >
+                    <b>{project.name}</b>
+                    <p>{project.description}</p>
+                  </div>
+                ))}
+              </>
+            )}
+            {results.otherProjects.length > 0 && (
+              <>
+                <div className="search-result-header">
+                  <b>Other projects</b>
                 </div>
-              ))}
-            </>
-          )}
-          {isResultsEmpty && (
-            <div className="search-result">
-              <p>No results found</p>
-            </div>
-          )}
-        </div>
-      )}
+                {results.otherProjects.map(project => (
+                  <div key={project.id} className="search-result">
+                    <p>{project.name}</p>
+                  </div>
+                ))}
+              </>
+            )}
+            {isResultsEmpty && (
+              <div className="search-result">
+                <p>No results found</p>
+              </div>
+            )}
+          </div>
+        )}
 
     </div>
   );
@@ -261,6 +291,11 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
             showPreviewFileModal={isShowingPreviewFileModal}
             setShowPreviewFileModal={setIsShowingPreviewFileModal}
             selectedFile={selectedFile}
+          />
+          <TaskModal
+            isShowing={isShowingTaskModal}
+            setIsShowing={setIsShowingTaskModal}
+            task={selectedTask!}
           />
         </TaskProvider>
       }
