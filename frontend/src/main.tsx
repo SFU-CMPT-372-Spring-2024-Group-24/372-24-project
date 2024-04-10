@@ -120,7 +120,7 @@ const App = () => {
               />
               <Route path="/notfound" element={<NotFoundPage />} />
             </Route>
-            <Route element={<LayoutWithHeader />}>
+            {/* <Route element={<LayoutWithHeader />}> */}
               <Route
                 path="/projects/:id"
                 element={
@@ -129,7 +129,7 @@ const App = () => {
                   </AuthRoute>
                 }
               />
-            </Route>
+            {/* </Route> */}
             <Route path="/login" element={<LoginSignup />} />
             <Route
               path="/admin"

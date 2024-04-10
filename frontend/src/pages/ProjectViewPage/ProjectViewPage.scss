@@ -2,4 +2,9 @@
 
 .project-view-page {
   display: flex;
+  flex-direction: column;
+
+  .project-view-page-body {
+    display: flex;
+  }
 }

@@ -1,29 +1,32 @@
 // Libraries
-import { useEffect, useRef, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { ButtonGroup, ToggleButton } from "react-bootstrap";
 // Models
 import { Task, PriorityTypes } from "../../../models/Task";
-// Utils
-// import { priorities } from "../../../utils/priorityColorUtils";
 // API
 import { api, AxiosError } from "../../../api";
-// Custom hooks
+// Hooks
 import { useTasks } from "../../../hooks/TaskContext";
 import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
+import { useEffect, useRef, useState } from "react";
 
 interface Props {
   task: Task;
 }
 
 const Priority = ({ task }: Props) => {
+  // Setting Priority Modal
   const [showPriorityModal, setShowPriorityModal] = useState<boolean>(false);
+  // Priority Ref for positioning the modal
   const priorityRef = useRef<HTMLDivElement>(null);
+  // Priority Value
   const [priorityValue, setPriorityValue] = useState<PriorityTypes>(
     task.priority || ""
   );
+  // Task Context
   const { setTask, project, userCanPerform } = useTasks();
-  const {handleApiError} = useApiErrorHandler();
+  // Error handling
+  const { handleApiError } = useApiErrorHandler();
   // Priority values
   const prioritiesValues: { value: PriorityTypes }[] = [
     { value: "unset" },
@@ -58,6 +61,9 @@ const Priority = ({ task }: Props) => {
         projectId: project.id,
       });
 
+      // ???
+      task.priority = response.data.priority;
+
       setTask({ ...task, priority: response.data.priority });
       setPriorityValue(response.data.priority);
       togglePriorityModal();
@@ -69,9 +75,13 @@ const Priority = ({ task }: Props) => {
   return (
     <>
       <div ref={priorityRef} className="priority">
-        {task.priority && task.priority !== 'unset' && (
+        {task.priority && task.priority !== "unset" && (
           <span
-            className={`task-priority ${userCanPerform("manageTasks") ? "editable" : ""}`}
+            className={`
+              task-priority 
+              ${userCanPerform("manageTasks") ? "editable" : ""}
+              priority-${task.priority}
+            `}
             onClick={() => {
               if (userCanPerform("manageTasks")) {
                 togglePriorityModal();
@@ -81,8 +91,8 @@ const Priority = ({ task }: Props) => {
             {task.priority}
           </span>
         )}
-        
-        {!task.priority && userCanPerform("manageTasks") && (
+
+        {task.priority === "unset" && userCanPerform("manageTasks") && (
           <button className="set-priority" onClick={togglePriorityModal}>
             Set priority
           </button>
@@ -112,9 +122,12 @@ const Priority = ({ task }: Props) => {
                 onChange={(e) => {
                   handlePriorityChange(e.currentTarget.value as PriorityTypes);
                 }}
-                style={{
-                  borderRadius: "10px",
-                }}
+                className={`${
+                  priorityValue === priority.value
+                    ? "priority-" + `${priority.value}`
+                    : ""
+                }`}
+                style={{ borderRadius: "10px" }}
               >
                 {priority.value}
               </ToggleButton>
