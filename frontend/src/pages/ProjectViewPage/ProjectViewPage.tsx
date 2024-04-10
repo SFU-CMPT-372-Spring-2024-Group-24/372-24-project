@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 // Components
 import ProjectInfo from "../../components/ProjectView/ProjectInfo/ProjectInfo";
 import ProjectBoard from "../../components/ProjectView/ProjectBoard/ProjectBoard";
+import Header from "../../components/Header/Header";
 // Models
 import { Project } from "../../models/Project";
 import { Role } from "../../models/ProjectRole";
@@ -65,11 +66,15 @@ const ProjectViewPage = () => {
             userRole={userRole}
             setUserRole={setUserRole}
           >
-            {/* Project description, members, files on left panel*/}
-            <ProjectInfo />
+            <Header searchPlaceholder="Search this project" />
 
-            {/* Project board on right panel */}
-            <ProjectBoard />
+            <div className="project-view-page-body">
+              {/* Project description, members, files on left panel*/}
+              <ProjectInfo />
+
+              {/* Project board on right panel */}
+              <ProjectBoard />
+            </div>
           </TaskProvider>
         </div>
       )}

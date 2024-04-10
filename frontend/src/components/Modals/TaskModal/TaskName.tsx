@@ -18,7 +18,7 @@ const TaskName = ({ task }: Props) => {
   const { project, setTask, userCanPerform } = useTasks();
   const [taskName, setTaskName] = useState<string>(task.name);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const {handleApiError} = useApiErrorHandler();
+  const { handleApiError } = useApiErrorHandler();
 
   const handleTaskNameChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +34,9 @@ const TaskName = ({ task }: Props) => {
         name: taskName.trim(),
         projectId: project.id,
       });
+
+      // ???
+      task.name = response.data.name;
 
       setTask({ ...task, name: response.data.name });
       setIsEditing(false);
@@ -73,8 +76,8 @@ const TaskName = ({ task }: Props) => {
         </form>
       ) : (
         <h3>
-          {task.name}
-          
+            {task.name}
+            
           {userCanPerform("manageTasks") && (
             <button className="btn-icon" onClick={() => setIsEditing(true)}>
               <FiEdit2 size={14} />

@@ -54,8 +54,12 @@ header {
     }
 
     .search-result-header {
-      background-color: darkgrey;
-      padding-left: 0.5rem;
+      background-color: $purple;
+      text-transform: uppercase;
+      padding: 0.25rem 0.5rem;
+      color: white;
+      font-weight: 500;
+      font-size: 14px;
     }
     
     .search-result {

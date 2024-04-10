@@ -34,6 +34,8 @@ interface TaskContextProps {
   userRole: Role;
   setUserRole: (role: Role) => void;
   userCanPerform: (action: string) => boolean;
+  selectedTask: Task | null;
+  setSelectedTask: (task: Task | null) => void;
 }
 export const TaskContext = createContext<TaskContextProps | undefined>(
   undefined
@@ -67,6 +69,7 @@ export const TaskProvider = ({
   const [projectMembers, setProjectMembers] = useState<User[]>([]);
   const [projectFiles, setProjectFiles] = useState<FileModel[]>([]);
   // const handleApiError = useApiErrorHandler();
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   // Fetch project members and their roles
   useEffect(() => {
@@ -312,6 +315,8 @@ export const TaskProvider = ({
         removeTask,
         moveTask,
         userCanPerform,
+        selectedTask,
+        setSelectedTask
       }}
     >
       {children}
