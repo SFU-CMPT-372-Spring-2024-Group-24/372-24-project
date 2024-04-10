@@ -75,13 +75,21 @@ const ChatView = ({ chat }: Props) => {
       setMessages([...messages, data]);
 
       // Update last message in chat list
-      const updatedChats = chats.map((chatItem) => {
-        if (chatItem.id === chat.id) {
-          return { ...chatItem, lastMessage: data };
-        }
-        return chatItem;
-      });
-      setChats(updatedChats);
+      //somehow send it to the top
+
+      const updatedChats = chats.filter(
+        (myChat: Chat) => myChat.id !== chat.id
+      );
+
+      const chatIndex: number = chats.findIndex(
+        (chatItem) => chatItem.id === chat.id
+      );
+
+      if (chatIndex != -1) {
+        let updatedChat: Chat = { ...chats[chatIndex], lastMessage: data };
+        updatedChats.unshift(updatedChat);
+        setChats(updatedChats);
+      }
 
       // Clear message input
       setNewMessage("");

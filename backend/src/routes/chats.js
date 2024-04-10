@@ -71,12 +71,24 @@ router.get("/", async (req, res) => {
               attributes: ["id", "name", "profilePicture"],
             },
           ],
-          limit: 1,
           order: [["createdAt", "DESC"]],
         },
+        {
+          model: Project,
+          attributes: ["id"],
+        },
       ],
+      order: [[Sequelize.literal('"Messages"."createdAt"'), "DESC"]],
     });
-
+    // console.log(
+    //   chats.map((chat) => {
+    //     if (chat.Messages != []) {
+    //       chat.Messages.dataValues;
+    //     } else {
+    //       return chat.Messages;
+    //     }
+    //   })
+    // );
     // res.json(chats);
     res.json(
       chats.map((chat) => {
@@ -92,9 +104,14 @@ router.get("/", async (req, res) => {
               profilePicture: user.profilePicture,
             };
           }),
-          lastMessage: chat.Messages[0]
+          lastMessage: chat.Messages[0],
+          Projects: chat.Projects.map((project) => {
+            return {
+              id: project.id,
+            };
+          }),
         };
-      }),
+      })
     );
   } catch (err) {
     res.status(400).json({ message: err.message });

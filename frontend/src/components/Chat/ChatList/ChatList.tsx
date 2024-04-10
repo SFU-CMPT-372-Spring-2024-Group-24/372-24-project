@@ -104,15 +104,20 @@ const ChatList = ({ showChat, setShowChat }: Props) => {
                     </div>
 
                     <div className="chat">
-                      {/* If it's a direct chat, show the other user's name as chat name. Otherwise, leave as it is */}
                       <h3>
+                        {/*If the chat is a group chat or just has one person, use the chat name.*/}
                         {chat.Users.length > 2 || chat.Users.length == 1
                           ? chat.name
                           : null}
+                        {/* If it's a direct chat, show the other user's name as chat name. Otherwise, leave as it is */}
+                        {/* If there's two users in a chat and it is not a project, display the other person's name */}
+                        {/* Otherwise, display the chat name */}
                         {chat.Users.length == 2
-                          ? chat.Users[0].id === user.id
-                            ? chat.Users[1].name
-                            : chat.Users[0].name
+                          ? chat.Projects.length == 0
+                            ? chat.Users[0].id === user.id
+                              ? chat.Users[1].name
+                              : chat.Users[0].name
+                            : chat.name
                           : null}
                       </h3>
 

@@ -1,11 +1,11 @@
 import { User } from "./User";
-// import { Project } from "./Project";
+import { Project } from "./Project";
 export interface Chat {
   id: number;
   name: string;
   createdAt: Date;
   Users: User[];
-  // Projects: Project[];
+  Projects: Project[];
   lastMessage: Message;
 }
 
@@ -14,6 +14,6 @@ export interface Message {
   message: string;
   chatId: number;
   createdAt: Date;
-  User: { id: number; name: string; username: string; profilePicture: string};
+  User: { id: number; name: string; username: string; profilePicture: string };
   // User: User;
 }
