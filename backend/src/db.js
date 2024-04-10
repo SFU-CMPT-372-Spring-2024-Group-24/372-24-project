@@ -77,6 +77,9 @@ File.belongsToMany(Task, { through: 'TaskFile' });
 Project.belongsToMany(File, { through: 'ProjectFile' });
 File.belongsToMany(Project, { through: 'ProjectFile' });
 
+// Hash password
+const { hashPassword } = require('./utils/userUtils');
+
 (async () => {
     await sequelize.sync({
         alter: true,
@@ -93,6 +96,21 @@ File.belongsToMany(Project, { through: 'ProjectFile' });
             });
         }
     });
+
+    // Populate User table with an admin user if none exists
+    User.findOrCreate({
+        where: { username: 'admin' },
+        defaults: {
+            name: 'Admin',
+            email: 'admin@collabhub.com',
+            password: await hashPassword('admin'),
+            isAdmin: true
+        }
+    }).then(result => {
+        if (result[1]) {
+            console.log('Admin user created');
+        }
+    }).catch(error => console.error('Error creating admin user:', error));
 })();
 
 module.exports = {

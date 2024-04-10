@@ -1,6 +1,5 @@
 // Node modules
 const http = require("http");
-// const fs = require("fs");
 const path = require("path");
 
 // Third-party modules
@@ -9,8 +8,6 @@ const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
 const { Server: SocketIOServer } = require("socket.io");
-// const { initializeApp } = require("firebase/app");
-// const { getStorage, ref } = require("firebase/storage");
 
 const app = express();
 
@@ -139,30 +136,3 @@ io.on("connection", (socket) => {
     }
   });
 });
-
-// Firebase cloud storage
-// const firebaseConfig = {
-//     apiKey: process.env.FIREBASE_API_KEY,
-//     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-//     projectId: process.env.FIREBASE_PROJECT_ID,
-//     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-//     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-//     appId: process.env.FIREBASE_APP_ID,
-//     measurementId: process.env.FIREBASE_MEASUREMENT_ID,
-// };
-// const firebaseApp = initializeApp(firebaseConfig);
-// const storage = getStorage(firebaseApp);
-// const storageRef = ref(storage, "files");
-
-// HTTPS server (for API)
-// const options = {
-//     key: fs.readFileSync(process.env.SSL_KEY_PATH),
-//     cert: fs.readFileSync(process.env.SSL_CERT_PATH),
-//     requestCert: false,
-//     rejectUnauthorized: false,
-// };
-// const httpsPort = process.env.HTTPS_PORT || 8443;
-// const httpsServer = https.createServer(options, app);
-// httpsServer.listen(httpsPort, () =>
-//     console.log(`HTTPS server is running on port ${httpsPort}`)
-// );

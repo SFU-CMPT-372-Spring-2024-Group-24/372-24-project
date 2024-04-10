@@ -80,16 +80,7 @@ router.get("/", async (req, res) => {
       ],
       order: [[Sequelize.literal('"Messages"."createdAt"'), "DESC"]],
     });
-    // console.log(
-    //   chats.map((chat) => {
-    //     if (chat.Messages != []) {
-    //       chat.Messages.dataValues;
-    //     } else {
-    //       return chat.Messages;
-    //     }
-    //   })
-    // );
-    // res.json(chats);
+
     res.json(
       chats.map((chat) => {
         return {
