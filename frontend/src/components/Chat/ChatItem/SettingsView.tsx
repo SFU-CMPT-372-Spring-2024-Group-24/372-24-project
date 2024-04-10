@@ -62,7 +62,7 @@ const SettingsView = ({ chat, setChat }: Props) => {
             className="btn-icon"
           >
             <IoMdAdd size={15} />
-            Add Members / Change Chat Name
+            Manage Chat
           </button>
           {/* <button type="button" className="btn-icon" onClick={() => {}}>
             <RiLogoutCircleRLine size={15} />
@@ -84,9 +84,11 @@ const SettingsView = ({ chat, setChat }: Props) => {
           <ul className="member-list">
             {chat.Users.map((user, index) => (
               <li key={index} className="member-list-item">
-
                 <div className="member-info">
-                  <Link to={`/profile/${user.username}`} className="profile-link">
+                  <Link
+                    to={`/profile/${user.username}`}
+                    className="profile-link"
+                  >
                     <img
                       src={user.profilePicture || defaultProfilePicture}
                       alt="User Avatar"
