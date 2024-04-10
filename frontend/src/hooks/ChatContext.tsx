@@ -18,15 +18,15 @@ import { useUser } from "./UserContext";
 import { useApiErrorHandler } from "./useApiErrorHandler";
 
 // Socket
-// export const socket = io("http://localhost:8080", {
-//   transports: ["websocket"],
-// });
+export const socket = io("http://localhost:8080", {
+  transports: ["websocket"],
+});
 
 // Setup for deployment
-export const socket = io();
+// export const socket = io();
 
-socket.on('connect', () => {
-  console.log('Connected to socket server');
+socket.on("connect", () => {
+  console.log("Connected to socket server");
 });
 
 // Chat context
@@ -34,6 +34,10 @@ interface ChatContextType {
   chats: Chat[];
   setChats: (chats: Chat[]) => void;
   socket: Socket;
+  showChat: boolean;
+  setShowChat: (value: boolean) => void;
+  showChatItem: boolean;
+  setShowChatItem: (value: boolean) => void;
 }
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
@@ -53,7 +57,8 @@ export const ChatProvider = ({ children }: Props) => {
   const { user } = useUser();
   const [chats, setChats] = useState<Chat[]>([]);
   const { handleApiError } = useApiErrorHandler();
-
+  const [showChat, setShowChat] = useState<boolean>(false);
+  const [showChatItem, setShowChatItem] = useState<boolean>(false);
   // Fetch chats for the user
   useEffect(() => {
     const getRecentChats = async () => {
@@ -62,7 +67,6 @@ export const ChatProvider = ({ children }: Props) => {
       try {
         const response = await api.get(`/chats`);
         setChats(response.data);
-        console.log(response.data);
         // Join chat rooms to receive messages
         response.data.forEach((chat: Chat) => {
           socket.emit("join_room", chat.id);
@@ -102,7 +106,17 @@ export const ChatProvider = ({ children }: Props) => {
   }, [chats, setChats, socket]);
 
   return (
-    <ChatContext.Provider value={{ chats, setChats, socket }}>
+    <ChatContext.Provider
+      value={{
+        chats,
+        setChats,
+        socket,
+        showChat,
+        setShowChat,
+        showChatItem,
+        setShowChatItem,
+      }}
+    >
       {children}
     </ChatContext.Provider>
   );

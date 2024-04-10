@@ -230,4 +230,43 @@ router.post("/:chatId/chatName", async (req, res) => {
   }
 });
 
+//User leaves chat
+router.delete("/:chatId/leave/:userId", async (req, res) => {
+  try {
+    const chatId = req.params.chatId;
+    const userId = req.params.userId;
+    console.log(userId);
+    const chat = await Chat.findByPk(chatId);
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+    //get user
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    //remove the user from the chat
+    await chat.removeUser(user);
+
+    //
+    res.status(200).json({ message: "User has been successfully deleted." });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+//chat is deleted
+router.delete("/:chatId/delete/", async (req, res) => {
+  try {
+    const chatId = req.params.chatId;
+    const chat = await Chat.findByPk(chatId);
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+    await chat.destroy();
+    res.status(200).json({ message: "Chat has been successfully deleted." });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 module.exports = router;
