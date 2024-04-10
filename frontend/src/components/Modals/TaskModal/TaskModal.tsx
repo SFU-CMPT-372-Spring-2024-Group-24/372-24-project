@@ -1,5 +1,5 @@
 // Hooks
-// import { useState } from "react";
+import { useState } from "react";
 import { useTasks } from "../../../hooks/TaskContext";
 import { useApiErrorHandler } from "../../../hooks/useApiErrorHandler";
 // Components
@@ -12,9 +12,11 @@ import DueDate from "./DueDate";
 import TaskMembers from "./TaskMembers";
 import Attachments from "./Attachments";
 import Comments from "./Comments";
+import MoveTaskModal from "../../Modals/MoveTask/MoveTaskModal";
+import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
 // Models
 import { Task } from "../../../models/Task";
-import { List } from "../../../models/List";
+// import { List } from "../../../models/List";
 // Icons
 import { IoMdClose, IoMdTrash } from "react-icons/io";
 import { TbArrowsExchange } from "react-icons/tb";
@@ -24,14 +26,19 @@ import { api, AxiosError } from "../../../api";
 interface Props {
   isShowing: boolean;
   setIsShowing: (show: boolean) => void;
-  list: List | undefined;
-  task: Task;
+  task: Task | undefined;
 }
 
-const TaskModal = ({ isShowing, setIsShowing, list, task }: Props) => {
-  const {handleApiError} = useApiErrorHandler();
-  const { project, removeTask, userCanPerform } = useTasks();
-  // const [isShowingMoveTaskModal, setIsShowingMoveTaskModal] = useState<boolean>(false);
+const TaskModal = ({ isShowing, setIsShowing, task }: Props) => {
+  if (!task) return null;
+
+  const { handleApiError } = useApiErrorHandler();
+  const { project, removeTask, userCanPerform, lists } = useTasks();
+  const [isShowingMoveTaskModal, setIsShowingMoveTaskModal] = useState<boolean>(false);
+  const [isShowingConfirmationModal, setIsShowingConfirmationModal] = useState<boolean>(false);
+
+  const list = lists.find((list) => list.id === task.listId)!;
+  const index = list.tasks.findIndex((t) => t.id === task.id);
 
   const handleDeleteTask = async () => {
     try {
@@ -40,7 +47,7 @@ const TaskModal = ({ isShowing, setIsShowing, list, task }: Props) => {
       });
 
       if (response.status === 200) {
-        if (list?.id) removeTask(list.id, task.id);
+        removeTask(list.id, task.id);
         setIsShowing(false);
         toast(response.data.message);
       }
@@ -49,7 +56,7 @@ const TaskModal = ({ isShowing, setIsShowing, list, task }: Props) => {
     }
   };
 
-  return (
+  return (<>
     <Modal
       show={isShowing}
       onHide={() => setIsShowing(false)}
@@ -66,8 +73,7 @@ const TaskModal = ({ isShowing, setIsShowing, list, task }: Props) => {
                 ${userCanPerform("manageTasks") && "hasPriority"}
               `}
           >
-            {/* TODO: Somehow get list in here */}
-            {list?.name}
+            {list.name}
           </span>
           <Priority task={task} />
         </div>
@@ -83,15 +89,15 @@ const TaskModal = ({ isShowing, setIsShowing, list, task }: Props) => {
             <>
               <button
                 className="btn-icon move-btn"
-                // onClick={() => setIsShowingMoveTaskModal(true)}
-                onClick={() => {setIsShowing(true)}}
+                onClick={() => setIsShowingMoveTaskModal(true)}
+                // onClick={() => { setIsShowing(true) }}
               >
                 <TbArrowsExchange size={20} />
               </button>
 
               <button
                 className="btn-icon delete-btn"
-                onClick={handleDeleteTask}
+                onClick={() => setIsShowingConfirmationModal(true)}
               >
                 <IoMdTrash size={20} />
               </button>
@@ -113,7 +119,24 @@ const TaskModal = ({ isShowing, setIsShowing, list, task }: Props) => {
         <Comments task={task} />
       </Modal.Footer>
     </Modal>
-  );
+
+    <MoveTaskModal
+      list={list}
+      index={index}
+      showModal={isShowingMoveTaskModal}
+      setShowModal={setIsShowingMoveTaskModal}
+      setShowTaskItemModal={setIsShowing}
+    />
+
+    <ConfirmationModal
+      show={isShowingConfirmationModal}
+      message="Are you sure you want to delete this task?"
+      secondMessage="All comments will be lost."
+      confirmText="Delete"
+      onConfirm={handleDeleteTask}
+      onCancel={() => setIsShowingConfirmationModal(false)}
+    />
+  </>);
 };
 
 export default TaskModal;
