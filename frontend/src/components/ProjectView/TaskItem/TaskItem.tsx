@@ -19,6 +19,7 @@ import Comments from "./Comments";
 import TaskMembers from "./TaskMembers";
 import TaskName from "./TaskName";
 import Attachments from "./Attachments";
+import TaskModal from "../../Modals/TaskModal/TaskModal";
 import MoveTaskModal from "../../Modals/MoveTask/MoveTaskModal";
 import ConfirmationModal from "../../Modals/ConfirmationModal/ConfirmationModal";
 // API
@@ -105,7 +106,13 @@ const TaskItem = ({ list, task, index }: Props) => {
         )}
       </Draggable>
 
-      <Modal
+      <TaskModal
+        isShowing={showTaskItemModal}
+        setIsShowing={setShowTaskItemModal}
+        task={task}
+      />
+        
+      {/* <Modal
         show={showTaskItemModal}
         onHide={toggleTaskItemModal}
         dialogClassName="task-item-modal"
@@ -167,7 +174,6 @@ const TaskItem = ({ list, task, index }: Props) => {
         </Modal.Footer>
       </Modal>
 
-      {/* Move task modal */}
       <MoveTaskModal
         list={list}
         index={index}
@@ -176,7 +182,6 @@ const TaskItem = ({ list, task, index }: Props) => {
         setShowTaskItemModal={setShowTaskItemModal}
       />
 
-      {/* Confirmation modal for deleting a task */}
       <ConfirmationModal
         show={showConfirmationModal}
         message="Are you sure you want to delete this task?"
@@ -184,7 +189,7 @@ const TaskItem = ({ list, task, index }: Props) => {
         confirmText="Delete"
         onConfirm={handleDeleteTask}
         onCancel={() => setShowConfirmationModal(false)}
-      />
+      /> */}
     </>
   );
 };

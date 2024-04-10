@@ -26,7 +26,7 @@ import { api, AxiosError } from "../../../api";
 interface Props {
   isShowing: boolean;
   setIsShowing: (show: boolean) => void;
-  task: Task | undefined;
+  task: Task;
 }
 
 const TaskModal = ({ isShowing, setIsShowing, task }: Props) => {

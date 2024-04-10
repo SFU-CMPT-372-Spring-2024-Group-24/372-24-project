@@ -1,7 +1,7 @@
 // Hooks
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "../../hooks/UserContext";
-import { TaskProvider } from "../../hooks/TaskContext";
+import { useTasks } from "../../hooks/TaskContext";
 // Models
 import { User } from "../../models/User";
 import { FileModel as File } from "../../models/FileModel";
@@ -27,6 +27,7 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
   const { user } = useUser();
   const [project, setProject] = useState<Project | null>(null);
   const [userRole, setUserRole] = useState<Role | null>(null);
+  const { lists, projectMembers, projectFiles, selectedTask, setSelectedTask } = useTasks();
 
   if (!isNaN(projectId)) {
     // Fetch project data
@@ -84,11 +85,11 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
   const [isResultsVisible, setIsResultsVisible] = useState(false);
   const searchInputRef = useRef(null);
   const searchResultsRef = useRef<HTMLDivElement | null>(null);
-  
+
   const [isShowingPreviewFileModal, setIsShowingPreviewFileModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [isShowingTaskModal, setIsShowingTaskModal] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined);
+  // const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -118,6 +119,8 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
     if (value.trim().length === 0) {
       setResults({ users: [], files: [], tasks: [], projects: [], otherProjects: [] });
       return;
+    } else if (value.trim().length <= 1) {
+      return;
     }
 
     if (pathname[1] === "projects" && !isNaN(projectId)) {
@@ -129,13 +132,23 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
 
   const searchInProject = async (projectId: number) => {
     try {
-      const userResponse = await api.get(`search/users/project/${projectId}?query=${searchTerm}`);
-      const fileResponse = await api.get(`search/files/project/${projectId}?query=${searchTerm}`);
-      const taskResponse = await api.get(`search/tasks/project/${projectId}?query=${searchTerm}`);
+      // const userResponse = await api.get(`search/users/project/${projectId}?query=${searchTerm}`);
+      // const fileResponse = await api.get(`search/files/project/${projectId}?query=${searchTerm}`);
+      // const taskResponse = await api.get(`search/tasks/project/${projectId}?query=${searchTerm}`);
+      // setResults({
+      //   users: userResponse.data.users,
+      //   files: fileResponse.data.files,
+      //   tasks: taskResponse.data.tasks,
+      //   projects: [],
+      //   otherProjects: []
+      // });
+      const files = projectFiles.filter(file => file.name.toLowerCase().includes(searchTerm.toLowerCase()));
+      const tasks = lists.flatMap(list => list.tasks).filter(task => task.name.toLowerCase().includes(searchTerm.toLowerCase()));
+      const users = projectMembers.filter(member => member.name.toLowerCase().includes(searchTerm.toLowerCase()));
       setResults({
-        users: userResponse.data.users,
-        files: fileResponse.data.files,
-        tasks: taskResponse.data.tasks,
+        users,
+        files,
+        tasks,
         projects: [],
         otherProjects: []
       });
@@ -165,11 +178,15 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
   const onFileClick = (file: File) => {
     setSelectedFile(file);
     setIsShowingPreviewFileModal(true);
+    setIsResultsVisible(false);
+    setSearchTerm("");
   };
 
   const onTaskClick = (task: Task) => {
     setSelectedTask(task);
     setIsShowingTaskModal(true);
+    setIsResultsVisible(false);
+    setSearchTerm("");
   };
 
   const isResultsEmpty = results.users.length === 0 && results.files.length === 0 && results.tasks.length === 0 && results.projects.length === 0 && results.otherProjects.length === 0;
@@ -266,7 +283,11 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
                 ))}
               </>
             )}
-            {isResultsEmpty && (
+            {searchTerm.trim().length <= 1 ? (
+              <div className="search-result">
+                <p>Type more to search</p>
+              </div>
+            ) : isResultsEmpty && (
               <div className="search-result">
                 <p>No results found</p>
               </div>
@@ -279,26 +300,21 @@ const SearchBar = ({ placeholder = "Search" }: Props) => {
 
   if (!isNaN(projectId)) {
     return (<>
-      {project && userRole &&
-        <TaskProvider
-          project={project}
-          setProject={setProject}
-          userRole={userRole}
-          setUserRole={setUserRole}
-        >
-          {content}
-          <PreviewFileModal
-            showPreviewFileModal={isShowingPreviewFileModal}
-            setShowPreviewFileModal={setIsShowingPreviewFileModal}
-            selectedFile={selectedFile}
-          />
+      {project && userRole && <>
+        {content}
+        <PreviewFileModal
+          showPreviewFileModal={isShowingPreviewFileModal}
+          setShowPreviewFileModal={setIsShowingPreviewFileModal}
+          selectedFile={selectedFile}
+        />
+        {selectedTask && (
           <TaskModal
             isShowing={isShowingTaskModal}
             setIsShowing={setIsShowingTaskModal}
-            task={selectedTask!}
+            task={selectedTask}
           />
-        </TaskProvider>
-      }
+        )}
+      </>}
     </>);
   } else {
     return content;
