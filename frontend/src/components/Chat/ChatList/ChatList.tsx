@@ -8,10 +8,10 @@ import ChatItem from "../ChatItem/ChatItem";
 import ManageChatModal from "../../Modals/ManageChat/ManageChatModal";
 // Hooks
 import { useUser } from "../../../hooks/UserContext";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useChats } from "../../../hooks/ChatContext";
 // Models
-import { Chat, Message } from "../../../models/Chat";
+import { Chat } from "../../../models/Chat";
 
 interface Props {
   showChat: boolean;
@@ -21,7 +21,7 @@ const ChatList = ({ showChat, setShowChat }: Props) => {
   const { user } = useUser();
   if (!user) return null;
 
-  const { socket, chats, setChats } = useChats();
+  const { chats } = useChats();
 
   const [showChatItem, setShowChatItem] = useState<boolean>(false);
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
