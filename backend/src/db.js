@@ -96,21 +96,6 @@ const { hashPassword } = require('./utils/userUtils');
             });
         }
     });
-
-    // Populate User table with an admin user if none exists
-    User.findOrCreate({
-        where: { username: 'admin' },
-        defaults: {
-            name: 'Admin',
-            email: 'admin@collabhub.com',
-            password: await hashPassword('admin'),
-            isAdmin: true
-        }
-    }).then(result => {
-        if (result[1]) {
-            console.log('Admin user created');
-        }
-    }).catch(error => console.error('Error creating admin user:', error));
 })();
 
 module.exports = {
