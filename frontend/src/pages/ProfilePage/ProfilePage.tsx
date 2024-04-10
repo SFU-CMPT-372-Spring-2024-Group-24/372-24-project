@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 // Components
 import ProfilePanel from "../../components/Profile/ProfilePanel";
 import AccountView from "../../components/Profile/AccountView/AccountView";
-import ActivityView from "../../components/Profile/ActivityView";
+// import ActivityView from "../../components/Profile/ActivityView";
 // Styles
 import "./ProfilePage.scss";
 // API
@@ -62,7 +62,7 @@ const ProfilePage = () => {
           />
 
           <section className="profile-main-view">
-            {view === "activity" && <ActivityView />}
+            {/* {view === "activity" && <ActivityView />} */}
 
             {isOwnProfile && view === "editProfile" && <AccountView />}
           </section>

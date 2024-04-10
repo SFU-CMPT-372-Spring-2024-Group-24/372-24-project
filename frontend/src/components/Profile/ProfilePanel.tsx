@@ -55,12 +55,12 @@ const ProfilePanel = ({ view, setView, isOwnProfile, profile, setProfile }: Prop
         <div className="profile-nav">
           {isOwnProfile && (
             <>
-              <button
+              {/* <button
                 className={view === "activity" ? "active" : ""}
                 onClick={() => setView("activity")}
               >
                 Activity
-              </button>
+              </button> */}
 
               <button
                 className={view === "editProfile" ? "active" : ""}
