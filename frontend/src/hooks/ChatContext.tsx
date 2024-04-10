@@ -18,15 +18,15 @@ import { useUser } from "./UserContext";
 import { useApiErrorHandler } from "./useApiErrorHandler";
 
 // Socket
-// export const socket = io("http://localhost:8080", {
-//   transports: ["websocket"],
-// });
+export const socket = io("http://localhost:8080", {
+  transports: ["websocket"],
+});
 
 // Setup for deployment
-export const socket = io();
+// export const socket = io();
 
-socket.on('connect', () => {
-  console.log('Connected to socket server');
+socket.on("connect", () => {
+  console.log("Connected to socket server");
 });
 
 // Chat context

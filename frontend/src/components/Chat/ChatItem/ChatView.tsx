@@ -47,6 +47,38 @@ const ChatView = ({ chat }: Props) => {
     fetchMessages();
   }, []);
 
+  const updateOrderOfChats = (data: Message) => {
+    //first check if the chat is already the first item
+    if (chat.id !== chats[0].id) {
+      //filter the chats to exclude the current chat and store it in updatedChats
+      console.log("Change of order will occur.");
+      const updatedChats = chats.filter(
+        (myChat: Chat) => myChat.id !== chat.id
+      );
+
+      //in our old chats, find the index of our current chat
+      const chatIndex: number = chats.findIndex(
+        (chatItem) => chatItem.id === chat.id
+      );
+
+      //update our chat with the newest message, and move it to the top of the list
+      if (chatIndex != -1) {
+        let updatedChat: Chat = { ...chats[chatIndex], lastMessage: data };
+        updatedChats.unshift(updatedChat);
+        setChats(updatedChats);
+      }
+    } else {
+      //if it is the first item, don't need to change the order, just update the list
+      console.log("No order change.");
+      const updatedChats = chats.map((chatItem) => {
+        if (chatItem.id === chat.id) {
+          return { ...chatItem, lastMessage: data };
+        }
+        return chatItem;
+      });
+      setChats(updatedChats);
+    }
+  };
   // Add a new message to the chat
   const handleAddMessage = async () => {
     try {
@@ -71,25 +103,17 @@ const ChatView = ({ chat }: Props) => {
       // Emit message to socket server
       socket.emit("send_message", data);
 
+      updateOrderOfChats(data);
+      // const updatedChats = chats.map((chatItem) => {
+      //   if (chatItem.id === chat.id) {
+      //     return { ...chatItem, lastMessage: data };
+      //   }
+      //   return chatItem;
+      // });
+      // setChats(updatedChats);
+
       // Update message list
       setMessages([...messages, data]);
-
-      // Update last message in chat list
-      //somehow send it to the top
-
-      const updatedChats = chats.filter(
-        (myChat: Chat) => myChat.id !== chat.id
-      );
-
-      const chatIndex: number = chats.findIndex(
-        (chatItem) => chatItem.id === chat.id
-      );
-
-      if (chatIndex != -1) {
-        let updatedChat: Chat = { ...chats[chatIndex], lastMessage: data };
-        updatedChats.unshift(updatedChat);
-        setChats(updatedChats);
-      }
 
       // Clear message input
       setNewMessage("");
@@ -101,7 +125,10 @@ const ChatView = ({ chat }: Props) => {
   // Listen for new messages and update the chat view
   useEffect(() => {
     const receiveMessage = (newMessage: Message) => {
+      // console.log("received message!");
+      // updateOrderOfChats(newMessage);
       setMessages((list) => [...list, newMessage]);
+      //
     };
     socket.on("receive_message", receiveMessage);
 
