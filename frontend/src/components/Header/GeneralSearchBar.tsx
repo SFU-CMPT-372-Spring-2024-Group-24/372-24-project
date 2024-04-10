@@ -1,16 +1,11 @@
 // Hooks
 import { useState, useEffect, useRef } from "react";
-import { useUser } from "../../hooks/UserContext";
-import { useTasks } from "../../hooks/TaskContext";
 // Models
 import { User } from "../../models/User";
 import { FileModel as File } from "../../models/FileModel";
 import { Task } from "../../models/Task";
 import { Project } from "../../models/Project";
-import { Role } from "../../models/ProjectRole";
 // Components
-import PreviewFileModal from "../Modals/PreviewFile/PreviewFileModal";
-import TaskModal from "../Modals/TaskModal/TaskModal";
 // Icons
 import { IoSearch } from "react-icons/io5";
 // API
@@ -21,8 +16,8 @@ interface Props {
 }
 
 const GeneralSearchBar = ({ placeholder = "Search" }: Props) => {
-  const pathname = window.location.pathname.split("/");
-  const projectId = parseInt(pathname[2]);
+  // const pathname = window.location.pathname.split("/");
+  // const projectId = parseInt(pathname[2]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<{ users: User[], files: File[], tasks: Task[], projects: Project[], otherProjects: Project[] }>({ users: [], files: [], tasks: [], projects: [], otherProjects: [] });

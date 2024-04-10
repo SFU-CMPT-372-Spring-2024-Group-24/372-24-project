@@ -26,7 +26,7 @@ export const socket = io("http://localhost:8080", {
 // export const socket = io();
 
 socket.on("connect", () => {
-  console.log("Connected to socket server");
+  // console.log("Connected to socket server");
 });
 
 // Chat context

@@ -16,7 +16,7 @@ const useSearchUsers = () => {
   // Search users
   const handleSearch = async (e: React.FormEvent, excludeIds: number[]) => {
     e.preventDefault();
-    console.log(excludeIds);
+    // console.log(excludeIds);
     try {
       const response = await api.get(
         `/search/users/exclude?query=${query}&exclude=${JSON.stringify(excludeIds)}`

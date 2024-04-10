@@ -48,17 +48,6 @@ function Layout() {
   );
 }
 
-function LayoutWithHeader() {
-  return (
-    <>
-      <Header searchPlaceholder="Search this project"/>
-      <main>
-        <Outlet />
-      </main>
-    </>
-  );
-}
-
 interface AuthRouteProps {
   children: React.ReactNode;
 }

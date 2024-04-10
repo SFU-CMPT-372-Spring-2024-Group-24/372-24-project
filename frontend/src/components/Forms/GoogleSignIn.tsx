@@ -10,9 +10,9 @@ const GoogleSignIn = () => {
 
   const handleCallbackResponse = async (response: any) => {
     try {
-      console.log("Encoded HWT ID token: " + response.credential);
+      // console.log("Encoded HWT ID token: " + response.credential);
       const decodedToken: any = jwtDecode(response.credential);
-      console.log(decodedToken);
+      // console.log(decodedToken);
 
       const { given_name, name, email, picture } = decodedToken;
 

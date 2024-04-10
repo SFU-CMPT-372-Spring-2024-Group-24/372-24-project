@@ -89,7 +89,7 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
       });
 
       if (response.status === 201) {
-        console.log("Response:", response);
+        // console.log("Response:", response);
         const newMembers = selectedUsers.map((user) => {
           return {
             ...user,
@@ -130,7 +130,7 @@ const ManageMemberModal = ({ showModal, setShowModal }: Props) => {
       setChats(
         chats.map((chat: Chat) => {
           if (chat.id === response.data.id) {
-            console.log("found it!");
+            // console.log("found it!");
             return {
               ...chat,
               Users: projectMembers.filter((member) => member.id !== user.id),
